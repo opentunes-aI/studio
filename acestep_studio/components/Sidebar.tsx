@@ -1,9 +1,10 @@
 "use client";
 import { useEffect, useState } from "react";
 import { getHistory, getTrackMetadata, deleteLocalFile } from "@/utils/api";
-import { Music2, RefreshCw, FileAudio, Wand2, Database, Trash2, Share2 } from "lucide-react";
+import { Music2, RefreshCw, FileAudio, Wand2, Database, Trash2, Share2, Pencil } from "lucide-react";
 import { useStudioStore } from "@/utils/store";
 import { syncTrackToCloud, deleteCloudSong, supabase } from "@/utils/supabase";
+import { getSongGradient } from "@/utils/visuals";
 
 export default function Sidebar() {
     const [tab, setTab] = useState<'local' | 'cloud'>('local');
@@ -90,6 +91,21 @@ export default function Sidebar() {
         alert(`Link copied: ${url}`);
     }
 
+    async function handleRenameCloud(e: React.MouseEvent, song: any) {
+        e.stopPropagation();
+        const newTitle = prompt("Rename song:", song.title || "Untitled");
+        if (newTitle && newTitle.trim() !== "") {
+            if (!supabase) return;
+            const { error } = await supabase.from('songs').update({ title: newTitle }).eq('id', song.id);
+            if (!error) {
+                load();
+            } else {
+                console.error(error);
+                alert("Failed to rename.");
+            }
+        }
+    }
+
     return (
         <div className="w-64 bg-card border-l border-border h-full flex flex-col shrink-0 z-10 w-72">
             <div className="h-14 border-b border-border flex items-center justify-between px-4 shrink-0 bg-card/50 backdrop-blur">
@@ -123,8 +139,11 @@ export default function Sidebar() {
                                 className={`group relative p-3 rounded-md cursor-pointer border transition-all ${isActive ? 'bg-primary/10 border-primary/50' : 'bg-secondary/20 hover:bg-secondary/80 border-transparent hover:border-primary/20'}`}
                             >
                                 <div className="flex items-start gap-3">
-                                    <div className={`w-8 h-8 rounded flex items-center justify-center shrink-0 transition-colors ${isActive ? 'bg-primary text-white' : 'bg-background text-muted-foreground group-hover:text-primary'}`}>
-                                        <FileAudio className="w-4 h-4" />
+                                    <div
+                                        className={`w-8 h-8 rounded flex items-center justify-center shrink-0 transition-colors ${isActive ? 'ring-2 ring-primary' : ''}`}
+                                        style={getSongGradient(f)}
+                                    >
+                                        <FileAudio className="w-4 h-4 text-white drop-shadow-md" />
                                     </div>
                                     <div className="flex-1 min-w-0">
                                         <div className={`text-xs font-medium truncate mb-0.5 ${isActive ? 'text-primary' : 'text-foreground'}`}>{f}</div>
@@ -174,8 +193,11 @@ export default function Sidebar() {
                                 className={`group relative p-3 rounded-md cursor-pointer border transition-all ${isActive ? 'bg-primary/10 border-primary/50' : 'bg-secondary/20 hover:bg-secondary/80 border-transparent hover:border-primary/20'}`}
                             >
                                 <div className="flex items-start gap-3">
-                                    <div className={`w-8 h-8 rounded flex items-center justify-center shrink-0 transition-colors ${isActive ? 'bg-purple-600 text-white' : 'bg-background text-muted-foreground group-hover:text-purple-500'}`}>
-                                        <Music2 className="w-4 h-4" />
+                                    <div
+                                        className={`w-8 h-8 rounded flex items-center justify-center shrink-0 transition-colors ${isActive ? 'ring-2 ring-primary' : ''}`}
+                                        style={getSongGradient(song.id)}
+                                    >
+                                        <Music2 className="w-4 h-4 text-white drop-shadow-md" />
                                     </div>
                                     <div className="flex-1 min-w-0">
                                         <div className={`text-xs font-medium truncate mb-0.5 ${isActive ? 'text-primary' : 'text-foreground'}`}>{song.title || song.local_filename}</div>
@@ -192,6 +214,13 @@ export default function Sidebar() {
                                         className="p-1.5 bg-background border border-border rounded-md shadow hover:text-blue-500 hover:border-blue-500"
                                     >
                                         <Share2 className="w-3 h-3" />
+                                    </button>
+                                    <button
+                                        onClick={(e) => handleRenameCloud(e, song)}
+                                        title="Rename"
+                                        className="p-1.5 bg-background border border-border rounded-md shadow hover:text-green-500 hover:border-green-500"
+                                    >
+                                        <Pencil className="w-3 h-3" />
                                     </button>
                                     <button
                                         onClick={(e) => handleRemix(e, song.local_filename, song.meta)}

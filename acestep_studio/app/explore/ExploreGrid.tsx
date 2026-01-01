@@ -1,7 +1,7 @@
-"use client";
 import { Play, User } from "lucide-react";
 import Link from "next/link";
 import { useStudioStore } from "@/utils/store";
+import { getSongGradient, getGenreIcon } from "@/utils/visuals";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export default function ExploreGrid({ songs }: { songs: any[] }) {
@@ -20,9 +20,13 @@ export default function ExploreGrid({ songs }: { songs: any[] }) {
                 return (
                     <div key={song.id} className="group bg-card border border-border rounded-xl overflow-hidden hover:border-primary/50 transition-all hover:shadow-lg flex flex-col">
                         {/* Art Placeholder */}
-                        <div className="aspect-square bg-gradient-to-br from-indigo-900/50 to-purple-900/50 relative">
+                        <div style={getSongGradient(song.id)} className="aspect-square relative">
+                            {/* Genre Icon */}
+                            <div className="absolute top-2 right-2 text-3xl opacity-20 group-hover:opacity-50 transition-opacity select-none filter grayscale group-hover:grayscale-0">
+                                {getGenreIcon(song.prompt || "")}
+                            </div>
                             {/* Play Overlay */}
-                            <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/40 backdrop-blur-sm z-10">
+                            <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/20 backdrop-blur-[2px] z-10">
                                 <button
                                     onClick={(e) => {
                                         e.preventDefault();
