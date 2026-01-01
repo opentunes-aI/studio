@@ -108,7 +108,7 @@ export default function ControlPanel({ onJobCreated }: ControlPanelProps) {
 
 
     return (
-        <div className="w-96 bg-card border-l border-border h-full flex flex-col p-4 gap-4 shrink-0 z-20 shadow-xl overflow-y-auto relative">
+        <div className="w-96 bg-card border-r border-border h-full flex flex-col p-4 gap-4 shrink-0 z-20 shadow-xl overflow-y-auto relative">
             <h2 className="text-xl font-bold tracking-tight text-foreground flex items-center gap-2">
                 Studio Controls
             </h2>

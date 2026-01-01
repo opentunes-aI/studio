@@ -66,7 +66,7 @@ export default function Sidebar() {
     }
 
     return (
-        <div className="w-64 bg-card border-r border-border h-full flex flex-col shrink-0 z-10 w-72">
+        <div className="w-64 bg-card border-l border-border h-full flex flex-col shrink-0 z-10 w-72">
             <div className="h-14 border-b border-border flex items-center justify-between px-4 shrink-0 bg-card/50 backdrop-blur">
                 <div className="flex gap-1 bg-secondary/50 p-0.5 rounded-lg">
                     <button

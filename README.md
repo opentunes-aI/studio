@@ -328,8 +328,14 @@ If you intend to integrate ACE-Step as a library into your own Python projects, 
 - `--overlapped_decode`: Use overlapped decoding to speed up inference (default: False)
 
 ## 📱 User Interface Guide
+    
+The Opentunes Studio interface is designed to mimic professional audio tools:
+*   **Left Panel**: Studio Controls (Prompt, Lyrics, Settings).
+*   **Center**: Waveform Visualizer & Timeline.
+*   **Right Panel**: Library (Local History & Cloud Sync).
+*   **Bottom Drawer**: Console Logs.
 
-The ACE-Step interface provides several tabs for different music generation and editing tasks:
+The interface provides several workflow modes:
 
 ### 📝 Text2Music Tab
 

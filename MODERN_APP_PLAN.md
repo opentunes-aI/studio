@@ -47,7 +47,9 @@ The core philosophy is **"No-Code Music"**: Users should not need to understand 
 - [x] **Supabase Integration**: Set up Client, Auth Widget, and `.env` config.
 - [x] **Database Setup**: Schema created and verified.
 - [x] **Persistent Library**: Implemented "Local-First" library with Cloud Sync.
+- [x] **UI Layout**: Optimized layout (Controls Left, Library Right) for DAW-like workflow.
 - [x] **Shortcuts**: Implemented Space (Play/Pause) and Arrow (Seek) keys.
+
 
 ---
 

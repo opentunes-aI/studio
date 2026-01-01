@@ -19,11 +19,11 @@ export default function Home() {
     <div className="flex flex-col h-screen w-screen overflow-hidden bg-background text-foreground antialiased selection:bg-primary/30">
       <Header />
       <div className="flex-1 flex overflow-hidden relative">
-        <Sidebar />
-        <div className="flex-1 flex flex-col relative min-w-0">
+        <ControlPanel onJobCreated={handleJobCreated} />
+        <div className="flex-1 flex flex-col relative min-w-0 bg-background/50 backdrop-blur-sm">
           <WaveformVisualizer />
         </div>
-        <ControlPanel onJobCreated={handleJobCreated} />
+        <Sidebar />
 
         {/* Drawer sits on top of everything in the main area, or fixed to window */}
         <ConsoleDrawer activeJobId={activeJobId} />
