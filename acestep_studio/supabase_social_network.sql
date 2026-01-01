@@ -16,8 +16,9 @@ begin
   insert into public.profiles (id, username, avatar_url)
   values (
     new.id, 
-    new.raw_user_meta_data->>'full_name'::text, 
-    new.raw_user_meta_data->>'avatar_url'::text
+    -- Fallback to part before @ in email if name is missing
+    coalesce(new.raw_user_meta_data->>'full_name', split_part(new.email, '@', 1)), 
+    new.raw_user_meta_data->>'avatar_url'
   );
   return new;
 end;
