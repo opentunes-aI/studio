@@ -37,7 +37,9 @@ Open [http://localhost:7865](http://localhost:7865).
 ## 🎵 Key Features
 
 *   **Waveform Visualization**: Uses `wavesurfer.js` for interactive regions.
+*   **Persistent Player**: Global audio playback continues across pages.
 *   **Real-time Console**: Polls the backend for generation logs.
+*   **Library Management**: Sync Local files to Cloud, and **Delete** unwanted tracks.
 *   **Cloud Sync**: Hybrid "Local-First" architecture. Files stay on disk; metadata syncs to Supabase.
 
 ## 🤝 Contributing
