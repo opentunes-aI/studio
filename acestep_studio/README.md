@@ -1,4 +1,6 @@
-# Opentunes Studio (Agentic Frontend)
+# Opentunes Studio Application
+> **Note**: This documentation is for the **SaaS Application** (`app/(studio)`). 
+> The Marketing functionalities (`opentunes.ai`) are documented separately in `app/(home)`.
 
 This is the commercial-grade interface for **Opentunes.ai**.
 It is designed to host **Agentic Workflows**, where the UI adapts to the AI Producer's decisions.
@@ -30,6 +32,9 @@ Open [http://localhost:7865](http://localhost:7865).
 
 ## 🏗️ Architecture
 
+*   **Routing**: Uses Next.js Route Groups.
+    *   `app/(home)`: Public landing page (`opentunes.ai`).
+    *   `app/(studio)`: Main application (`app.opentunes.ai`).
 *   **`components/`**: UI Building blocks (ControlPanel, WaveformVisualizer, Sidebar).
 *   **`utils/api.ts`**: Client for the Python Backend (`localhost:8000`).
 *   **`utils/supabase.ts`**: Supabase Client instance.

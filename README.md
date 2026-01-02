@@ -13,11 +13,12 @@
     <img src="./assets/orgnization_logos.png" width="100%" alt="StepFun Logo">
 </p>
 
-## 🎵 Opentunes.ai: The Agentic music Studio
-**"The First Agentic AI Music Generation App"**
+## 🎵 Opentunes.ai: The Agentic SaaS Platform
+**"Your Personal AI Producer"**
 
-We have transformed this research demo into **Opentunes**, a commercial-grade Agentic Studio.
-It combines state-of-the-art generation with **Web3 Ownership** and **Agentic Workflows**.
+We have evolved this project into a dual-domain platform:
+1.  **Opentunes.ai (Home)**: The engaging landing page for user acquisition.
+2.  **App.Opentunes.ai (Studio)**: The deep-work creative environment with **Web3 Ownership** and **Agentic Workflows**.
 
 ### ✨ Studio Features
 *   **Console Drawer**: View real-time logs and generation progress (solved "silent failure" issues).

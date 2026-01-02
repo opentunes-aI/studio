@@ -39,7 +39,16 @@ The user directs the session, and the **AI Producer Agent** handles the complexi
 - [x] **The Visualizer**: Art Director agent for generating cover art (Pollinations.ai).
 - [x] **Orchestrator Architecture**: Implemented Planner/Executor pattern for robust multi-tool execution with local LLMs.
 
-### Horizon 4: Advanced Creation (The "Song" Layer)
+### Horizon 4: SaaS Expansion & Landing Page [🚀 STARTING]
+*Goal: Decouple the 'Marketing Site' from the 'Studio App' for domain-based routing.*
+- [ ] **Architecture**:
+    - `app/(home)`: The Marketing Site (Landing Page, Pricing). Targeted at `opentunes.ai`.
+    - `app/(studio)`: The SaaS Application (Dashboard, Visualizer). Targeted at `app.opentunes.ai`.
+- [ ] **Documentation**:
+    - Create `app/(home)/README.md` and `LANDING_BUILD_PLAN.md`.
+- [ ] **Routing**: Middleware to handle subdomain rewriting.
+
+### Horizon 5: Advanced Creation (The "Song" Layer)
 *Goal: Move from "Clips" to "Songs".*
 - [ ] **Extension (Out-Painting)**: "Continue this track for 30s".
 - [ ] **Stem Separation**: Separate Vocals/Instrumentals.
@@ -63,6 +72,6 @@ The user directs the session, and the **AI Producer Agent** handles the complexi
 | **Database** | Supabase | Auth, Metadata, Social Graph. |
 
 ## 4. Immediate Next Steps (Horizon 4)
-1.  Implement **Out-Painting** (Track Extension).
-2.  Implement **Stem Separation**.
-3.  Deploy **Web3 Bridge** logic.
+1.  **Refactor Directory Structure**: Implement `(studio)` and `(home)` groups.
+2.  **Build Landing Page**: Design the `opentunes.ai` entry point.
+3.  **Deploy Middleware**: Handle subdomain routing.
