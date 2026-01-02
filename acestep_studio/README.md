@@ -1,6 +1,7 @@
-# Opentunes Studio (Frontend)
+# Opentunes Studio (Agentic Frontend)
 
-This is the commercial-grade frontend for **Opentunes.ai** (formerly ACE-Step).
+This is the commercial-grade interface for **Opentunes.ai**.
+It is designed to host **Agentic Workflows**, where the UI adapts to the AI Producer's decisions.
 Built with **Next.js 14**, **Tailwind CSS**, **Zustand**, and **Supabase**.
 
 ## 🛠️ Setup

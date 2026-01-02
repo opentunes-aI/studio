@@ -1,15 +1,13 @@
-# Opentunes.ai: Product Roadmap to Commercialization
+# Opentunes.ai: The First Agentic AI Music Generation App
 
-## 1. Product Vision: "Suno for Localhost"
-Our goal is to transform ACE-Step from a technical research demo into a commercial-grade, fee-based SaaS platform called **Opentunes.ai**.
-The core philosophy is **"No-Code Music"**: Users should not need to understand "CFG Scale" or "Inference Steps". They should simply describe an emotion and get a radio-ready track.
+## 1. Product Vision
+**"Your Personal AI Producer"**
+Opentunes moves beyond "slot machine" generation (Suno/Udio) to **Agentic Co-Creation**.
+The user directs the session, and the **AI Producer Agent** handles the complexity—tweaking parameters, writing lyrics, and organizing takes.
 
-### Target Architecture (Commercial)
-*   **Landing Page**: `opentunes.ai` (Marketing, Pricing).
-*   **App URL**: `app.opentunes.ai` (The Studio).
-*   **Frontend Hosting**: Cloudflare Pages / Vercel (Next.js).
-*   **Backend Hosting**: GPU Cloud (RunPod / Railway / AWS) running Dockerized FastAPI.
-*   **Database/Auth**: **Supabase** (PostgreSQL + Auth + Realtime).
+**Dual Value Proposition:**
+1.  **Agentic Studio (Web 2.0)**: A "Pro" workflow where AI Agents help you craft the perfect track.
+2.  **On-Chain Music (Web 3.0)**: (Future) Direct distribution and monetization of your AI masterpieces via Blockchain.
 
 ---
 
@@ -17,63 +15,50 @@ The core philosophy is **"No-Code Music"**: Users should not need to understand 
 
 ### Horizon 1: The Core Foundation (MVP) [✅ COMPLETED]
 *Goal: Prove the architecture works with robust error handling and basic generation.*
-- [x] **New Architecture**: Decoupled Next.js Frontend + FastAPI Backend.
-- [x] **Failure Monitoring**: Console Drawer for real-time logs (Fixed "Silent Failures").
-- [x] **Basic Studio API**: `/generate` endpoint with `soundfile` fix.
-- [x] **Optimization**: `cpu_offload` for 8GB Consumer GPUs.
-- [x] **Audio Playback**: Waveform visualizer (Wavesurfer.js) with Play/Pause.
-- [x] **Feature Parity**: Ported Lyrics, Presets, Formats, and Advanced Param controls.
-- [x] **Smart Lyrics**: Integrated Local Ollama for "Magic Lyrics".
-
----
+**(See previous logs for completed items)**
 
 ### Horizon 2: The "Creator Studio" (Feature Completeness) [✅ COMPLETED]
-*Goal: Match the creative workflows of Suno/Udio. Move beyond "One-shot" generation.*
+*Goal: Match the creative workflows of Suno/Udio.*
+- [x] **Branding**: Implemented Header/Footer.
+- [x] **Variations/In-Painting**: Repaint and Remix logic.
+- [x] **Social Network**: Profiles, Explore Feed, and Sharing.
+- [x] **Visual Polish**: Dynamic Gradients and Genre Icons.
+- [x] **Library Management**: Cloud/Local sync and file deletion.
 
-- [x] **Branding**: Implemented Header/Footer for "Opentunes" commercial look.
-- [x] **Variations (Retake)**: Implemented "Remix Strength" slider and Sidebar integration.
-- [x] **In-Painting (Repaint)**: Implemented Waveform Region Selection + Repaint logic.
-- [ ] **Out-Painting (Extend)**: (Deferred to Horizon 3).
+### Horizon 3: The "Agentic Layer" (Intelligent Workflow) [🚀 NEXT UP]
+*Goal: Implement the "AI Producer" to abstract complexity.*
 
-#### B. UX for Non-Musicians
-- [x] **Structure Builder**: Implemented Visual Block Builder with bi-directional sync (Text <-> Visual).
-- [x] **Curated Style Chips**: Implemented visual Presets Grid with 12+ genres.
+#### Phase 3.1: The Parameter Agent (Backend)
+- [ ] **Infrastructure**: Integrate `smolagents` or `langchain` with local Ollama (Llama 3).
+- [ ] **Text-to-Config**: "Make it punchier" -> Agent sets `cfg_scale=20`, `steps=64`.
+- [ ] **Param-Bot**: A chat interface to modify the current track state via natural language.
 
----
+#### Phase 3.2: Multi-Agent Collaboration
+- [ ] **The Lyricist**: Specialized agent for structure-aware songwriting (Verse/Chorus rules).
+- [ ] **The Critic**: Agent that reviews "Prompt Compliance" before generation.
 
-### Horizon 3: The "Platform" (Engagement & Library) [🚧 ACTIVE]
-*Goal: Increase user stickiness. Migration to Supabase.*
+### Horizon 4: Advanced Creation (The "Song" Layer)
+*Goal: Move from "Clips" to "Songs".*
+- [ ] **Extension (Out-Painting)**: "Continue this track for 30s".
+- [ ] **Stem Separation**: Separate Vocals/Instrumentals.
 
-- [x] **Supabase Integration**: Set up Client, Auth Widget, and `.env` config.
-- [x] **Database Setup**: Schema created and verified.
-- [x] **Persistent Library**: Implemented "Local-First" library with Cloud Sync.
-- [x] **Cloud Storage**: Implemented MP3 Backup to Supabase Storage.
-- [x] **UI Layout**: Optimized layout (Controls Left, Library Right) for DAW-like workflow.
-- [x] **Persistent Player**: Implemented Global Audio Element and Footer Player architecture.
-- [x] **Song Deletion**: Implemented Delete for Local and Cloud (Library Management).
-- [x] **Shortcuts**: Implemented Space (Play/Pause) and Arrow (Seek) keys.
-
-
----
-
-### Horizon 4: Commercialization (SaaS Transformation)
-*Goal: Prepare for deployment and monetization.*
-
-- [ ] **Cloud Infrastructure**: Dockerize the app for GPU Instances.
-- [ ] **Credit System**: Stripe integration via Supabase Functions.
-- [x] **Social Sharing**: Public song pages (`/song/[id]`) and easy link sharing.
+### Horizon 5: Commercialization & Web3 (The Bridge)
+*Goal: Monetization and Assets.*
+- [ ] **Blockchain Bridge**: "Mint this Song" (NFT Metadata).
+- [ ] **Deployment**: Dockerize for GPU Cloud.
+- [ ] **Credit System**: Stripe/Crypto payments.
 
 ---
 
-## 3. Technology Stack (Final State)
+## 3. Technology Stack (Agentic Era)
 
 | Component | Technology | Reasoning |
 | :--- | :--- | :--- |
-| **Frontend** | Next.js 14 + Tailwind + Zustand | High performance, SEO, robust state. |
-| **Backend** | FastAPI + Celery/Redis | Async job processing essential for scale. |
-| **Compute** | **GPU Cloud** (RunPod/AWS) | ACE-Step Model Hosting (3.5B params). |
-| **Database** | **Supabase** (Postgres) | Auth, DB, Realtime all-in-one. |
-| **Storage** | **Supabase Storage** / S3 | Hosting audio files. |
+| **Agents** | **Smolagents / LangGraph** | Code-centric, lightweight orchestration for Local LLMs. |
+| **LLM** | **Ollama (Llama 3)** | Free, local, private intelligence. |
+| **Frontend** | Next.js 14 + Tailwind | High performance Studio UI. |
+| **Backend** | FastAPI + Celery | Async job processing. |
+| **Database** | Supabase | Auth, Metadata, Social Graph. |
 
 ## 4. Immediate Next Steps (Horizon 2)
 1.  Implement **Branding**.

@@ -347,3 +347,18 @@ async def delete_file(filename: str):
     except Exception as e:
         logger.error(f"Failed to delete {filename}: {e}")
         raise HTTPException(status_code=500, detail=str(e))
+
+# --- Agent Endpoints ---
+from acestep.api.agent_service import process_user_intent
+
+class AgentChatRequest(BaseModel):
+    message: str
+
+@app.post("/agent/chat")
+async def chat_with_producer(req: AgentChatRequest):
+    """
+    Talk to the AI Producer Agent to configure studio parameters.
+    """
+    # Run in threadpool to avoid blocking event loop
+    return await asyncio.to_thread(process_user_intent, req.message)
+

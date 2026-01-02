@@ -1,6 +1,7 @@
 "use client";
 import ControlPanel from "@/components/ControlPanel";
 import WaveformVisualizer from "@/components/WaveformVisualizer";
+import AgentChat from "@/components/AgentChat";
 
 export default function Home() {
   return (
@@ -14,6 +15,7 @@ export default function Home() {
       </div>
 
       {/* Note: Sidebar is now in GlobalLayout (Right) */}
+      <AgentChat />
     </div>
   );
 }

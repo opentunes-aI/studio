@@ -13,8 +13,11 @@
     <img src="./assets/orgnization_logos.png" width="100%" alt="StepFun Logo">
 </p>
 
-## 🎵 New: ACE-Step Studio Service
-We have migrated to a decoupled modern architecture (Next.js + FastAPI) to provide a premium user experience.
+## 🎵 Opentunes.ai: The Agentic music Studio
+**"The First Agentic AI Music Generation App"**
+
+We have transformed this research demo into **Opentunes**, a commercial-grade Agentic Studio.
+It combines state-of-the-art generation with **Web3 Ownership** and **Agentic Workflows**.
 
 ### ✨ Studio Features
 *   **Console Drawer**: View real-time logs and generation progress (solved "silent failure" issues).
