@@ -1,5 +1,5 @@
 from smolagents import CodeAgent, LiteLLMModel, tool
-from typing import Optional, Dict, Any
+from typing import Optional, Dict, Any, List
 import os
 
 # 1. Define Tools
@@ -82,63 +82,114 @@ critic_agent = CodeAgent(
     add_base_tools=False
 )
 
-def process_user_intent(user_input: str):
+import re
+import json
+
+def extract_json_from_text(text: str) -> Optional[Dict]:
+    """Helper to extract JSON from verbose LLM output."""
+    try:
+        # 1. Try finding a JSON code block
+        match = re.search(r"```json\s*(\{.*?\})\s*```", text, re.DOTALL)
+        if match:
+            return json.loads(match.group(1))
+        
+        # 2. Try finding the raw JSON object
+        # Find first { and last }
+        start = text.find('{')
+        end = text.rfind('}')
+        if start != -1 and end != -1:
+            candidate = text[start:end+1]
+            return json.loads(candidate)
+    except:
+        pass
+    return None
+
+def process_user_intent(user_input: str, history: List[Dict[str, str]] = []):
     """
     Orchestrates the Producer and Critic agents.
     """
     try:
-        # 1. PRODUCER PHASE
-        instruction = (
+        # Build Context
+        context_str = ""
+        if history:
+            relevant = [m for m in history if m.get('role') in ['user', 'agent']]
+            context_str = "PREVIOUS CONVERSATION:\n" + "\n".join([f"{m.get('role','USER').upper()}: {str(m.get('content',''))[:200]}" for m in relevant[-6:]]) + "\n\n"
+
+        # 1. PLAN PHASE
+        plan_instruction = (
+            f"{context_str}"
             f"USER REQUEST: '{user_input}'\n\n"
-            "TASK: You are an Intelligent Studio Assistant (Producer, Lyricist, & Visualizer).\n"
+            "TASK: Analyze the USER REQUEST. Return a JSON object identifying needed agents.\n"
             "RULES:\n"
-            "1. IF USER WANTS MUSIC SETTINGS: Call 'configure_studio'.\n"
-            "   - Expand the prompt creatively.\n"
-            "2. IF USER WANTS LYRICS: Call 'update_lyrics'.\n"
-            "   - Write creative lyrics with [Verse]/[Chorus].\n"
-            "3. IF USER WANTS ART/IMAGES: Call 'generate_cover_art'.\n"
-            "   - write a detailed visual prompt.\n"
-            "4. MANDATORY TOOL CALL: You must call a tool.\n"
-            "5. FINAL ANSWER: Return the exact JSON from the tool.\n"
+            "- 'music': True if user wants a song, track, beat, or specific parameters.\n"
+            "- 'lyrics': True if user mentions lyrics, words, or a subject to write about.\n"
+            "- 'art': True if user mentions cover art, image, or visuals.\n"
+            "FORMAT: { \"music\": bool, \"lyrics\": bool, \"art\": bool }\n"
+            "OUTPUT: JSON ONLY."
         )
+        print(f"Planning for: {user_input}")
+        # Re-use producer model for planning (it's smart enough)
+        plan_raw = producer_agent.run(plan_instruction)
+        plan = extract_json_from_text(str(plan_raw))
+        if not plan:
+            print(f"Plan failed, defaulting to all. Raw: {plan_raw}")
+            plan = {"music": True, "lyrics": True, "art": True}
         
-        print(f"Producer Processing: {user_input}") 
-        response = producer_agent.run(instruction)
-        print(f"Producer Response: {response}")
+        # HEURISTIC OVERRIDE (Hybrid Intelligence)
+        # 3B models sometimes miss obvious intents. We force-enable based on keywords.
+        u = user_input.lower()
+        if any(w in u for w in ['song', 'track', 'beat', 'music', 'bpm', 'tempo', 'configure']):
+            plan['music'] = True
+        if any(w in u for w in ['lyrics', 'words', 'verse', 'chorus', 'write']):
+            plan['lyrics'] = True
+        if any(w in u for w in ['art', 'cover', 'image', 'picture', 'draw', 'visual']):
+            plan['art'] = True
 
-        # 2. CRITIC PHASE (Only for configuration)
-        if isinstance(response, dict) and response.get("action") == "configure":
-            params = response['params']
-            critique_instruction = (
-                f"ACT as a strict Music Studio Critic.\n"
-                f"User Intent: '{user_input}'\n"
-                f"Proposed Settings: {params}\n\n"
-                "CHECKLIST:\n"
-                "- Is the 'prompt' descriptive enough (>10 words)?\n"
-                "- Are 'steps' appropriate (aim for 50+ normally)?\n"
-                "- Does the vibe match the intent?\n\n"
-                "OUTPUT:\n"
-                "- If PASS: Return exactly 'APPROVED'.\n"
-                "- If FAIL: Return a 1-sentence warning for the user.\n"
+        print(f"Plan (Final): {plan}")
+
+        results = []
+
+        # 2. EXECUTE PHASE (Sequential)
+        
+        # A. Music Config
+        if plan.get('music'):
+            print(">>> Running Music Config")
+            res = producer_agent.run(
+                f"{context_str}USER: {user_input}\nTASK: Configure the studio settings (prompt, steps, cfg, duration). Call 'configure_studio'. Return the result."
             )
-            print("Critic Reviewing...")
-            critique = critic_agent.run(critique_instruction)
-            print(f"Critic Verdict: {critique}")
-            
-            if "APPROVED" not in str(critique).upper():
-                # Block the config and warn user
-                return {
-                    "action": "critique_warning",
-                    "message": f"⚠️ Critic Warning: {str(critique)}"
-                }
+            if isinstance(res, str): res = extract_json_from_text(res) or {"message": res}
+            results.append(res)
 
-        return response
+            # Critic Check (Only for music)
+            if res and isinstance(res, dict) and res.get("action") == "configure":
+                critique = critic_agent.run(f"Critique this music config: {res['params']}")
+                if "APPROVED" not in str(critique).upper():
+                    results.append({"action": "critique_warning", "message": f"⚠️ Critic Warning: {str(critique)}"})
+
+        # B. Lyrics
+        if plan.get('lyrics'):
+            print(">>> Running Lyrics")
+            res = producer_agent.run(
+                f"{context_str}USER: {user_input}\nTASK: Write lyrics for this song. Call 'update_lyrics'. Return the result."
+            )
+            if isinstance(res, str): res = extract_json_from_text(res) or {"message": res}
+            results.append(res)
+
+        # C. Art
+        if plan.get('art'):
+            print(">>> Running Art")
+            res = producer_agent.run(
+                f"{context_str}USER: {user_input}\nTASK: Generate cover art. Call 'generate_cover_art'. Return the result."
+            )
+            if isinstance(res, str): res = extract_json_from_text(res) or {"message": res}
+            results.append(res)
+            
+        return {"result": results}
 
     except Exception as e:
         print(f"Agent Execution Error: {e}")
-        # Fallback
         return {
             "action": "error", 
-            "message": str(e),
+            "message": f"Agent Error: {str(e)}",
             "fallback": {"prompt": user_input} 
         }

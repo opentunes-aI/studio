@@ -37,6 +37,7 @@ The user directs the session, and the **AI Producer Agent** handles the complexi
 - [x] **The Lyricist**: Specialized agent for structure-aware songwriting (Verse/Chorus rules).
 - [x] **The Critic**: Agent that reviews "Prompt Compliance" before generation.
 - [x] **The Visualizer**: Art Director agent for generating cover art (Pollinations.ai).
+- [x] **Orchestrator Architecture**: Implemented Planner/Executor pattern for robust multi-tool execution with local LLMs.
 
 ### Horizon 4: Advanced Creation (The "Song" Layer)
 *Goal: Move from "Clips" to "Songs".*
@@ -61,7 +62,7 @@ The user directs the session, and the **AI Producer Agent** handles the complexi
 | **Backend** | FastAPI + Celery | Async job processing. |
 | **Database** | Supabase | Auth, Metadata, Social Graph. |
 
-## 4. Immediate Next Steps (Horizon 2)
-1.  Implement **Branding**.
-2.  Implement **Variations (Retake)** logic.
-3.  Implement **Region Selection** for Repainting.
+## 4. Immediate Next Steps (Horizon 4)
+1.  Implement **Out-Painting** (Track Extension).
+2.  Implement **Stem Separation**.
+3.  Deploy **Web3 Bridge** logic.

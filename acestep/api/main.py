@@ -353,6 +353,7 @@ from acestep.api.agent_service import process_user_intent
 
 class AgentChatRequest(BaseModel):
     message: str
+    history: List[Dict[str, str]] = []
 
 @app.post("/agent/chat")
 async def chat_with_producer(req: AgentChatRequest):
@@ -360,5 +361,5 @@ async def chat_with_producer(req: AgentChatRequest):
     Talk to the AI Producer Agent to configure studio parameters.
     """
     # Run in threadpool to avoid blocking event loop
-    return await asyncio.to_thread(process_user_intent, req.message)
+    return await asyncio.to_thread(process_user_intent, req.message, req.history)
 
