@@ -1,17 +1,14 @@
-# Opentunes.ai: The First Agentic AI Music Generation App
+# Opentunes.ai: Master Development Plan
 
-## 1. Product Vision
-**"Your Personal AI Producer"**
-Opentunes moves beyond "slot machine" generation (Suno/Udio) to **Agentic Co-Creation**.
-The user directs the session, and the **AI Producer Agent** handles the complexity—tweaking parameters, writing lyrics, and organizing takes.
-
-**Dual Value Proposition:**
-1.  **Agentic Studio (Web 2.0)**: A "Pro" workflow where AI Agents help you craft the perfect track.
-2.  **On-Chain Music (Web 3.0)**: (Future) Direct distribution and monetization of your AI masterpieces via Blockchain.
+This document tracks the development of the **Opentunes** ecosystem.
+The platform is divided into two distinct domains:
+1.  **Opentunes.ai (Marketing)**: Public facing landing page for user acquisition.
+2.  **App.Opentunes.ai (Studio)**: The authenticated SaaS application for music creation.
 
 ---
 
-## 2. Strategic Roadmap
+## PART A: The Studio App Plan (App.Opentunes.ai)
+*Focus: Agentic Workflow, Audio Generation, and Web3 Ownership.*
 
 ### Horizon 1: The Core Foundation (MVP) [✅ COMPLETED]
 *Goal: Prove the architecture works with robust error handling and basic generation.*
@@ -25,35 +22,25 @@ The user directs the session, and the **AI Producer Agent** handles the complexi
 - [x] **Visual Polish**: Dynamic Gradients and Genre Icons.
 - [x] **Library Management**: Cloud/Local sync and file deletion.
 
-### Horizon 3: The "Agentic Layer" (Intelligent Workflow) [🚀 ACTIVE]
+### Horizon 3: The "Agentic Layer" (Intelligent Workflow) [✅ COMPLETED]
 *Goal: Implement the "AI Producer" to abstract complexity.*
 
-#### Phase 3.1: The Parameter Agent (Backend) [✅ COMPLETED]
+#### Phase 3.1: The Parameter Agent (Backend)
 - [x] **Infrastructure**: Integrated `smolagents` with local Ollama (`qwen2.5`).
-- [x] **Text-to-Config**: "Make it punchier" -> Agent sets paramaters via Tool Calling.
-- [x] **Param-Bot**: Floating Chat Interface implemented.
+- [x] **Text-to-Config**: "Make it punchier" -> Agent sets defaults.
+- [x] **Param-Bot**: Floating Chat Interface.
 
-#### Phase 3.2: Multi-Agent Collaboration [✅ COMPLETED]
-- [x] **The Lyricist**: Specialized agent for structure-aware songwriting (Verse/Chorus rules).
-- [x] **The Critic**: Agent that reviews "Prompt Compliance" before generation.
-- [x] **The Visualizer**: Art Director agent for generating cover art (Pollinations.ai).
-- [x] **Orchestrator Architecture**: Implemented Planner/Executor pattern for robust multi-tool execution with local LLMs.
+#### Phase 3.2: Multi-Agent Orchestration
+- [x] **Architecture**: Developed Planner/Executor pattern for robust sequential execution.
+- [x] **The Agents**: Producer (Config), Lyricist (Writing), Visualizer (Cover Art).
+- [x] **UI**: Multi-session chat history and composite message stacking.
 
-### Horizon 4: SaaS Expansion & Landing Page [🚀 STARTING]
-*Goal: Decouple the 'Marketing Site' from the 'Studio App' for domain-based routing.*
-- [ ] **Architecture**:
-    - `app/(home)`: The Marketing Site (Landing Page, Pricing). Targeted at `opentunes.ai`.
-    - `app/(studio)`: The SaaS Application (Dashboard, Visualizer). Targeted at `app.opentunes.ai`.
-- [ ] **Documentation**:
-    - Create `app/(home)/README.md` and `LANDING_BUILD_PLAN.md`.
-- [ ] **Routing**: Middleware to handle subdomain rewriting.
-
-### Horizon 5: Advanced Creation (The "Song" Layer)
+### Horizon 4: Advanced Creation (The "Song" Layer) [TODO]
 *Goal: Move from "Clips" to "Songs".*
 - [ ] **Extension (Out-Painting)**: "Continue this track for 30s".
 - [ ] **Stem Separation**: Separate Vocals/Instrumentals.
 
-### Horizon 5: Commercialization & Web3 (The Bridge)
+### Horizon 5: Commercialization & Web3 (The Bridge) [TODO]
 *Goal: Monetization and Assets.*
 - [ ] **Blockchain Bridge**: "Mint this Song" (NFT Metadata).
 - [ ] **Deployment**: Dockerize for GPU Cloud.
@@ -61,17 +48,23 @@ The user directs the session, and the **AI Producer Agent** handles the complexi
 
 ---
 
-## 3. Technology Stack (Agentic Era)
+## PART B: The Home Landing Plan (Opentunes.ai)
+*Focus: Growth, SEO, Branding, and User Onboarding.*
 
-| Component | Technology | Reasoning |
-| :--- | :--- | :--- |
-| **Agents** | **Smolagents / LangGraph** | Code-centric, lightweight orchestration for Local LLMs. |
-| **LLM** | **Ollama (Llama 3)** | Free, local, private intelligence. |
-| **Frontend** | Next.js 14 + Tailwind | High performance Studio UI. |
-| **Backend** | FastAPI + Celery | Async job processing. |
-| **Database** | Supabase | Auth, Metadata, Social Graph. |
+### Phase 1: Infrastructure & Launch [🚀 ACTIVE]
+- [x] **SaaS Architecture**: Refactored `app/page.tsx` (Home) vs `app/studio` (App).
+- [x] **Hero Page**: High-conversion dark mode landing page.
+- [ ] **Middleware**: Domain routing logic (`app.*` -> `/studio`).
+- [ ] **Pricing Page**: Subscription tiers display.
+- [ ] **Auth Integration**: "Sign In" button redirects to Studio dashboard.
 
-## 4. Immediate Next Steps (Horizon 4)
-1.  **Refactor Directory Structure**: Implement `(studio)` and `(home)` groups.
-2.  **Build Landing Page**: Design the `opentunes.ai` entry point.
-3.  **Deploy Middleware**: Handle subdomain routing.
+### Phase 2: Content & Growth
+- [ ] **Blog Engine**: SEO-optimized content.
+- [ ] **Case Studies**: Showcase "Best of Opentunes".
+
+---
+
+## 4. Immediate Next Steps
+1.  **Deploy Middleware**: Handle subdomain routing.
+2.  **Pricing Page**: Build `app/pricing` section on Home.
+3.  **App: Out-Painting**: Begin Horizon 4 of Studio.
