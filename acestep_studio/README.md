@@ -1,10 +1,13 @@
 # Opentunes Studio Application
-> **Note**: This documentation is for the **SaaS Application** (`app/(studio)`). 
-> The Marketing functionalities (`opentunes.ai`) are documented separately in `app/(home)`.
 
-This is the commercial-grade interface for **Opentunes.ai**.
-It is designed to host **Agentic Workflows**, where the UI adapts to the AI Producer's decisions.
-Built with **Next.js 14**, **Tailwind CSS**, **Zustand**, and **Supabase**.
+The commercial-grade interface for **Opentunes.ai**, separating the Marketing Landing Page from the Studio App.
+
+## 🔐 Authentication & Access Control
+
+Access to the Studio (`/studio`) is protected by **StudioGate**.
+*   **Guests**: Redirected to a Login Card.
+*   **Auth Provider**: Supabase Magic Links.
+*   **Local Mode**: If Supabase keys are missing, the Login Card offers a "Continue as Guest" bypass.
 
 ## 🛠️ Setup
 

@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
-import { ArrowRight, Sparkles, Zap, Bot, Coins, Waves } from "lucide-react";
+import { ArrowRight, Sparkles, Zap, Bot, Coins, Waves, Globe } from "lucide-react";
 import HomeShowcase from '@/components/HomeShowcase';
 import HomePricing from '@/components/HomePricing';
 
@@ -20,10 +20,16 @@ export default function LandingPage() {
 
     return (
         <div className="min-h-screen bg-black text-white selection:bg-purple-500/30 font-sans overflow-x-hidden">
-            {/* Background Gradients */}
+            {/* Background Image */}
             <div className="fixed inset-0 z-0 pointer-events-none">
-                <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] rounded-full bg-purple-900/20 blur-[120px] animate-pulse"></div>
-                <div className="absolute bottom-[-20%] right-[-10%] w-[50%] h-[50%] rounded-full bg-pink-900/20 blur-[120px] animate-pulse" style={{ animationDelay: '2s' }}></div>
+                <Image
+                    src="/hero-bg.jpg"
+                    alt="Background"
+                    fill
+                    className="object-cover opacity-60"
+                    priority
+                />
+                <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/50 to-black"></div>
             </div>
 
             {/* Header */}
@@ -92,14 +98,14 @@ export default function LandingPage() {
                 </form>
 
                 {/* Feature Grid */}
-                <div id="features" className="grid md:grid-cols-3 gap-6 max-w-6xl mx-auto text-left mb-20">
+                <div id="features" className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto text-left mb-20">
                     {/* Card 1: Agents */}
                     <div className="p-8 rounded-3xl bg-white/5 border border-white/10 hover:border-purple-500/50 transition-colors group">
                         <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-pink-500 to-rose-500 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
                             <Bot className="w-6 h-6 text-white" />
                         </div>
                         <h3 className="text-xl font-bold mb-3">Agentic Co-Creation</h3>
-                        <p className="text-gray-400 leading-relaxed">
+                        <p className="text-gray-400 leading-relaxed text-sm">
                             Don't just prompt. Direct a team of specialized agents:
                             <span className="text-white"> The Producer</span>,
                             <span className="text-white"> The Lyricist</span>,
@@ -114,7 +120,7 @@ export default function LandingPage() {
                             <Coins className="w-6 h-6 text-white" />
                         </div>
                         <h3 className="text-xl font-bold mb-3">On-Chain Ownership</h3>
-                        <p className="text-gray-400 leading-relaxed">
+                        <p className="text-gray-400 leading-relaxed text-sm">
                             Stop renting your creativity. Mint your AI generated tracks as NFTs to
                             enable instant monetization and royalty tracking.
                         </p>
@@ -126,9 +132,21 @@ export default function LandingPage() {
                             <Waves className="w-6 h-6 text-white" />
                         </div>
                         <h3 className="text-xl font-bold mb-3">Studio Fidelity</h3>
-                        <p className="text-gray-400 leading-relaxed">
-                            Powered by **ACE-Step** 3.5B. Generate 48kHz stereo mastery with
+                        <p className="text-gray-400 leading-relaxed text-sm">
+                            Powered by Our Advanced AI Music Gen Engine. Generate 48kHz stereo mastery with
                             granular control over instruments, mood, and mixing.
+                        </p>
+                    </div>
+
+                    {/* Card 4: Community */}
+                    <div className="p-8 rounded-3xl bg-white/5 border border-white/10 hover:border-orange-500/50 transition-colors group">
+                        <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-orange-500 to-amber-500 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                            <Globe className="w-6 h-6 text-white" />
+                        </div>
+                        <h3 className="text-xl font-bold mb-3">Community Showcase</h3>
+                        <p className="text-gray-400 leading-relaxed text-sm">
+                            Discover trending tracks, remix community hits, and collaborate with producers
+                            worldwide in a shared sonic metaverse.
                         </p>
                     </div>
                 </div>
@@ -140,7 +158,7 @@ export default function LandingPage() {
             </main>
 
             {/* Footer */}
-            <footer className="border-t border-white/5 py-12 bg-black/80">
+            <footer className="relative z-10 border-t border-white/5 py-12 bg-black/60 backdrop-blur-xl">
                 <div className="container mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-6 text-gray-500 text-sm">
                     <div>© 2026 Opentunes AI Inc.</div>
                     <div className="flex gap-6">

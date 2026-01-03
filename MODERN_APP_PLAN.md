@@ -74,9 +74,9 @@ The platform is divided into two distinct domains:
 
 ### Track A: Platform Architecture
 - [x] **Routing Refactor**: `app/page.tsx` (Home) vs `app/studio` (App).
-- [ ] **Auth Gate**: Protect `/studio` with a dedicated Login Screen (StudioGate).
-    *   Unauthenticated users see "Sign In / Sign Up" prompt.
-    *   Authenticated users get full access.
+- [x] **Auth Gate** [✅ COMPLETED]: Protected `/studio` with `StudioGate`.
+    *   Unauthenticated users see "Enter Studio" Login Card.
+    *   "Continue as Guest" available for Local Mode.
 - [ ] **Middleware**: Handle subdomain rewriting (`app.*` -> `/studio`).
 
 ---

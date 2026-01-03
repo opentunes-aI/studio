@@ -17,8 +17,8 @@
 **"Your Personal AI Producer"**
 
 We have evolved this project into a dual-domain platform:
-1.  **Opentunes.ai (Home)**: The engaging landing page for user acquisition.
-2.  **App.Opentunes.ai (Studio)**: The deep-work creative environment with **Web3 Ownership** and **Agentic Workflows**.
+1.  **Opentunes.ai (Home)**: The interactive landing page featuring "Decentralized Music Creation" and community showcases.
+2.  **App.Opentunes.ai (Studio)**: The secured creative environment (via **StudioGate**) for Agentic Workflows.
 
 ### ✨ Studio Features
 *   **Console Drawer**: View real-time logs and generation progress (solved "silent failure" issues).
@@ -32,8 +32,9 @@ We have evolved this project into a dual-domain platform:
 
 ### 🚀 How to Run
 1.  Double-click `run_studio.bat`.
-2.  Open **[http://localhost:7865](http://localhost:7865)**.
-3.  The API runs in the background at `http://localhost:8000`.
+2.  Open **[http://localhost:7865](http://localhost:7865)** (Landing Page).
+3.  Click **"Sign In"** or **"Launch Studio"** to enter the App.
+4.  The API runs in the background at `http://localhost:8000`.
 
 *(Legacy Gradio app is still available via `run_acestep.bat`)*
 
