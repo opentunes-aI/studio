@@ -2,7 +2,8 @@
 import Link from 'next/link';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { ArrowRight, Music, Sparkles, Zap, Bot, Coins, Waves } from "lucide-react";
+import Image from 'next/image';
+import { ArrowRight, Sparkles, Zap, Bot, Coins, Waves } from "lucide-react";
 import HomeShowcase from '@/components/HomeShowcase';
 import HomePricing from '@/components/HomePricing';
 
@@ -29,8 +30,8 @@ export default function LandingPage() {
             <header className="fixed top-0 w-full z-50 border-b border-white/5 bg-black/50 backdrop-blur-xl">
                 <div className="container mx-auto px-6 h-20 flex items-center justify-between">
                     <div className="flex items-center gap-3 font-bold text-xl tracking-tighter">
-                        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-pink-500 to-purple-600 flex items-center justify-center shadow-lg shadow-purple-500/20">
-                            <Music className="w-5 h-5 text-white" />
+                        <div className="w-10 h-10 relative">
+                            <Image src="/logo.png" alt="Opentunes Logo" fill className="object-contain rounded-xl" />
                         </div>
                         <span>Opentunes.ai</span>
                     </div>

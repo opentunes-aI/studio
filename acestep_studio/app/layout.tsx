@@ -16,6 +16,9 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Opentunes Studio",
   description: "AI Music Generation Platform",
+  icons: {
+    icon: '/logo.png',
+  },
 };
 
 export default function RootLayout({
