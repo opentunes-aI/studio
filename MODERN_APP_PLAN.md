@@ -53,11 +53,12 @@ The platform is divided into two distinct domains:
 
 ### Phase 1: The "Hook" (Hero & Value Props) [✅ COMPLETED]
 1.  **Hero Section**:
-    *   Headline: "Your Agentic AI Music Studio".
-    *   Subhead: "Collaborate with AI Producer Agents. Own your work on-chain."
     *   **Interactive Input**: "Describe your vibe..." -> Redirects to Studio pre-filled.
-    *   **Action Item**: Wire up `initialPrompt` query param in Studio App (`ControlPanel.tsx`).
-2.  **Value Prop Grid**:
+    *   **Handover**: [✅ COMPLETED] Wired up `initialPrompt` query param in AgentChat.
+2.  **Branding & Navigation** [✅ COMPLETED]:
+    *   **Logo**: Updated Opentunes Note/CD Logo & Favicon.
+    *   **Consistency**: Unified Header styling between Home and Studio.
+3.  **Value Prop Grid**:
     *   **Agentic Intelligence**: "Don't just prompt. Direct a team of agents (Producer, Lyricist, Visualizer)."
     *   **Web3 Monetization**: "Mint your hits. Royalties are baked in from day one."
     *   **Pro Fidelity**: "High-definition audio generation, just like Suno/Udio but open."

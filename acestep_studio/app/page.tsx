@@ -29,12 +29,14 @@ export default function LandingPage() {
             {/* Header */}
             <header className="fixed top-0 w-full z-50 border-b border-white/5 bg-black/50 backdrop-blur-xl">
                 <div className="container mx-auto px-6 h-20 flex items-center justify-between">
-                    <div className="flex items-center gap-3 font-bold text-xl tracking-tighter">
-                        <div className="w-10 h-10 relative">
-                            <Image src="/logo.png" alt="Opentunes Logo" fill className="object-contain rounded-xl" />
+                    <Link href="/" className="flex items-center gap-2 font-bold text-lg tracking-tight hover:opacity-80 transition-opacity">
+                        <div className="w-8 h-8 relative">
+                            <Image src="/logo.png" alt="Opentunes Logo" fill className="object-contain rounded-lg" />
                         </div>
-                        <span>Opentunes.ai</span>
-                    </div>
+                        <span className="bg-clip-text text-transparent bg-gradient-to-r from-white to-white/70">
+                            Opentunes<span className="text-purple-500">.ai</span>
+                        </span>
+                    </Link>
                     <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-gray-400">
                         <Link href="#features" className="hover:text-white transition-colors">Features</Link>
                         <Link href="#agents" className="hover:text-white transition-colors">AI Agents</Link>

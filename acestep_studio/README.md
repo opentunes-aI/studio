@@ -32,9 +32,9 @@ Open [http://localhost:7865](http://localhost:7865).
 
 ## 🏗️ Architecture
 
-*   **Routing**: Uses Next.js Route Groups.
-    *   `app/(home)`: Public landing page (`opentunes.ai`).
-    *   `app/(studio)`: Main application (`app.opentunes.ai`).
+*   **Routing**:
+    *   `app/page.tsx`: Public landing page (`opentunes.ai`).
+    *   `app/studio/`: Main application (`app.opentunes.ai`).
 *   **`components/`**: UI Building blocks (ControlPanel, WaveformVisualizer, Sidebar).
 *   **`utils/api.ts`**: Client for the Python Backend (`localhost:8000`).
 *   **`utils/supabase.ts`**: Supabase Client instance.
