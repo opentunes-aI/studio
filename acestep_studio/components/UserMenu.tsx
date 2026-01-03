@@ -5,12 +5,14 @@ import { supabase } from '../utils/supabase';
 import { useProfile } from '../utils/useProfile';
 import Avatar from './Avatar';
 import ProfileDialog from './ProfileDialog';
+import SettingsDialog from './SettingsDialog';
 
 export default function UserMenu() {
     const { session } = useStore();
     const { profile } = useProfile();
     const [isOpen, setIsOpen] = useState(false);
     const [showProfile, setShowProfile] = useState(false);
+    const [showSettings, setShowSettings] = useState(false);
     const menuRef = useRef<HTMLDivElement>(null);
 
     // Close on click outside
@@ -62,7 +64,7 @@ export default function UserMenu() {
                     </button>
 
                     <button
-                        onClick={() => alert("Global Settings are coming in Phase 3! Use 'Edit Profile' to change your avatar.")}
+                        onClick={() => { setShowSettings(true); setIsOpen(false); }}
                         className="w-full text-left px-4 py-2.5 text-sm hover:bg-white/5 flex items-center gap-2 transition-colors"
                     >
                         <Settings size={16} className="text-gray-400" />
@@ -82,6 +84,7 @@ export default function UserMenu() {
             )}
 
             <ProfileDialog isOpen={showProfile} onClose={() => setShowProfile(false)} />
+            <SettingsDialog isOpen={showSettings} onClose={() => setShowSettings(false)} />
         </div>
     );
 }

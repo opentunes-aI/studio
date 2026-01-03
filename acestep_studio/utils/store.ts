@@ -27,6 +27,15 @@ interface StudioState {
     activeJobId: string | null;
     isConsoleOpen: boolean;
 
+    // Global Settings
+    settings: {
+        defaultFormat: "mp3" | "wav";
+        defaultDuration: number;
+        reducedMotion: boolean;
+        autoSave: boolean;
+    };
+    updateSettings: (s: Partial<StudioState['settings']>) => void;
+
     // Actions
     setPrompt: (v: string) => void;
     setLyrics: (v: string) => void;
@@ -47,6 +56,21 @@ export const useStore = create<StudioState>((set) => ({
     // Defaults
     session: null,
     setSession: (s) => set({ session: s }),
+
+    // Settings Defaults
+    settings: {
+        defaultFormat: "mp3",
+        defaultDuration: 60,
+        reducedMotion: false,
+        autoSave: true
+    },
+    updateSettings: (s) => set((state) => {
+        const newSettings = { ...state.settings, ...s };
+        if (typeof window !== 'undefined') {
+            localStorage.setItem('opentunes_settings', JSON.stringify(newSettings));
+        }
+        return { settings: newSettings };
+    }),
 
     currentTrackUrl: null,
     currentTrackName: null,
