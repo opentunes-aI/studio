@@ -55,9 +55,12 @@ export default function LandingPage() {
 
             {/* Hero Section */}
             <main className="relative z-10 pt-40 pb-0 px-6 container mx-auto text-center">
-                <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-purple-500/10 border border-purple-500/20 text-xs font-bold text-purple-300 mb-8 uppercase tracking-wide">
-                    <Sparkles className="w-3 h-3" />
-                    <span>The Future of Decentralized Music Creation</span>
+                <div className="inline-flex items-center gap-2 px-6 py-2 rounded-full bg-white/5 border border-white/10 text-sm font-bold mb-8 relative overflow-hidden group hover:scale-105 transition-transform backdrop-blur-md">
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-purple-500/20 to-transparent animate-shimmer" />
+                    <Sparkles className="w-4 h-4 text-purple-400 relative z-10" />
+                    <span className="relative z-10 bg-clip-text text-transparent bg-gradient-to-r from-purple-200 to-indigo-200 tracking-wide">
+                        The Future of Decentralized Music Creation
+                    </span>
                 </div>
 
                 <h1 className="text-5xl md:text-8xl font-black tracking-tight mb-8 leading-tight">
@@ -99,7 +102,8 @@ export default function LandingPage() {
                         <p className="text-gray-400 leading-relaxed">
                             Don't just prompt. Direct a team of specialized agents:
                             <span className="text-white"> The Producer</span>,
-                            <span className="text-white"> The Lyricist</span>, and
+                            <span className="text-white"> The Lyricist</span>,
+                            <span className="text-white"> The Critic</span>, and
                             <span className="text-white"> The Visualizer</span>.
                         </p>
                     </div>
