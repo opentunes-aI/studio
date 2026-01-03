@@ -4,6 +4,7 @@ import { ArrowLeft, Users } from 'lucide-react';
 import CommunityFeed from '@/components/CommunityFeed';
 import CommunityShowcase from '@/components/CommunityShowcase';
 import CommunityHeaderAuth from '@/components/CommunityHeaderAuth';
+import Footer from '@/components/Footer';
 
 export default function CommunityPage() {
     return (
@@ -53,6 +54,8 @@ export default function CommunityPage() {
                     </div>
                 </div>
             </main>
-        </div>
+
+            <Footer />
+        </div >
     );
 }

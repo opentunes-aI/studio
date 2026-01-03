@@ -127,5 +127,6 @@ The Community Page is the retention engine. It turns passive listening into acti
 ---
 
 ## 4. Immediate Next Steps
-1.  **Middleware**: Handle subdomain routing.
+1.  **Footer Update**: Add Social Media icons (X, Instagram, TikTok, Discord) to the global footer.
+2.  **Middleware**: Handle subdomain routing.
 2.  **App: Out-Painting**: Begin Horizon 4 of Studio.

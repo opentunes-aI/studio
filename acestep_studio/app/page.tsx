@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { ArrowRight, Sparkles, Zap, Bot, Coins, Waves, Globe } from "lucide-react";
 import HomeShowcase from '@/components/HomeShowcase';
 import HomePricing from '@/components/HomePricing';
+import Footer from '@/components/Footer';
 
 export default function LandingPage() {
     const [prompt, setPrompt] = useState("");
@@ -160,18 +161,9 @@ export default function LandingPage() {
 
             </main>
 
+
             {/* Footer */}
-            <footer className="relative z-10 border-t border-white/5 py-12 bg-black/60 backdrop-blur-xl">
-                <div className="container mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-6 text-gray-500 text-sm">
-                    <div>© 2026 Opentunes AI Inc.</div>
-                    <div className="flex gap-6">
-                        <Link href="#" className="hover:text-white transition-colors">Privacy</Link>
-                        <Link href="#" className="hover:text-white transition-colors">Terms</Link>
-                        <Link href="#" className="hover:text-white transition-colors">Twitter</Link>
-                        <Link href="#" className="hover:text-white transition-colors">Discord</Link>
-                    </div>
-                </div>
-            </footer>
+            <Footer />
         </div>
     );
 }
