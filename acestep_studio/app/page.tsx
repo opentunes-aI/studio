@@ -45,7 +45,7 @@ export default function LandingPage() {
                     </Link>
                     <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-gray-400">
                         <Link href="#features" className="hover:text-white transition-colors">Features</Link>
-                        <Link href="#agents" className="hover:text-white transition-colors">AI Agents</Link>
+                        <Link href="#showcase" className="hover:text-white transition-colors">Showcase</Link>
                         <Link href="#pricing" className="hover:text-white transition-colors">Pricing</Link>
                     </nav>
                     <div className="flex items-center gap-4">
@@ -152,7 +152,9 @@ export default function LandingPage() {
                 </div>
 
                 {/* New Components */}
-                <HomeShowcase />
+                <div id="showcase" className="scroll-mt-24 mb-20">
+                    <HomeShowcase />
+                </div>
                 <HomePricing />
 
             </main>

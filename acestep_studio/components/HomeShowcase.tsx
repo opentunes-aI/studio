@@ -1,11 +1,13 @@
 "use client";
 import { Play } from "lucide-react";
 
+import Image from "next/image";
+
 const TRACKS = [
-    { id: 1, title: "Midnight in Tokyo", artist: "@neo_jazz", genre: "Lofi Jazz", color: "from-pink-500 to-rose-500" },
-    { id: 2, title: "Cyberpunk Chase", artist: "@runner_2049", genre: "Synthwave", color: "from-purple-500 to-indigo-500" },
-    { id: 3, title: "Ethereal Dreams", artist: "@sky_walker", genre: "Ambient", color: "from-cyan-500 to-blue-500" },
-    { id: 4, title: "Bass Heavy", artist: "@drop_king", genre: "Dubstep", color: "from-emerald-500 to-green-500" },
+    { id: 1, title: "Midnight in Tokyo", artist: "@neo_jazz", genre: "Lofi Jazz", image: "/covers/cover_lofi.png" },
+    { id: 2, title: "Cyberpunk Chase", artist: "@runner_2049", genre: "Synthwave", image: "/covers/cover_synthwave.png" },
+    { id: 3, title: "Ethereal Dreams", artist: "@sky_walker", genre: "Ambient", image: "/covers/cover_ambient_v2.png" },
+    { id: 4, title: "Bass Heavy", artist: "@drop_king", genre: "Dubstep", image: "/covers/cover_dubstep.png" },
 ];
 
 export default function HomeShowcase() {
@@ -19,20 +21,28 @@ export default function HomeShowcase() {
 
                 <div className="grid md:grid-cols-4 gap-6">
                     {TRACKS.map((track) => (
-                        <div key={track.id} className="group relative aspect-square rounded-2xl overflow-hidden bg-gray-900 border border-white/10 hover:border-white/30 transition-all">
-                            {/* Gradient Placeholder for Art */}
-                            <div className={`absolute inset-0 bg-gradient-to-br ${track.color} opacity-20 group-hover:opacity-40 transition-opacity`}></div>
+                        <div key={track.id} className="group relative aspect-square rounded-2xl overflow-hidden bg-gray-900 border border-white/10 hover:border-white/30 transition-all shadow-lg hover:shadow-2xl hover:-translate-y-1">
+                            {/* Local Generated Cover Art */}
+                            <Image
+                                src={track.image}
+                                alt={track.title}
+                                fill
+                                className="object-cover transition-transform duration-700 group-hover:scale-110 opacity-80 group-hover:opacity-100"
+                            />
+
+                            {/* Dark Gradient Overlay for Text Readability */}
+                            <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent opacity-90 group-hover:opacity-80 transition-opacity" />
 
                             {/* Content */}
                             <div className="absolute inset-0 p-6 flex flex-col justify-end">
-                                <div className="transform translate-y-4 group-hover:translate-y-0 transition-transform">
-                                    <h3 className="font-bold text-lg leading-tight mb-1">{track.title}</h3>
-                                    <p className="text-xs text-gray-400 mb-4">{track.artist}</p>
+                                <div className="transform translate-y-2 group-hover:translate-y-0 transition-transform">
+                                    <h3 className="font-bold text-lg leading-tight mb-1 text-white">{track.title}</h3>
+                                    <p className="text-xs text-gray-300 mb-4 opacity-80">{track.artist}</p>
 
-                                    <div className="flex items-center justify-between opacity-0 group-hover:opacity-100 transition-opacity delay-75">
-                                        <span className="text-[10px] uppercase tracking-wider font-bold bg-white/10 px-2 py-1 rounded text-white/70">{track.genre}</span>
-                                        <button className="w-8 h-8 rounded-full bg-white text-black flex items-center justify-center hover:scale-110 transition-transform">
-                                            <Play className="w-3 h-3 ml-0.5" fill="currentColor" />
+                                    <div className="flex items-center justify-between">
+                                        <span className="text-[10px] uppercase tracking-wider font-bold bg-white/20 backdrop-blur-md px-2 py-1 rounded text-white">{track.genre}</span>
+                                        <button className="w-10 h-10 rounded-full bg-white text-black flex items-center justify-center hover:scale-110 transition-transform shadow-[0_0_15px_rgba(255,255,255,0.5)]">
+                                            <Play className="w-4 h-4 ml-0.5" fill="currentColor" />
                                         </button>
                                     </div>
                                 </div>
