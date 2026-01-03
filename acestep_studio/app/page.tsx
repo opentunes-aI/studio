@@ -57,7 +57,7 @@ export default function LandingPage() {
             <main className="relative z-10 pt-40 pb-0 px-6 container mx-auto text-center">
                 <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-purple-500/10 border border-purple-500/20 text-xs font-bold text-purple-300 mb-8 uppercase tracking-wide">
                     <Sparkles className="w-3 h-3" />
-                    <span>The Future of Music Creation</span>
+                    <span>The Future of Decentralized Music Creation</span>
                 </div>
 
                 <h1 className="text-5xl md:text-8xl font-black tracking-tight mb-8 leading-tight">
