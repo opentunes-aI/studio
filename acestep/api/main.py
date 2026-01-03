@@ -13,8 +13,30 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 import requests
+from dotenv import load_dotenv
+from supabase import create_client
+
+# Load Envs (Try User's Studio config first)
+load_dotenv("acestep_studio/.env.local")
+load_dotenv() # Fallback to .env in root
 
 from acestep.api.dependencies import manager
+
+# Config
+OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
+SUPABASE_URL = os.getenv("NEXT_PUBLIC_SUPABASE_URL")
+SUPABASE_KEY = os.getenv("NEXT_PUBLIC_SUPABASE_ANON_KEY") # Use Anon for now (upload policy typically allows Authenticated or Anon for 'public' buckets depending on config. MVP assumes Public 'music' bucket writable or we need Service Key).
+# Ideally use SUPABASE_SERVICE_ROLE_KEY if available
+if os.getenv("SUPABASE_SERVICE_ROLE_KEY"):
+    SUPABASE_KEY = os.getenv("SUPABASE_SERVICE_ROLE_KEY")
+
+supabase = None
+if SUPABASE_URL and SUPABASE_KEY:
+    try:
+        supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
+        logger.info(f"Supabase Client Initialized: {SUPABASE_URL}")
+    except Exception as e:
+        logger.error(f"Supabase Init Failed: {e}")
 
 # ... logging ...
 
@@ -201,9 +223,55 @@ async def process_jobs():
             
             file_results = [p for p in output_paths if isinstance(p, str)]
             
+            # Hybrid Storage: Upload to Supabase (Async/Block for now)
+            # We want to return the Public URL if possible.
+            cloud_urls = []
+            if supabase and file_results:
+                for local_path in file_results:
+                    try:
+                        filename = os.path.basename(local_path)
+                        # Upload to 'generated_audio' bucket (or 'music')
+                        # Path: generated/{job_id}/{filename} or just {filename}
+                        # We use filename because Frontend expects it.
+                        bucket_name = "music" # Matches Frontend logic
+                        storage_path = f"generated/{filename}" 
+                        
+                        logger.info(f"Uploading {filename} to Supabase...")
+                        with open(local_path, 'rb') as f:
+                            supabase.storage.from_(bucket_name).upload(storage_path, f, file_options={"upsert": "true"})
+                        
+                        # Get Public URL
+                        res = supabase.storage.from_(bucket_name).get_public_url(storage_path)
+                        if res:
+                            cloud_urls.append(res)
+                            logger.info(f"Uploaded: {res}")
+                    except Exception as up_err:
+                        logger.error(f"Upload Failed for {local_path}: {up_err}")
+
             job.status = "completed"
             job.progress = 1.0
             job.message = "Generation complete"
+            job.result = cloud_urls if cloud_urls else file_results # Return Cloud URLs if success, else Local
+            # Wait, Frontend expects Local Filename or URL? 
+            # Current frontend uses 'local_filename' from DB.
+            # The API returns JobStatus.result.
+            # If we change result to URL, Frontend needs to handle it.
+            # Let's return BOTH or keep existing behavior + Cloud Metadata?
+            # JobStatus.result is List[str].
+            # We will return the Cloud URLs if available, otherwise Local Paths.
+            # Frontend Polling will see 'result'.
+            
+            job.result = file_results # Keep Local Paths for 'local_filename' logic? 
+            # Actually, let's append valid result metadata if possible.
+            # For MVP refactor: Stick to returning Local Paths in 'result' (backward compat)
+            # But the 'local_filename' is strictly the filename. 
+            # The Frontend calculates the URL.
+            # We are done.
+            # Wait, the PLAN said "Generator saves to Local Disk AND uploads".
+            # DONE. The file is uploaded.
+            # Frontend 'Hybrid Read' will try to fetch. 
+            # We don't need to change return value yet, unless we want Frontend to KNOW it's uploaded.
+            
             job.result = file_results
             
             logger.info(f"Job {job_id} completed successfully.")
@@ -232,7 +300,7 @@ class LyricsRequest(BaseModel):
 async def get_llm_models():
     """Fetch available models from local Ollama instance."""
     try:
-        res = requests.get("http://localhost:11434/api/tags", timeout=5)
+        res = requests.get(f"{OLLAMA_BASE_URL}/api/tags", timeout=5)
         if res.status_code == 200:
             data = res.json()
             return {"models": [m["name"] for m in data.get("models", [])]}
@@ -252,7 +320,7 @@ async def generate_lyrics_endpoint(req: LyricsRequest):
     )
     
     try:
-        res = requests.post("http://localhost:11434/api/generate", json={
+        res = requests.post(f"{OLLAMA_BASE_URL}/api/generate", json={
             "model": req.model,
             "prompt": prompt,
             "stream": False

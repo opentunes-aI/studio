@@ -2,6 +2,7 @@
 import { useEffect, useState, useRef } from 'react';
 import { Play, Heart, Download, Crown } from 'lucide-react';
 import { supabase } from '../utils/supabase';
+import { API_URL } from '../utils/config';
 import Avatar from './Avatar';
 
 interface Song {
@@ -64,7 +65,7 @@ export default function CommunityShowcase() {
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {topSongs.map((song, index) => {
-                    const playUrl = song.audio_url || (song.local_filename ? `http://localhost:8000/outputs/${song.local_filename}` : null);
+                    const playUrl = song.audio_url || (song.local_filename ? `${API_URL}/outputs/${song.local_filename}` : null);
                     return (
                         <div key={song.id} className="relative group rounded-3xl overflow-hidden aspect-[4/5] bg-zinc-900 border border-white/10 hover:border-yellow-500/50 transition-all hover:scale-[1.02] shadow-2xl">
                             {/* Background / Cover */}

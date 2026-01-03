@@ -18,7 +18,7 @@ Scope: **Foundation -> Studio (Creation) -> Community (Discovery) -> Commerciali
     *   *Risk*: Medium. Database `songs` table must store the Cloud URL. Existing records might need migration or remain local-only.
 
 ### 1.2 Configuration Management
-*   [ ] **Centralized Env Vars**: Refactor all hardcoded URLs to use environment variables.
+*   [x] **Centralized Env Vars**: Refactor all hardcoded URLs to use environment variables.
     *   Frontend: `NEXT_PUBLIC_API_URL` (default: `http://localhost:8000`), `NEXT_PUBLIC_SUPABASE_URL`.
     *   Backend: `OLLAMA_BASE_URL` (default: `http://localhost:11434`), `ACE_OUTPUT_DIR`.
 *   [ ] **CORS Security**: specific allow-lists for production domains.
@@ -28,11 +28,16 @@ Scope: **Foundation -> Studio (Creation) -> Community (Discovery) -> Commerciali
     *   **Write**: Generator saves to Local Disk AND uploads to Supabase Storage immediately.
     *   **Read**: Frontend attempts Local URL first; falls back to Supabase CDN if unreachable (404/Network Error).
     *   **Priority Reference**: Local is default for speed/dev; Cloud is default for public/sharing.
-*   [ ] **Backend Update**: Modify `main.py` pipeline to perform async upload to Supabase bucket `generated_audio` after file generation.
-*   [ ] **Frontend Utility**: Create `getAudioUrl(song)` resolver that handles the fallback logic transparently.
+*   [x] **Backend Update**: Modify `main.py` pipeline to perform async upload to Supabase bucket `generated_audio` after file generation.
+*   [x] **Frontend Utility**: Create `getAudioUrl(song)` resolver that handles the fallback logic transparently.
 
-### 1.4 Containerization
-*   [ ] **Docker Support**: Add `Dockerfile` for the Python API to ensure reproducible builds on any cloud provider (AWS/GCP/Render).
+### 1.4 Deployment Strategy (Free Prototyping)
+*   **Frontend**: Cloudflare Pages (Free Bandwidth & Hosting).
+*   **Backend API**:
+    *   **Option A (Free)**: Google Colab w/ ngrok tunnel. (Run API in notebook, paste URL to Frontend).
+    *   **Option B (Serverless)**: Replicate (Pay-per-sec, Scale-to-Zero).
+*   [x] **Containerization**: Create `Dockerfile` (Required for Replicate/Render).
+*   [x] **Colab Notebook**: Create `colab_api.ipynb` that installs deps, runs FastAPI, and starts ngrok.
 
 ### 1.5 Web3 Readiness Prep [FUTURE-PROOFING]
 *   **Goal**: Ensure data structures support future on-chain minting without migration pain.

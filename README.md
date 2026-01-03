@@ -30,11 +30,22 @@ We have evolved this project into a dual-domain platform:
     *   **AI Lyrics Wizard**: Built-in Ollama integration for generating structured lyrics.
 *   **Performance**: Optimized for 8GB VRAM cards via CPU offloading.
 
-### 🚀 How to Run
-1.  Double-click `run_studio.bat`.
-2.  Open **[http://localhost:7865](http://localhost:7865)** (Landing Page).
-3.  Click **"Sign In"** or **"Launch Studio"** to enter the App.
-4.  The API runs in the background at `http://localhost:8000`.
+### 🚀 How to Run (Local)
+1.  Double-click `run_studio.bat` (Starts Backend API + Frontend Studio).
+2.  Open **[http://localhost:7865](http://localhost:7865)**.
+3.  Click **"Sign In"** or **"Launch Studio"**.
+
+### ☁️ Deployment (Cloud Architecture)
+Opentunes uses a split architecture (Frontend on Edge, Backend on GPU).
+
+*   **Frontend**: Deploy `acestep_studio/` to **Cloudflare Pages** or Vercel.
+    *   Set `NEXT_PUBLIC_API_URL` to your Backend URL.
+*   **Backend API**:
+    *   **Free Prototyping**: Open `colab_api.ipynb` in Google Colab, run it, and copy the `ngrok` URL.
+    *   **Production**: Dockerize using the provided `Dockerfile` and deploy to a GPU Cloud (RunPod, Lambda, AWS).
+        ```bash
+        docker build -t acestep-api .
+        ```
 
 *(Legacy Gradio app is still available via `run_acestep.bat`)*
 

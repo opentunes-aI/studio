@@ -24,3 +24,10 @@ click
 peft
 tensorboard
 tensorboardX
+# API Dependencies
+fastapi
+uvicorn
+requests
+python-multipart
+supabase
+python-dotenv

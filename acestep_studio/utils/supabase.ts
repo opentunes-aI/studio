@@ -1,5 +1,6 @@
 
 import { createClient } from '@supabase/supabase-js';
+import { API_URL } from './config';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
@@ -25,7 +26,7 @@ export async function syncTrackToCloud(filename: string) {
         // 1. Upload Audio to Storage
         let publicUrl = null;
         try {
-            const response = await fetch(`http://localhost:8000/outputs/${filename}`);
+            const response = await fetch(`${API_URL}/outputs/${filename}`);
             if (response.ok) {
                 const blob = await response.blob();
                 const path = `${user.id}/${filename}`;

@@ -2,6 +2,7 @@
 import { useEffect, useState, useRef } from 'react';
 import { Play, Heart, Share2, MoreHorizontal, Flame, Clock, Trophy, Repeat, Download, UserPlus, MessageCircle, UserCheck } from 'lucide-react';
 import { supabase } from '../utils/supabase';
+import { API_URL } from '../utils/config';
 import { useRouter } from 'next/navigation';
 import Avatar from './Avatar';
 import Image from 'next/image';
@@ -203,7 +204,7 @@ export default function CommunityFeed() {
 
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6">
                 {songs.map((song) => {
-                    const playUrl = song.audio_url || (song.local_filename ? `http://localhost:8000/outputs/${song.local_filename}` : null);
+                    const playUrl = song.audio_url || (song.local_filename ? `${API_URL}/outputs/${song.local_filename}` : null);
                     const isLiked = myId && song.likes && song.likes.some(l => l.user_id === myId);
                     const isFollowing = following.has(song.user_id);
                     const isMe = myId === song.user_id;

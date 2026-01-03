@@ -24,7 +24,14 @@ Copy the `.env.local.example` (or `env.local`) to `.env.local` and fill in your 
 ```bash
 NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=...
+# Optional: Point to deployed backend
+NEXT_PUBLIC_API_URL=http://localhost:8000
 ```
+
+### 1a. Backend Environment (For Deployment)
+The Python backend (`run_api.bat`) supports:
+*   `OLLAMA_BASE_URL` (default: `http://localhost:11434`)
+*   `ACE_OUTPUT_DIR` (default: `./outputs`)
 
 If you don't have Supabase keys, the app will run in **Local Mode** (Authentication features disabled).
 

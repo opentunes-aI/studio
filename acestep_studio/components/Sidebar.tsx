@@ -5,6 +5,7 @@ import { Music2, RefreshCw, FileAudio, Wand2, Database, Trash2, Share2, Pencil }
 import { useStudioStore } from "@/utils/store";
 import { syncTrackToCloud, deleteCloudSong, supabase } from "@/utils/supabase";
 import { getSongGradient } from "@/utils/visuals";
+import { API_URL } from "@/utils/config";
 
 export default function Sidebar() {
     const [tab, setTab] = useState<'local' | 'cloud'>('local');
@@ -38,7 +39,7 @@ export default function Sidebar() {
 
     useEffect(() => { load(); }, [tab]);
 
-    const API_BASE = "http://localhost:8000";
+    const API_BASE = API_URL;
 
     async function handleRemix(e: React.MouseEvent, filename: string, cloudMeta?: any) {
         e.stopPropagation();
