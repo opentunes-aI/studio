@@ -14,6 +14,16 @@ export default function LoginCard({ onLocalHack }: { onLocalHack?: () => void })
     async function handleLogin(e: React.FormEvent) {
         e.preventDefault();
         if (!email || !supabase) return;
+
+        // Persist prompt if present
+        if (typeof window !== 'undefined') {
+            const params = new URLSearchParams(window.location.search);
+            const prompt = params.get('initialPrompt');
+            if (prompt) {
+                localStorage.setItem('pendingPrompt', prompt);
+            }
+        }
+
         setLoading(true);
         try {
             const { error } = await supabase.auth.signInWithOtp({

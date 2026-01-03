@@ -46,6 +46,7 @@ export default function LandingPage() {
                     <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-gray-400">
                         <Link href="#features" className="hover:text-white transition-colors">Features</Link>
                         <Link href="#showcase" className="hover:text-white transition-colors">Showcase</Link>
+                        <Link href="/community" className="hover:text-white transition-colors">Community</Link>
                         <Link href="#pricing" className="hover:text-white transition-colors">Pricing</Link>
                     </nav>
                     <div className="flex items-center gap-4">

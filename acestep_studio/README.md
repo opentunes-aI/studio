@@ -9,6 +9,13 @@ Access to the Studio (`/studio`) is protected by **StudioGate**.
 *   **Auth Provider**: Supabase Magic Links.
 *   **Local Mode**: If Supabase keys are missing, the Login Card offers a "Continue as Guest" bypass.
 
+## 🌍 Community & Feeds
+
+The application supports a vibrant creator economy:
+*   **Showcase Cards**: Pre-configured templates on the Landing Page that launch the Agent with specific prompts.
+*   **Global Feed**: Accessible at `/community` (Scaffold), aiming to showcase user creations.
+*   **Templating**: Clicking a Showcase Card passes the `initialPrompt` to the Agent, preserving it through the Login flow via `localStorage`.
+
 ## 🛠️ Setup
 
 ### 1. Environment Variables

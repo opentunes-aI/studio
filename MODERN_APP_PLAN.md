@@ -79,9 +79,23 @@ The platform is divided into two distinct domains:
     *   "Continue as Guest" available for Local Mode.
 - [ ] **Middleware**: Handle subdomain rewriting (`app.*` -> `/studio`).
 
+### Track B: Community Ecosystem [PLANNED]
+*Focus: From "Solo Creator" to "Collaborative Network".*
+
+1.  **Phase 1: The Scaffold (Infrastructure)**
+    *   [x] **Scaffold**: Created `/community` placeholder page with consistent branding.
+    *   [x] **Navigation**: Added "Community" link to Landing Page and Studio Header.
+    *   [ ] Define Supabase Schema for public sharing (`is_public` flag on tracks).
+2.  **Phase 2: Global Feed Integration**
+    *   [x] **Landing Integration**: Landing Page "View Global Feed" buttons now point to `/community`.
+    *   [ ] Implement "Feed Reader" to fetch latest public tracks.
+3.  **Phase 3: Social Interaction**
+    *   [ ] **Likes & Comments**: Social graph.
+    *   [ ] **Remix/Fork**: "Use this track as seed" button on public items.
+
 ---
 
 ## 4. Immediate Next Steps
-1.  **Deploy Middleware**: Handle subdomain routing.
-2.  **Pricing Page**: Build `app/pricing` section on Home.
+1.  **Community Scaffold**: Implement Phase 1 of Community Ecosystem.
+2.  **Middleware**: Handle subdomain routing.
 3.  **App: Out-Painting**: Begin Horizon 4 of Studio.

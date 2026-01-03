@@ -74,16 +74,28 @@ export default function AgentChat() {
     }, [messages, currentSessionId]);
 
     // Handle initial prompt from Landing Page
+    // Handle initial prompt from Landing Page or Post-Login Redirect
     useEffect(() => {
-        const initialPrompt = searchParams.get("initialPrompt");
+        let initialPrompt = searchParams.get("initialPrompt");
+
+        // If not in URL, check if we stored it pre-login
+        if (!initialPrompt && typeof window !== 'undefined') {
+            initialPrompt = localStorage.getItem('pendingPrompt');
+            if (initialPrompt) {
+                localStorage.removeItem('pendingPrompt');
+            }
+        }
+
         if (initialPrompt && !hasHandledPrompt.current) {
             hasHandledPrompt.current = true;
-            // Clear param to prevent re-trigger on refresh
-            router.replace('/studio', { scroll: false });
+            // Clear param to prevent re-trigger on refresh if it was in URL
+            if (searchParams.get("initialPrompt")) {
+                router.replace('/studio', { scroll: false });
+            }
 
             setIsOpen(true);
             // Delay slightly to ensure state is ready if needed, or just send
-            setTimeout(() => sendMessage(initialPrompt), 500);
+            setTimeout(() => sendMessage(initialPrompt!), 500);
         }
     }, [searchParams]);
 

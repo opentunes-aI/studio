@@ -16,9 +16,8 @@ export default function Header() {
             </Link>
 
             <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-muted-foreground">
-                <Link href="/" className="text-foreground hover:text-primary transition-colors">Studio</Link>
-                <Link href="/explore" className="hover:text-foreground transition-colors">Explore</Link>
-                <a href="#" className="hover:text-foreground transition-colors">Pricing</a>
+                <Link href="/studio" className="text-foreground hover:text-primary transition-colors">Studio</Link>
+                <Link href="/community" className="hover:text-foreground transition-colors">Community</Link>
                 <a href="#" className="hover:text-foreground transition-colors">Docs</a>
             </nav>
 
