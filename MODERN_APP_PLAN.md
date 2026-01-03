@@ -89,7 +89,7 @@ The platform is divided into two distinct domains:
 2.  **Phase 2: UI Components**
     *   [x] **UserMenu**: Header Dropdown (Profile, Settings, Sign Out).
     *   [x] **ProfileForm**: Modal to edit Username, Bio, and upload Avatar.
-    *   [x] **SettingsDialog**: Global Preferences (Studio Defaults, Appearance) using `localStorage`.
+    *   [x] **SettingsDialog**: Global Preferences (Studio Defaults, Appearance) using `localStorage` and React Portals.
 3.  **Phase 3: Integration**
     *   [x] Replace Email in Header with Avatar/Username.
     *   [ ] Show Authors in Community Feed.
