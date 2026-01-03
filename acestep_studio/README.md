@@ -41,7 +41,10 @@ npm run dev
 ### 4. Database Setup (Supabase)
 Run the following SQL scripts (found in `acestep_studio/`) in your Supabase SQL Editor to set up the necessary tables:
 1.  `supabase_profiles.sql`: Sets up User Profiles, Avatars bucket, and Triggers.
-2.  `supabase_fix_columns.sql`: Run this ONLY if you encounter "missing column" errors (patches legacy tables).
+2.  `supabase_community_init.sql`: Sets up Public Songs and Feed Sharing.
+3.  `supabase_community_v2.sql`: Enables Likes and Play Counts.
+4.  `supabase_social_v3.sql`: Enables Follow system and Messages.
+5.  `supabase_fix_columns.sql`: Run this ONLY if you encounter "missing column" errors (patches legacy tables).
 
 Open [http://localhost:7865](http://localhost:7865).
 
@@ -62,8 +65,10 @@ Open [http://localhost:7865](http://localhost:7865).
 *   **Real-time Console**: Polls the backend for generation logs.
 *   **Library Management**: Sync Local files to Cloud, and **Delete** unwanted tracks.
 
-*   **Social Network**: Explore feed, User Profiles, Song Renaming, and Dynamic Visuals.
-*   **Cloud Sync**: Hybrid "Local-First" architecture. Files stay on disk; metadata syncs to Supabase.
+*   **Social Network**: 
+    *   **User Identity**: Rich Profiles, Custom Avatars, and Persistent Settings.
+    *   **Community Feed**: Global showcase of public tracks with Author attribution.
+    *   **Cloud Sync**: Hybrid "Local-First" architecture. Files stay on disk; metadata syncs to Supabase.
 *   **AI Agent Chat**: A robust multi-agent orchestrator powered by `smolagents` and `Ollama`.
     *   **Orchestrator Pattern**: A backend planner dynamically activates specific agents (Producer, Lyricist, Visualizer) based on intent.
     *   **Multi-Session Management**: Support for multiple persistent chat threads to manage different creative projects.

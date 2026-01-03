@@ -13,7 +13,7 @@ export default function ProfileDialog({ isOpen, onClose }: ProfileDialogProps) {
     const { profile, loading, updateProfile, uploadAvatar } = useProfile();
     const [uploading, setUploading] = useState(false);
 
-    // Local state for inputs to allow editing
+    // Local state
     const [username, setUsername] = useState(profile?.username || '');
     const [website, setWebsite] = useState(profile?.website || '');
     const fileInputRef = useRef<HTMLInputElement>(null);
@@ -24,7 +24,7 @@ export default function ProfileDialog({ isOpen, onClose }: ProfileDialogProps) {
         return () => setMounted(false);
     }, []);
 
-    // Sync state when profile loads
+    // Sync state
     useEffect(() => {
         if (profile) {
             setUsername(profile.username || '');
@@ -41,7 +41,6 @@ export default function ProfileDialog({ isOpen, onClose }: ProfileDialogProps) {
 
     async function handleAvatarChange(e: React.ChangeEvent<HTMLInputElement>) {
         if (!e.target.files || e.target.files.length === 0) return;
-
         try {
             setUploading(true);
             const file = e.target.files[0];
@@ -56,10 +55,8 @@ export default function ProfileDialog({ isOpen, onClose }: ProfileDialogProps) {
 
     return createPortal(
         <div className="fixed inset-0 z-[9999] font-sans text-white">
-            {/* Backdrop */}
             <div className="fixed inset-0 bg-black/80 backdrop-blur-sm" onClick={onClose} />
 
-            {/* Centered Modal Container */}
             <div className="flex min-h-full items-center justify-center p-4">
                 <div className="relative w-full max-w-md bg-zinc-900 border border-white/10 rounded-2xl p-6 shadow-2xl animate-in fade-in zoom-in-95 duration-200">
                     <button onClick={onClose} className="absolute top-4 right-4 text-gray-400 hover:text-white">
@@ -69,37 +66,25 @@ export default function ProfileDialog({ isOpen, onClose }: ProfileDialogProps) {
                     <h2 className="text-xl font-bold mb-6">Edit Profile</h2>
 
                     <div className="flex flex-col gap-6">
-                        {/* Avatar Section - Using explicit Z-index and Colors for Pencil Visibility */}
                         <div className="flex items-center gap-6">
-                            <div className="relative cursor-pointer group" onClick={() => fileInputRef.current?.click()}>
-                                <Avatar url={profile?.avatar_url} size={80} alt={username || "User"} />
-
-                                {/* Pencil Button: Z-50, Blue, Absolute positioning */}
-                                <div className="absolute -bottom-1 -right-1 z-50">
-                                    <button
-                                        type="button"
-                                        className="p-2 bg-blue-600 text-white rounded-full shadow-xl border-2 border-black hover:bg-blue-500 transition-transform hover:scale-110 flex items-center justify-center"
-                                        title="Change Photo"
-                                    >
-                                        <Pencil size={14} className="stroke-2" />
-                                    </button>
-                                </div>
-
-                                {/* Hover Overlay */}
-                                <div className="absolute inset-0 bg-black/50 rounded-full opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center pointer-events-none z-40">
-                                    <Upload size={20} className="text-white" />
-                                </div>
+                            {/* Avatar Display */}
+                            <div className="shrink-0">
+                                <Avatar url={profile?.avatar_url} size={84} alt={username || "User"} />
                             </div>
 
+                            {/* Explicit Edit Controls */}
                             <div className="flex-1">
-                                <h3 className="font-bold text-lg mb-1">{username || "User"}</h3>
+                                <h3 className="font-bold text-lg mb-2">{username || "User"}</h3>
+
                                 <button
                                     onClick={() => fileInputRef.current?.click()}
                                     disabled={uploading}
-                                    className="text-sm text-blue-400 hover:text-blue-300 font-medium flex items-center gap-2"
+                                    className="flex items-center gap-2 px-3 py-1.5 bg-white text-black hover:bg-gray-200 rounded-md text-sm font-bold transition-colors mb-1"
                                 >
-                                    {uploading ? <Loader2 size={14} className="animate-spin" /> : "Change profile photo"}
+                                    {uploading ? <Loader2 size={14} className="animate-spin" /> : <Pencil size={14} />}
+                                    {uploading ? "Uploading..." : "Edit Photo"}
                                 </button>
+
                                 <input
                                     type="file"
                                     ref={fileInputRef}
@@ -107,13 +92,12 @@ export default function ProfileDialog({ isOpen, onClose }: ProfileDialogProps) {
                                     accept="image/*"
                                     onChange={handleAvatarChange}
                                 />
-                                <p className="text-xs text-muted-foreground mt-2">
-                                    Recommended: Square JPG, PNG. Max 2MB.
+                                <p className="text-xs text-muted-foreground mt-1">
+                                    JPG, PNG. Max 2MB.
                                 </p>
                             </div>
                         </div>
 
-                        {/* Fields */}
                         <div className="space-y-4">
                             <div>
                                 <label className="block text-xs uppercase text-muted-foreground font-bold mb-1">Username</label>
@@ -136,12 +120,11 @@ export default function ProfileDialog({ isOpen, onClose }: ProfileDialogProps) {
                                     value={website}
                                     onChange={e => setWebsite(e.target.value)}
                                     className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-1 focus:ring-primary"
-                                    placeholder="https://opentunes.ai"
+                                    placeholder="https://"
                                 />
                             </div>
                         </div>
 
-                        {/* Actions */}
                         <div className="flex justify-end pt-4 gap-2">
                             <button onClick={onClose} className="px-4 py-2 rounded-lg text-sm hover:bg-white/5 transition-colors">
                                 Cancel

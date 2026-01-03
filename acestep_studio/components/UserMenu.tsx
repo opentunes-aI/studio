@@ -1,5 +1,6 @@
+"use client";
 import { useState, useRef, useEffect } from 'react';
-import { LogOut, User, Settings, ChevronDown } from 'lucide-react';
+import { LogOut, User, Settings, ChevronDown, Pencil } from 'lucide-react';
 import { useStore } from '../utils/store';
 import { supabase } from '../utils/supabase';
 import { useProfile } from '../utils/useProfile';
@@ -59,7 +60,7 @@ export default function UserMenu() {
                         onClick={() => { setShowProfile(true); setIsOpen(false); }}
                         className="w-full text-left px-4 py-2.5 text-sm hover:bg-white/5 flex items-center gap-2 transition-colors"
                     >
-                        <User size={16} className="text-purple-400" />
+                        <Pencil size={16} className="text-purple-400" />
                         Edit Profile
                     </button>
 

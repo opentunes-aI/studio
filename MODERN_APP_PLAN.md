@@ -92,26 +92,40 @@ The platform is divided into two distinct domains:
     *   [x] **SettingsDialog**: Global Preferences (Studio Defaults, Appearance) using `localStorage` and React Portals.
 3.  **Phase 3: Integration**
     *   [x] Replace Email in Header with Avatar/Username.
-    *   [ ] Show Authors in Community Feed.
+    *   [x] Show Authors in Community Feed.
 
-### Track C: Community Ecosystem [PLANNED]
-*Focus: From "Solo Creator" to "Collaborative Network".*
+### Track C: Community Ecosystem [🚀 ACTIVE]
+*Focus: From "Solo Creator" to "Collaborative Network" & "Viral Growth Engine".*
 
-1.  **Phase 1: The Scaffold (Infrastructure)**
-    *   [x] **Scaffold**: Created `/community` placeholder page with consistent branding.
-    *   [x] **Navigation**: Added "Community" link to Landing Page and Studio Header.
-    *   [ ] Define Supabase Schema for public sharing (`is_public` flag on tracks).
-2.  **Phase 2: Global Feed Integration**
-    *   [x] **Landing Integration**: Landing Page "View Global Feed" buttons now point to `/community`.
-    *   [ ] Implement "Feed Reader" to fetch latest public tracks.
-3.  **Phase 3: Social Interaction**
-    *   [ ] **Likes & Comments**: Social graph.
-    *   [ ] **Remix/Fork**: "Use this track as seed" button on public items.
+#### Vision: The "Sonic Metaverse"
+The Community Page is the retention engine. It turns passive listening into active creation via "Remixing", and provides social status to top creators.
+
+1.  **Phase 1: Discovery Engine (The Feed)** [✅ COMPLETED]
+    *   [x] **Scaffold**: `/community` page.
+    *   [x] **Public Schema**: `is_public` flag and RLS policies.
+    *   [x] **Feed Components**: Grid layout with Author Profiles (Avatar/Name).
+    *   [x] **Playback**: Robust audio player with Local/Cloud fallback.
+
+2.  **Phase 2: Engagement & Ranking** [✅ COMPLETED]
+    *   [x] **Metrics**: functionality for `play_count` and `likes`.
+    *   [x] **Sorting**: Tabs for "Latest", "Trending" (Most Played), and "Top Charts".
+    *   [x] **Social Actions**: Like (Heart) toggle with optimistic UI updates.
+    *   [x] **Follow System**: Users can follow creators (Social Graph).
+    *   [x] **Messaging**: Direct Message button (Scaffold).
+    *   [ ] **Comment System**: (Future) Threaded discussions.
+
+3.  **Phase 3: The Viral Loop (Remixing)** [🚀 IN PROGRESS]
+    *   [x] **Community Showcase**: Top 3 Hero Section replacing static header.
+    *   [x] **"Remix" Button**: One-click deep-link to Studio with `initialPrompt` pre-filled.
+    *   [x] **Download**: Added direct MP3 download button for public tracks.
+    *   [ ] **"Forking"**: (Future) Maintain lineage (Parent Song ID -> Child Song).
+
+4.  **Phase 4: Marketplace (Monetization)** [PLANNED]
+    *   [ ] **Stems**: Selling individual tracks (Bass, Drums).
+    *   [ ] **Tips**: Send ETH/SOL to creator.
 
 ---
 
 ## 4. Immediate Next Steps
-1.  **Community Scaffold**: Connect real DB to the Community Page.
-2.  **Middleware**: Handle subdomain routing.
-3.  **App: Out-Painting**: Begin Horizon 4 of Studio.
-3.  **App: Out-Painting**: Begin Horizon 4 of Studio.
+1.  **Middleware**: Handle subdomain routing.
+2.  **App: Out-Painting**: Begin Horizon 4 of Studio.
