@@ -5,7 +5,7 @@ Scope: **Foundation -> Studio (Creation) -> Community (Discovery) -> Commerciali
 
 ---
 
-## 1. Phase 0: Infrastructure & Core Foundation [🚧 CRITICAL PATH]
+## 1. Phase 0: Infrastructure & Core Foundation [✅ COMPLETE]
 *Focus: Robustness, Cloud Readiness, and Scalability. "Build it right so it deploys anywhere."*
 
 ### 1.1 Impact Assessment
@@ -41,8 +41,8 @@ Scope: **Foundation -> Studio (Creation) -> Community (Discovery) -> Commerciali
 
 ### 1.5 Web3 Readiness Prep [FUTURE-PROOFING]
 *   **Goal**: Ensure data structures support future on-chain minting without migration pain.
-*   [ ] **Identity Extension**: Add `wallet_address` (text) column to `public.profiles`.
-*   [ ] **Asset Provenance**: Add `content_hash` (SHA-256) column to `songs`.
+*   [x] **Database Schema**: Created `supabase_web3_prep.sql` to add `wallet_address`, `content_hash`, `nft_contract_address`.
+*   [x] **Frontend Scaffold**: Created `useWeb3Store` with mock connection logic for UI validation.
     *   *Why*: Required for NFT metadata integrity. We must prove the file hasn't changed since generation.
     *   *Backend*: Python to calculate hash during generation and save to DB.
 

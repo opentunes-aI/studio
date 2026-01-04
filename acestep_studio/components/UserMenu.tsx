@@ -1,7 +1,8 @@
 "use client";
 import { useState, useRef, useEffect } from 'react';
-import { LogOut, User, Settings, ChevronDown, Pencil } from 'lucide-react';
+import { LogOut, User, Settings, ChevronDown, Pencil, Wallet } from 'lucide-react';
 import { useStore } from '../utils/store';
+import { useWeb3Store } from '../utils/web3Store';
 import { supabase } from '../utils/supabase';
 import { useProfile } from '../utils/useProfile';
 import Avatar from './Avatar';
@@ -11,6 +12,7 @@ import SettingsDialog from './SettingsDialog';
 export default function UserMenu() {
     const { session } = useStore();
     const { profile } = useProfile();
+    const { isConnected, connect, disconnect } = useWeb3Store();
     const [isOpen, setIsOpen] = useState(false);
     const [showProfile, setShowProfile] = useState(false);
     const [showSettings, setShowSettings] = useState(false);
@@ -70,6 +72,18 @@ export default function UserMenu() {
                     >
                         <Settings size={16} className="text-gray-400" />
                         Settings
+                    </button>
+
+                    <button
+                        onClick={() => {
+                            if (isConnected) disconnect();
+                            else connect();
+                            setIsOpen(false);
+                        }}
+                        className="w-full text-left px-4 py-2.5 text-sm hover:bg-white/5 flex items-center gap-2 transition-colors"
+                    >
+                        <Wallet size={16} className={isConnected ? "text-green-400" : "text-blue-400"} />
+                        {isConnected ? "Wallet Connected (Mock)" : "Connect Wallet"}
                     </button>
 
                     <div className="h-px bg-white/5 my-1" />

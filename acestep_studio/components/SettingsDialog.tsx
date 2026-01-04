@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { X, Sliders, Eye, Volume2, Save, Monitor } from 'lucide-react';
+import { X, Sliders, Eye, Volume2, Save, Monitor, Wallet } from 'lucide-react';
 import { useStore } from '../utils/store';
+import { useWeb3Store } from '../utils/web3Store';
 
 interface SettingsDialogProps {
     isOpen: boolean;
@@ -10,7 +11,8 @@ interface SettingsDialogProps {
 
 export default function SettingsDialog({ isOpen, onClose }: SettingsDialogProps) {
     const { settings, updateSettings } = useStore();
-    const [activeTab, setActiveTab] = useState<"general" | "appearance">("general");
+    const { isConnected, address, connect, disconnect } = useWeb3Store();
+    const [activeTab, setActiveTab] = useState<"general" | "appearance" | "integrations">("general");
     const [mounted, setMounted] = useState(false);
 
     useEffect(() => {
@@ -53,6 +55,14 @@ export default function SettingsDialog({ isOpen, onClose }: SettingsDialogProps)
                         >
                             <Eye size={18} />
                             Appearance
+                        </button>
+
+                        <button
+                            onClick={() => setActiveTab('integrations')}
+                            className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${activeTab === 'integrations' ? 'bg-purple-600 text-white' : 'text-gray-400 hover:bg-white/5 hover:text-white'}`}
+                        >
+                            <Wallet size={18} />
+                            Integrations
                         </button>
                     </div>
 
@@ -151,6 +161,45 @@ export default function SettingsDialog({ isOpen, onClose }: SettingsDialogProps)
                                                 <div className="w-11 h-6 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-600"></div>
                                             </label>
                                         </div>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
+                        {activeTab === 'integrations' && (
+                            <div className="space-y-8 animate-in fade-in slide-in-from-right-4 duration-300">
+                                <div>
+                                    <h3 className="text-lg font-bold mb-1">Web3 Integrations</h3>
+                                    <p className="text-sm text-gray-400 mb-6">Connect your wallet to enable Blockchain features.</p>
+
+                                    <div className="p-4 rounded-xl border border-white/5 bg-white/5 space-y-4">
+                                        <div className="flex items-center justify-between">
+                                            <div className="flex items-center gap-3">
+                                                <div className={`p-2 rounded ${isConnected ? 'bg-green-500/20 text-green-400' : 'bg-blue-500/20 text-blue-400'}`}>
+                                                    <Wallet size={20} />
+                                                </div>
+                                                <div>
+                                                    <p className="text-sm font-bold">Ethereum Wallet</p>
+                                                    <p className="text-xs text-gray-400">
+                                                        {isConnected ? "Connected to Mainnet (Mock)" : "Not connected"}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            <button
+                                                onClick={() => {
+                                                    if (isConnected) disconnect(); else connect();
+                                                }}
+                                                className={`px-4 py-2 rounded-lg text-xs font-bold transition-all ${isConnected ? 'bg-red-500/10 text-red-400 hover:bg-red-500/20' : 'bg-white text-black hover:bg-gray-200'}`}
+                                            >
+                                                {isConnected ? "Disconnect" : "Connect"}
+                                            </button>
+                                        </div>
+
+                                        {isConnected && (
+                                            <div className="bg-black/40 rounded-lg p-3 border border-white/10 font-mono text-xs text-gray-400 break-all">
+                                                {address}
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
                             </div>

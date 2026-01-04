@@ -53,6 +53,7 @@ Run the following SQL scripts (found in `acestep_studio/`) in your Supabase SQL 
 3.  `supabase_community_v2.sql`: Enables Likes and Play Counts.
 4.  `supabase_social_v3.sql`: Enables Follow system and Messages.
 5.  `supabase_fix_columns.sql`: Run this ONLY if you encounter "missing column" errors (patches legacy tables).
+6.  `supabase_web3_prep.sql`: Adds `wallet_address` and `content_hash` columns for Web3 Readiness.
 
 Open [http://localhost:7865](http://localhost:7865).
 
