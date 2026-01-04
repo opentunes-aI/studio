@@ -89,4 +89,4 @@ Open [http://localhost:7865](http://localhost:7865).
 ## 🤝 Contributing
 
 This project uses `lucide-react` for icons and standard Tailwind utility classes.
-Please ensure all new components are responsive and follow the dark-mode aesthetic.
+Please ensure all new components are responsive and follow the "Deep Space" aesthetic (Glassmorphism, Neon Accents, Outfit/Inter typography).

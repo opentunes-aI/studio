@@ -105,23 +105,22 @@ export default function ControlPanel() {
 
 
     return (
-        <div className="w-96 bg-card border-r border-border h-full flex flex-col p-4 gap-4 shrink-0 z-20 shadow-xl overflow-y-auto relative">
-            <h2 className="text-xl font-bold tracking-tight text-foreground flex items-center gap-2">
-                Studio Controls
+        <div className="w-96 bg-black/40 backdrop-blur-2xl border-r border-white/10 h-full flex flex-col p-5 gap-5 shrink-0 z-20 shadow-2xl overflow-y-auto relative custom-scrollbar">
+            <h2 className="text-2xl font-black font-heading tracking-tight text-white flex items-center gap-2 drop-shadow-md">
+                <span className="bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-cyan-400">Controls</span>
             </h2>
 
             {/* Genre Preset */}
-            <div className="space-y-2">
-                <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground flex justify-between items-center">
+            <div className="space-y-3">
+                <label className="text-xs font-bold uppercase tracking-wider text-gray-400 flex justify-between items-center">
                     <span>Style Presets</span>
-                    <span className="text-[10px] text-muted-foreground/50">Click to apply</span>
                 </label>
-                <div className="flex flex-wrap gap-2 max-h-40 overflow-y-auto p-0.5 custom-scrollbar">
+                <div className="flex flex-wrap gap-2 max-h-40 overflow-y-auto p-1 custom-scrollbar">
                     {Object.entries(GENRES).map(([name, promptText]) => (
                         <button
                             key={name}
                             onClick={() => setPrompt(promptText)}
-                            className="px-3 py-1.5 rounded-full text-xs font-medium border border-border bg-secondary/30 hover:bg-primary hover:text-primary-foreground hover:border-primary transition-all text-foreground whitespace-nowrap active:scale-95 shadow-sm"
+                            className="px-3 py-1.5 rounded-full text-[11px] font-bold border border-white/10 bg-white/5 hover:bg-purple-600 hover:border-purple-500 hover:text-white transition-all text-gray-300 whitespace-nowrap active:scale-95 shadow-sm backdrop-blur-sm"
                             title={promptText}
                         >
                             {name}
@@ -131,10 +130,10 @@ export default function ControlPanel() {
             </div>
 
             {/* Prompt */}
-            <div className="space-y-1">
-                <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Prompt</label>
+            <div className="space-y-1.5">
+                <label className="text-xs font-bold uppercase tracking-wider text-gray-400">Prompt</label>
                 <textarea
-                    className="w-full h-24 bg-input border border-border rounded-md p-3 text-sm focus:outline-none focus:ring-1 focus:ring-primary text-foreground placeholder:text-muted-foreground/50 resize-none"
+                    className="w-full h-24 bg-black/20 border border-white/10 rounded-xl p-3 text-sm focus:outline-none focus:ring-1 focus:ring-purple-500/50 focus:border-purple-500/50 text-white placeholder:text-gray-600 resize-none transition-all shadow-inner"
                     value={prompt}
                     onChange={e => setPrompt(e.target.value)}
                     placeholder="Describe style, instruments, mood..."
@@ -142,20 +141,20 @@ export default function ControlPanel() {
             </div>
 
             {/* Lyrics */}
-            <div className="space-y-1 flex flex-col h-64 shrink-0 transition-all">
+            <div className="space-y-1.5 flex flex-col h-64 shrink-0 transition-all">
                 <div className="flex justify-between items-center mb-1">
                     <div className="flex items-center gap-2">
-                        <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Lyrics</label>
-                        <div className="flex bg-secondary/50 rounded-md p-0.5 ml-2 border border-border">
+                        <label className="text-xs font-bold uppercase tracking-wider text-gray-400">Lyrics</label>
+                        <div className="flex bg-white/5 rounded-lg p-0.5 ml-2 border border-white/5">
                             <button
                                 onClick={() => setLyricsTab('text')}
-                                className={`px-2 py-0.5 rounded text-[10px] font-medium transition-colors ${lyricsTab === 'text' ? 'bg-background shadow text-foreground' : 'text-muted-foreground hover:text-foreground'}`}
+                                className={`px-2 py-0.5 rounded-md text-[10px] font-bold transition-colors ${lyricsTab === 'text' ? 'bg-purple-500 text-white shadow' : 'text-gray-500 hover:text-white'}`}
                             >
                                 Text
                             </button>
                             <button
                                 onClick={() => setLyricsTab('visual')}
-                                className={`px-2 py-0.5 rounded text-[10px] font-medium transition-colors ${lyricsTab === 'visual' ? 'bg-background shadow text-foreground' : 'text-muted-foreground hover:text-foreground'}`}
+                                className={`px-2 py-0.5 rounded-md text-[10px] font-bold transition-colors ${lyricsTab === 'visual' ? 'bg-purple-500 text-white shadow' : 'text-gray-500 hover:text-white'}`}
                             >
                                 Blocks
                             </button>
@@ -163,7 +162,7 @@ export default function ControlPanel() {
                     </div>
                     <button
                         onClick={() => setShowLyricsWizard(true)}
-                        className="text-xs flex items-center gap-1 text-primary hover:text-primary/80 transition-colors"
+                        className="text-xs flex items-center gap-1 text-cyan-400 hover:text-cyan-300 transition-colors font-bold"
                     >
                         <Sparkles className="w-3 h-3" /> <span className="hidden sm:inline">Wizard</span>
                     </button>
@@ -171,29 +170,29 @@ export default function ControlPanel() {
 
                 {lyricsTab === 'text' ? (
                     <textarea
-                        className="w-full h-full bg-input border border-border rounded-md p-3 text-sm focus:outline-none focus:ring-1 focus:ring-primary text-foreground placeholder:text-muted-foreground/50 resize-none font-mono custom-scrollbar"
+                        className="w-full h-full bg-black/20 border border-white/10 rounded-xl p-3 text-sm focus:outline-none focus:ring-1 focus:ring-purple-500/50 text-white placeholder:text-gray-600 resize-none font-mono custom-scrollbar"
                         value={lyrics}
                         onChange={e => setLyrics(e.target.value)}
                         placeholder="[verse]&#10;Line 1...&#10;Line 2..."
                     />
                 ) : (
-                    <div className="h-full border border-border rounded-md bg-input/30 p-1 overflow-hidden">
+                    <div className="h-full border border-white/10 rounded-xl bg-black/20 p-1 overflow-hidden">
                         <StructureBuilder value={lyrics} onChange={setLyrics} />
                     </div>
                 )}
             </div>
 
             {/* Duration */}
-            <div className="space-y-2 pt-2">
+            <div className="space-y-3 pt-2">
                 <div className="flex justify-between items-center">
-                    <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Duration</label>
-                    <span className="text-xs font-mono text-primary">{duration}s</span>
+                    <label className="text-xs font-bold uppercase tracking-wider text-gray-400">Duration</label>
+                    <span className="text-xs font-mono text-cyan-400 bg-cyan-950/30 px-2 py-0.5 rounded border border-cyan-500/30">{duration}s</span>
                 </div>
                 <input
                     type="range" min="10" max="240"
                     value={duration}
                     onChange={e => setDuration(Number(e.target.value))}
-                    className="w-full accent-primary h-2 bg-secondary rounded-lg appearance-none cursor-pointer"
+                    className="w-full accent-cyan-500 h-2 bg-white/10 rounded-lg appearance-none cursor-pointer"
                 />
             </div>
 
@@ -296,16 +295,13 @@ export default function ControlPanel() {
 
             {/* Repaint Indicator */}
             {repaintStart !== null && repaintEnd !== null && (
-                <div className="mb-2 p-3 bg-orange-500/10 border border-orange-500/30 rounded-md animate-in slide-in-from-bottom-2">
+                <div className="mb-2 p-3 bg-orange-500/10 border border-orange-500/30 rounded-xl animate-in slide-in-from-bottom-2 backdrop-blur-sm">
                     <div className="flex justify-between items-center">
                         <span className="text-xs font-bold text-orange-500 flex items-center gap-1"><Wand2 className="w-3 h-3" /> Repaint Active</span>
-                        <button onClick={() => setRepaintRegion(null, null)} className="text-muted-foreground hover:text-foreground"><X className="w-3 h-3" /></button>
+                        <button onClick={() => setRepaintRegion(null, null)} className="text-gray-400 hover:text-white"><X className="w-3 h-3" /></button>
                     </div>
-                    <div className="text-xs font-mono mt-1 text-foreground">
+                    <div className="text-xs font-mono mt-1 text-white">
                         {repaintStart.toFixed(2)}s — {repaintEnd.toFixed(2)}s
-                    </div>
-                    <div className="text-[10px] text-muted-foreground mt-1">
-                        Correcting lyrics/audio in this region.
                     </div>
                 </div>
             )}
@@ -313,7 +309,7 @@ export default function ControlPanel() {
             <button
                 onClick={handleGenerate}
                 disabled={loading}
-                className={`w-full h-12 rounded-md font-bold hover:brightness-110 active:scale-[0.98] transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:pointer-events-none mt-2 ${repaintStart !== null ? 'bg-orange-600 text-white' : 'bg-primary text-primary-foreground'}`}
+                className={`w-full h-14 rounded-xl font-bold hover:brightness-110 active:scale-[0.98] transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:pointer-events-none mt-2 shadow-lg shadow-purple-900/40 text-sm tracking-wide ${repaintStart !== null ? 'bg-orange-600 text-white' : 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white border border-white/10'}`}
             >
                 {loading ? <Loader2 className="animate-spin w-5 h-5" /> : (repaintStart !== null ? <Wand2 className="w-5 h-5" /> : (seed !== null && retakeVariance > 0) ? <Wand2 className="w-5 h-5" /> : <Play className="fill-current w-5 h-5" />)}
                 {loading ? "Processing..." : (repaintStart !== null ? "Repaint Region" : (seed !== null && retakeVariance > 0) ? "Remix Track" : "Generate Track")}

@@ -345,7 +345,7 @@ If you intend to integrate ACE-Step as a library into your own Python projects, 
 
 ## 📱 User Interface Guide
     
-The Opentunes Studio interface is designed to mimic professional audio tools:
+The Opentunes Studio interface is designed to mimic professional audio tools with a "Deep Space" glassmorphism aesthetic:
 *   **Left Panel**: Studio Controls (Prompt, Lyrics, Settings).
 *   **Center**: Waveform Visualizer & Timeline.
 *   **Right Panel**: Library (Local History & Cloud Sync).

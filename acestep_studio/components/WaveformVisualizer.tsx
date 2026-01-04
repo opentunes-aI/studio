@@ -21,13 +21,13 @@ export default function WaveformVisualizer() {
         ws.current = WaveSurfer.create({
             container: containerRef.current,
             media: mediaEl || undefined,
-            waveColor: '#52525b', // zinc-600
-            progressColor: '#f97316', // orange-500
+            waveColor: '#4b5563', // gray-600
+            progressColor: '#22d3ee', // cyan-400
             cursorColor: '#ffffff',
             barWidth: 3,
-            barGap: 2,
+            barGap: 3,
             barRadius: 3,
-            height: 200,
+            height: 250,
             normalize: true,
             backend: 'WebAudio',
         });
@@ -36,7 +36,9 @@ export default function WaveformVisualizer() {
         const wsRegions = ws.current.registerPlugin(RegionsPlugin.create());
 
         wsRegions.enableDragSelection({
-            color: 'rgba(234, 88, 12, 0.2)',
+            color: 'rgba(124, 58, 237, 0.3)', // Violet with opacity
+            resize: true,
+            drag: true,
         });
 
         // Event Handling
@@ -107,22 +109,22 @@ export default function WaveformVisualizer() {
     }
 
     return (
-        <div className="flex-1 bg-background relative flex flex-col items-center justify-center overflow-hidden">
-            <div className="absolute inset-0 z-0 opacity-10 pointer-events-none bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-zinc-800 to-background" />
+        <div className="flex-1 bg-black relative flex flex-col items-center justify-center overflow-hidden">
+            <div className="absolute inset-0 z-0 opacity-20 pointer-events-none bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-purple-900/40 via-black to-black animate-pulse-slow" />
 
-            <div className="z-10 absolute top-10 left-0 right-0 text-center">
+            <div className="z-10 absolute top-10 left-0 right-0 text-center pointer-events-none">
                 {currentTrackName ? (
-                    <div className="inline-block px-4 py-2 bg-secondary/50 rounded-full border border-white/5 backdrop-blur-md">
-                        <span className="text-muted-foreground text-xs font-mono uppercase mr-2">Now Playing</span>
-                        <span className="text-foreground font-medium">{currentTrackName}</span>
+                    <div className="inline-block px-6 py-3 bg-black/40 rounded-2xl border border-white/10 backdrop-blur-xl shadow-2xl pointer-events-auto animate-in slide-in-from-top-4">
+                        <span className="text-cyan-400 text-xs font-bold uppercase tracking-widest mr-3">Now Playing</span>
+                        <span className="text-white font-heading font-medium text-lg drop-shadow-md">{currentTrackName}</span>
                     </div>
                 ) : (
-                    <div className="text-muted-foreground/50 font-mono text-sm px-4 py-2 border border-dashed border-border rounded-full">
+                    <div className="text-gray-500 font-mono text-xs px-6 py-3 border border-dashed border-white/10 rounded-full bg-white/5 backdrop-blur">
                         Select a track to visualize
                     </div>
                 )}
                 {error && (
-                    <div className="mt-4 text-red-500 bg-red-500/10 px-4 py-2 rounded flex items-center justify-center gap-2">
+                    <div className="mt-4 text-red-400 bg-red-950/50 border border-red-500/30 px-4 py-2 rounded-lg flex items-center justify-center gap-2 backdrop-blur-md">
                         <AlertCircle className="w-4 h-4" /> {error}
                     </div>
                 )}
@@ -134,9 +136,9 @@ export default function WaveformVisualizer() {
                 <div className="absolute bottom-10 z-20">
                     <button
                         onClick={togglePlay}
-                        className="w-16 h-16 rounded-full bg-primary text-primary-foreground flex items-center justify-center shadow-lg hover:scale-105 transition-all active:scale-95"
+                        className="w-20 h-20 rounded-full bg-white text-black flex items-center justify-center shadow-[0_0_30px_-5px_rgba(255,255,255,0.5)] hover:bg-cyan-400 hover:text-black hover:scale-110 transition-all active:scale-95 group"
                     >
-                        {isPlaying ? <Pause className="fill-current w-6 h-6" /> : <Play className="fill-current w-6 h-6 ml-1" />}
+                        {isPlaying ? <Pause className="fill-current w-8 h-8" /> : <Play className="fill-current w-8 h-8 ml-1" />}
                     </button>
                 </div>
             )}
