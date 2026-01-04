@@ -1,7 +1,10 @@
--- Community V2 Update (Idempotent)
--- Run this in Supabase SQL Editor
+-- 1. Public Access to Songs (For Feed Sharing)
+-- Note: 'Users can view own songs' from 01_core_schema might conflict if we want TRUE public access.
+-- We will create a broad policy for reading.
+drop policy if exists "Users can view own songs" on public.songs;
+create policy "Public can view songs" on public.songs for select using (true);
 
--- 1. Ensure Likes Table Exists
+-- 2. Likes Table
 create table if not exists public.likes (
   user_id uuid references auth.users on delete cascade not null,
   song_id uuid references public.songs on delete cascade not null,
@@ -9,25 +12,26 @@ create table if not exists public.likes (
   primary key (user_id, song_id)
 );
 
--- 2. Add Metrics to Songs
+-- 3. Add Play Count to Songs
 alter table public.songs add column if not exists play_count bigint default 0;
 
--- 3. RLS for Likes
+-- 4. RLS for Likes
 alter table public.likes enable row level security;
 
--- Drop existing policies to avoid conflicts
+-- Avoid policy conflicts by dropping first
 drop policy if exists "Likes are viewable by everyone" on public.likes;
 drop policy if exists "Authenticated users can like" on public.likes;
 drop policy if exists "Authenticated users can unlike" on public.likes;
-drop policy if exists "Users can insert their own likes" on public.likes; -- potential name from old script
-drop policy if exists "Users can delete their own likes" on public.likes; -- potential name from old script
 
--- Re-create Policies
 create policy "Likes are viewable by everyone" on public.likes for select using (true);
 create policy "Authenticated users can like" on public.likes for insert with check (auth.uid() = user_id);
 create policy "Authenticated users can unlike" on public.likes for delete using (auth.uid() = user_id);
 
--- 4. RPC Function to Increment Play Count safely
+-- 5. Foreign Key Link to Profiles (Optimization)
+alter table public.songs drop constraint if exists fk_songs_profiles;
+alter table public.songs add constraint fk_songs_profiles foreign key (user_id) references public.profiles (id);
+
+-- 6. RPC: Increment Play Count
 create or replace function increment_play_count(song_id uuid)
 returns void as $$
 begin

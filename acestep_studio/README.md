@@ -47,13 +47,13 @@ npm run dev
 ```
 
 ### 4. Database Setup (Supabase)
-Run the following SQL scripts (found in `acestep_studio/`) in your Supabase SQL Editor to set up the necessary tables:
-1.  `supabase_profiles.sql`: Sets up User Profiles, Avatars bucket, and Triggers.
-2.  `supabase_community_init.sql`: Sets up Public Songs and Feed Sharing.
-3.  `supabase_community_v2.sql`: Enables Likes and Play Counts.
-4.  `supabase_social_v3.sql`: Enables Follow system and Messages.
-5.  `supabase_fix_columns.sql`: Run this ONLY if you encounter "missing column" errors (patches legacy tables).
-6.  `supabase_web3_prep.sql`: Adds `wallet_address` and `content_hash` columns for Web3 Readiness.
+### 4. Database Setup (Supabase)
+Run the numbered SQL scripts found in `acestep_studio/migrations/` in order:
+1.  `01_core_schema.sql`: Core tables (Songs) and Storage.
+2.  `02_profiles.sql`: User Profiles and Avatars.
+3.  `03_community.sql`: Social features (Likes, Play Counts, Public Access).
+4.  `04_social.sql`: Follows and Messages.
+5.  `05_web3.sql`: Web3 readiness columns.
 
 Open [http://localhost:7865](http://localhost:7865).
 

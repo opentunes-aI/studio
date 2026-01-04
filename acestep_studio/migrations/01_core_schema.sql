@@ -1,5 +1,5 @@
 -- 1. Create Songs Table
-create table public.songs (
+create table if not exists public.songs (
   id uuid default gen_random_uuid() primary key,
   user_id uuid references auth.users not null,
   created_at timestamp with time zone default timezone('utc'::text, now()) not null,
@@ -19,7 +19,7 @@ create table public.songs (
 alter table public.songs enable row level security;
 
 -- 3. Create Policies
--- Allow users to view their own songs
+-- Allow users to view their own songs (Base rule)
 create policy "Users can view own songs" 
 on public.songs for select 
 using (auth.uid() = user_id);
@@ -34,8 +34,9 @@ create policy "Users can delete own songs"
 on public.songs for delete 
 using (auth.uid() = user_id);
 
--- 4. Create Storage Bucket (Optional - IF you want cloud backup)
 -- 4. Create Storage Bucket (required for MP3 backup)
-insert into storage.buckets (id, name, public) values ('music', 'music', true);
+insert into storage.buckets (id, name, public) values ('music', 'music', true)
+on conflict (id) do nothing;
+
 create policy "Storage Public Access" on storage.objects for select using ( bucket_id = 'music' );
 create policy "Storage User Upload" on storage.objects for insert with check ( bucket_id = 'music' and auth.uid() = owner );
