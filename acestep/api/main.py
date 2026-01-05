@@ -373,7 +373,8 @@ async def get_history():
     if not os.path.exists(output_dir):
         return []
     files = [f for f in os.listdir(output_dir) if f.lower().endswith((".wav", ".mp3", ".flac", ".ogg"))]
-    files.sort(reverse=True) # newest first
+    # Sort by modification time (newest first)
+    files.sort(key=lambda x: os.path.getmtime(os.path.join(output_dir, x)), reverse=True)
     return {"files": files}
 
 @app.get("/health")

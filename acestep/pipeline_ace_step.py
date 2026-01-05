@@ -81,6 +81,14 @@ SUPPORT_LANGUAGES = {
 structure_pattern = re.compile(r"\[.*?\]")
 
 
+def sanitize_filename(name):
+    # Remove non-alphanumeric (keep spaces/underscores)
+    s = re.sub(r'[^\w\s-]', '', name)
+    # Replace whitespace/hyphens with underscore
+    s = re.sub(r'[-\s]+', '_', s)
+    return s.strip()[:50] or "output"
+
+
 def ensure_directory_exists(directory):
     directory = str(directory)
     if not os.path.exists(directory):
@@ -1360,6 +1368,7 @@ class ACEStepPipeline:
         sample_rate=48000,
         save_path=None,
         format="wav",
+        filename_prefix="output",
     ):
         output_audio_paths = []
         bs = latents.shape[0]
@@ -1377,25 +1386,26 @@ class ACEStepPipeline:
                 save_path=save_path,
                 sample_rate=sample_rate,
                 format=format,
+                filename_prefix=filename_prefix,
             )
             output_audio_paths.append(output_audio_path)
         return output_audio_paths
 
     def save_wav_file(
-        self, target_wav, idx, save_path=None, sample_rate=48000, format="wav"
+        self, target_wav, idx, save_path=None, sample_rate=48000, format="wav", filename_prefix="output"
     ):
         if save_path is None:
             logger.warning("save_path is None, using default path ./outputs/")
             base_path = "./outputs"
             ensure_directory_exists(base_path)
             output_path_wav = (
-                f"{base_path}/output_{time.strftime('%Y%m%d%H%M%S')}_{idx}."+format
+                f"{base_path}/{filename_prefix}_{time.strftime('%Y%m%d%H%M%S')}_{idx}."+format
             )
         else:
             ensure_directory_exists(os.path.dirname(save_path))
             if os.path.isdir(save_path):
-                logger.info(f"Provided save_path '{save_path}' is a directory. Appending timestamped filename.")
-                output_path_wav = os.path.join(save_path, f"output_{time.strftime('%Y%m%d%H%M%S')}_{idx}."+format)
+                # logger.info(f"Provided save_path '{save_path}' is a directory. Appending timestamped filename.")
+                output_path_wav = os.path.join(save_path, f"{filename_prefix}_{time.strftime('%Y%m%d%H%M%S')}_{idx}."+format)
             else:
                 output_path_wav = save_path
 
@@ -1692,6 +1702,7 @@ class ACEStepPipeline:
             target_wav_duration_second=audio_duration,
             save_path=save_path,
             format=format,
+            filename_prefix=sanitize_filename(prompt if task != "edit" else edit_target_prompt),
         )
 
         # Clean up memory after generation
