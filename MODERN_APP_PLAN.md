@@ -51,12 +51,26 @@ Scope: **Foundation -> Studio (Creation) -> Community (Discovery) -> Agentic Int
 ## Phase 4: Agentic Intelligence (The Core) [🚀 NEXT UP]
 *Focus: Autonomous Reasoning, RAG Memory, and Specialized Agents.*
 
-### 4.1 Architecture & Framework
-*   **Framework**: **[Smolagents](https://github.com/huggingface/smolagents)**.
-    *   *Why*: Lightweight, Code-as-Tools approach, Optimized for Local LLMs (Ollama/Qwen).
-*   **Orchestration**: Hub-and-Spoke Pattern.
-    *   **The Interface**: Single Chat Window.
-    *   **The Brain**: A "Manager Agent" dispatcher.
+### 4.1 Architecture: The "Black Box" Pattern
+*Design Philosophy: The Intelligence Layer is a self-contained module acting as a "Brain" for the dumb Application Layer.*
+
+*   **1. The Contract (Input)**:
+    *   **Endpoint**: `POST /agent/chat` acts as the single entry point.
+    *   **Payload**: `{ message: string, history: [] }`. The App knows *nothing* about internal agents.
+
+*   **2. The Brain (Internal Logic)**:
+    *   **Location**: `acestep/api/agents/`.
+    *   **Structure**:
+        *   **Director**: Public Interface & Orchestrator.
+        *   **Specialists**: (Producer, Lyricist, Visualizer) Private implementations.
+        *   **RAG**: Internal long-term memory.
+    *   *Modularity*: This folder can be refactored/replaced entirely without breaking the Frontend.
+
+*   **3. The Side Effects (Output)**:
+    *   **Events**: Stream standardized JSON packets.
+        *   `type: "log"` -> UI Transparency.
+        *   `type: "result"` -> State Updates (e.g., `action: "configure"`, `action: "update_lyrics"`).
+    *   **Frontend Role**: purely a "Renderer" of these events. It does not calculate logic.
 
 ### 4.2 The Agent Squad (Roles)
 1.  **🤖 The Director (Orchestrator)**

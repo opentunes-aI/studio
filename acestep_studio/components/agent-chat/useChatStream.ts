@@ -168,18 +168,17 @@ export function useChatStream() {
                                 message: `Plan: Music=${data.plan.music}, Lyrics=${data.plan.lyrics}, Art=${data.plan.art}`
                             });
                         } else if (data.type === 'result') {
-                            if (Array.isArray(data.data)) {
-                                accumulatedActions.push(...data.data);
-                            }
+                            const items = Array.isArray(data.data) ? data.data : [data.data];
+                            // Add to UI
+                            accumulatedActions.push(...items);
+                            // Trigger Side Effects
+                            items.forEach((d: any) => handleSideEffect(d));
                         }
 
+                        // Update State
                         setMessages(prev => prev.map(m =>
                             m.id === tempId ? { ...m, content: [...accumulatedActions] } : m
                         ));
-
-                        if (data.type === 'result' && Array.isArray(data.data)) {
-                            data.data.forEach((d: any) => handleSideEffect(d));
-                        }
                     } catch (e) { console.error("Parse Error", e); }
                 }
             }

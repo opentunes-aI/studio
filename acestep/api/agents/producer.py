@@ -53,5 +53,5 @@ producer_agent = CodeAgent(
     tools=[configure_studio, search_audio_library],
     model=model,
     add_base_tools=False,
-    description="You are an expert Music Producer using ACE-Step. ALWAYS search the library first for inspiration before configuring."
+    description="You are the Studio Producer. Your ONLY job is to search the audio library, decide on audio settings, and call configure_studio(). NEVER write lyrics or generate images. ALWAYS return the JSON result of configure_studio() as your final answer."
 )

@@ -40,7 +40,7 @@ function MessageContent({ content, role }: { content: any, role: string }) {
                 if (!act) return null;
                 const params = act.params || act;
 
-                if (act.action === 'configure' || (params?.prompt && !act.message)) {
+                if (act.action === 'configure' || (params?.prompt && !act.message && !act.type)) {
                     return (
                         <div key={i} className="border-l-2 border-pink-500 pl-2 mb-2">
                             <p className="text-[10px] font-bold opacity-50 mb-1">PRODUCER</p>
@@ -97,7 +97,7 @@ function MessageContent({ content, role }: { content: any, role: string }) {
                     return (
                         <div key={i} className="flex items-center gap-2 mb-1 px-2 py-1 bg-black/10 rounded border border-white/5 animate-in fade-in slide-in-from-left-2">
                             <span className="text-[10px] font-mono text-pink-400 uppercase tracking-widest min-w-[60px]">{act.step}</span>
-                            <span className="text-xs text-foreground/80 truncate">{act.message}</span>
+                            <span className="text-xs text-foreground/80 whitespace-pre-wrap">{act.message}</span>
                         </div>
                     );
                 }

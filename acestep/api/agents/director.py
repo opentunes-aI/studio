@@ -127,44 +127,75 @@ async def process_user_intent(user_input: str, history: List[Dict[str, str]] = [
                         outputs[name] = res
                         
                         snippet = "Done"
-                        if isinstance(res, str):
+                        valid_result = None
+                        
+                        # Unwrap tuple/list if necessary (smolagents sometimes returns (result, log))
+                        if isinstance(res, (tuple, list)) and len(res) > 0:
+                            res = res[0]
+
+                        if isinstance(res, dict):
+                            valid_result = res
+                            if res.get("action") == "configure":
+                                p = res.get("params", {})
+                                snippet = f"Configured: {str(p.get('prompt'))[:30]}..."
+                            elif res.get("action") == "update_lyrics":
+                                snippet = "Lyrics Drafted"
+                        
+                        elif isinstance(res, str):
                             extracted = parse_llm_json(res)
                             if extracted:
+                                valid_result = extracted
                                 if extracted.get("action") == "configure":
                                     p = extracted.get("params", {})
-                                    snippet = f"Configured: {p.get('prompt')[:30]}..."
+                                    snippet = f"Configured: {str(p.get('prompt'))[:30]}..."
                                 elif extracted.get("action") == "update_lyrics":
                                     snippet = "Lyrics Drafted"
-                        
+                            else:
+                                # Fallback logic for Lyricist raw text
+                                if name == "lyricist" and ("[" in res or len(res) > 50):
+                                     valid_result = {
+                                        "action": "update_lyrics",
+                                        "params": { "lyrics": res },
+                                        "fallback": True
+                                     }
+                                     snippet = "Lyrics Drafted (Text Mode)"
+                                else:
+                                    # Parsing Failed
+                                    snippet = f"Error: Invalid JSON from {name}. Raw: {res[:50]}..."
+                        else:
+                             snippet = f"Error: {name} returned unknown type: {type(res)}"
+
+                        # Log the completion
                         yield json.dumps({"type": "log", "step": name.capitalize(), "message": snippet})
+                        
+                        # STREAM RESULT IMMEDIATELY
+                        if valid_result:
+                            yield json.dumps({"type": "result", "data": [valid_result]})
+                            
+                        # Visual Indicator that others are working
+                        if pending:
+                             remaining = [t.get_name() for t in pending] # Note: requires named tasks or logic inference
+                             yield json.dumps({"type": "log", "step": "Director", "message": "Waiting for other agents..."})
+
                     except Exception as task_err:
                         yield json.dumps({"type": "log", "step": "Director", "message": f"Task Failed: {task_err}"})
         except Exception as e:
             yield json.dumps({"type": "error", "message": f"Execution Loop Failed: {e}"})
 
-    # Flatten results
+    # Flatten results for Critic (Keep strictly for internal logic, do NOT yield again)
     producer_out = outputs.get("producer")
     if isinstance(producer_out, str): producer_out = parse_llm_json(producer_out)
     
     lyricist_out = outputs.get("lyricist")
     if isinstance(lyricist_out, str):
         extracted_lyrics = parse_llm_json(lyricist_out)
-        if extracted_lyrics:
-            lyricist_out = extracted_lyrics
-        else:
-            # Fallback: Treat raw text as lyrics if it contains typical lyric markers
-            if "[" in lyricist_out or "Verse" in lyricist_out or len(lyricist_out) > 50:
-                lyricist_out = {
-                    "action": "update_lyrics",
-                    "params": { "lyrics": lyricist_out },
-                    "fallback": True
-                }
-            else:
-                lyricist_out = None
+        if extracted_lyrics: lyricist_out = extracted_lyrics
+        # Fallback handled in loop above, but we need object for Critic
+        elif "[" in lyricist_out or len(lyricist_out) > 50:
+             lyricist_out = { "action": "update_lyrics", "params": { "lyrics": lyricist_out } }
 
-    results = []
-    if producer_out: results.append(producer_out)
-    if lyricist_out: results.append(lyricist_out)
+    results = [] # Reset, we streamed them already
+
 
     # 3. CRITIC
     if producer_out and lyricist_out:
