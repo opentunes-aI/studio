@@ -11,16 +11,16 @@ export const supabase = (supabaseUrl && supabaseKey)
 
 import { getTrackMetadata } from "./api";
 
-export async function syncTrackToCloud(filename: string) {
-    if (!supabase) return;
+export async function syncTrackToCloud(filename: string): Promise<boolean> {
+    if (!supabase) throw new Error("Supabase not initialized");
     try {
         const { data: { user } } = await supabase.auth.getUser();
-        if (!user) return;
+        if (!user) throw new Error("Not authenticated");
 
         const meta = await getTrackMetadata(filename);
         if (!meta) {
             console.warn("No metadata found for:", filename);
-            return;
+            throw new Error("Local metadata missing");
         }
 
         // 1. Upload Audio to Storage
@@ -36,16 +36,19 @@ export async function syncTrackToCloud(filename: string) {
                     .upload(path, blob, { upsert: true });
 
                 if (uploadError) {
-                    // console.error("Storage Error (Bucket might not exist):", uploadError);
+                    throw uploadError;
                 } else {
                     const { data: { publicUrl: url } } = supabase.storage
                         .from('music')
                         .getPublicUrl(path);
                     publicUrl = url;
                 }
+            } else {
+                throw new Error("Could not read local file blob");
             }
         } catch (uploadErr) {
             console.error("Upload Failed:", uploadErr);
+            throw uploadErr;
         }
 
         const { error } = await supabase.from('songs').insert({
@@ -58,13 +61,20 @@ export async function syncTrackToCloud(filename: string) {
             local_filename: filename,
             audio_url: publicUrl,
             status: 'completed',
+            is_public: true, // Default to true for now
+            parent_id: meta.parent_id || null,
             meta: meta
         });
 
-        if (error) console.error("Cloud Sync Failed:", error);
-        else console.log("Cloud Sync Success:", filename);
+        if (error) {
+            console.error("Cloud Sync Failed:", error);
+            throw error;
+        }
+        console.log("Cloud Sync Success:", filename);
+        return true;
     } catch (e) {
         console.error("Sync Exception:", e);
+        throw e;
     }
 }
 

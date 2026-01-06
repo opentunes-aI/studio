@@ -9,7 +9,9 @@ import { Play, Pause, AlertCircle } from "lucide-react";
 export default function WaveformVisualizer() {
     const containerRef = useRef<HTMLDivElement>(null);
     const ws = useRef<WaveSurfer | null>(null);
-    const { currentTrackUrl, currentTrackName, setRepaintRegion } = useStudioStore();
+    const currentTrackUrl = useStudioStore(s => s.currentTrackUrl);
+    const currentTrackName = useStudioStore(s => s.currentTrackName);
+    const setRepaintRegion = useStudioStore(s => s.setRepaintRegion);
     const [isPlaying, setIsPlaying] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
@@ -90,7 +92,13 @@ export default function WaveformVisualizer() {
 
         return () => {
             window.removeEventListener('keydown', handleKeyDown);
-            ws.current?.destroy();
+            try {
+                ws.current?.destroy();
+            } catch (e) {
+                // Ignore AbortError: The user aborted a request
+                if (e instanceof Error && e.name === 'AbortError') return;
+                console.error(e);
+            }
         }
     }, [setRepaintRegion]);
 

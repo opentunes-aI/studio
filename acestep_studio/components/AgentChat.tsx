@@ -43,7 +43,8 @@ export default function AgentChat() {
         if (initialPrompt && !hasHandledPrompt.current) {
             hasHandledPrompt.current = true;
             if (searchParams.get("initialPrompt")) {
-                router.replace('/studio', { scroll: false });
+                const pid = searchParams.get("parentId");
+                router.replace(pid ? `/studio?parentId=${pid}` : '/studio', { scroll: false });
             }
             setIsOpen(true);
             setTimeout(() => sendMessage(initialPrompt!), 500);

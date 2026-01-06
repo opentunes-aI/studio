@@ -75,6 +75,7 @@ class GenerationRequest(BaseModel):
     # Horizon 2: Repaint
     repaint_start: Optional[float] = None
     repaint_end: Optional[float] = None
+    parent_id: Optional[str] = None
 
 class JobStatus(BaseModel):
     job_id: str
@@ -226,6 +227,22 @@ async def process_jobs():
             # Last item is dict.
             
             file_results = [p for p in output_paths if isinstance(p, str)]
+            
+            # Inject parent_id into JSON sidecar
+            if req.parent_id and file_results:
+                try:
+                    import json
+                    for result_path in file_results:
+                         if result_path.lower().endswith(('.wav', '.mp3', '.flac')):
+                             json_path = os.path.splitext(result_path)[0] + ".json"
+                             if os.path.exists(json_path):
+                                 with open(json_path, 'r') as f:
+                                     meta = json.load(f)
+                                 meta['parent_id'] = req.parent_id
+                                 with open(json_path, 'w') as f:
+                                     json.dump(meta, f, indent=4)
+                except Exception as e:
+                    logger.error(f"Failed to patch parent_id: {e}")
             
             # Hybrid Storage: Upload to Supabase (Async/Block for now)
             # We want to return the Public URL if possible.
@@ -419,6 +436,51 @@ async def delete_file(filename: str):
         return {"status": "deleted", "file": filename}
     except Exception as e:
         logger.error(f"Failed to delete {filename}: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.patch("/files/{filename}/rename")
+async def rename_file(filename: str, new_name: str):
+    """Rename a local file and its metadata."""
+    output_dir = os.getenv("ACE_OUTPUT_DIR", "./outputs")
+    
+    # Security checks
+    if any(x in filename for x in ["..", "/", "\\"]) or any(x in new_name for x in ["..", "/", "\\"]):
+         raise HTTPException(status_code=400, detail="Invalid filename")
+
+    old_path = os.path.join(output_dir, filename)
+    if not os.path.exists(old_path):
+        raise HTTPException(status_code=404, detail="File not found")
+
+    # Ensure extension matches
+    ext = os.path.splitext(filename)[1]
+    if not new_name.lower().endswith(ext.lower()):
+        new_name += ext
+        
+    new_path = os.path.join(output_dir, new_name)
+    if os.path.exists(new_path):
+        raise HTTPException(status_code=409, detail="File with new name already exists")
+
+    try:
+        os.rename(old_path, new_path)
+        
+        # Rename associated JSONs
+        base_old = os.path.splitext(filename)[0]
+        base_new = os.path.splitext(new_name)[0]
+        
+        # Handle both naming conventions
+        candidates = [
+            (base_old + ".json", base_new + ".json"),
+            (base_old + "_input_params.json", base_new + "_input_params.json")
+        ]
+        
+        for old_j_name, new_j_name in candidates:
+            old_j = os.path.join(output_dir, old_j_name)
+            if os.path.exists(old_j):
+                 os.rename(old_j, os.path.join(output_dir, new_j_name))
+                 
+        return {"status": "renamed", "old": filename, "new": new_name}
+    except Exception as e:
+        logger.error(f"Rename failed: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
 # --- Agent Endpoints ---

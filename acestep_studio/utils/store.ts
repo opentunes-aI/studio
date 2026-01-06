@@ -27,6 +27,7 @@ interface StudioState {
     activeJobId: string | null;
     isConsoleOpen: boolean;
     coverImage: string | null;
+    parentId: string | null;
 
     // Global Settings
     settings: {
@@ -50,6 +51,7 @@ interface StudioState {
     setActiveJobId: (id: string | null) => void;
     setConsoleOpen: (v: boolean) => void;
     setCoverImage: (v: string | null) => void;
+    setParentId: (id: string | null) => void;
 
     lastCompletedTrack: { id: string; name: string; url: string } | null;
     setLastCompletedTrack: (track: { id: string; name: string; url: string } | null) => void;
@@ -92,6 +94,7 @@ export const useStore = create<StudioState>((set) => ({
     activeJobId: null,
     isConsoleOpen: false,
     coverImage: null,
+    parentId: null,
 
     setCurrentTrack: (url, name) => set({
         currentTrackUrl: url,
@@ -112,6 +115,7 @@ export const useStore = create<StudioState>((set) => ({
     setActiveJobId: (id) => set({ activeJobId: id, isConsoleOpen: true }),
     setConsoleOpen: (v) => set({ isConsoleOpen: v }),
     setCoverImage: (v) => set({ coverImage: v }),
+    setParentId: (id) => set({ parentId: id }),
 
     lastCompletedTrack: null,
     setLastCompletedTrack: (track) => set({ lastCompletedTrack: track }),

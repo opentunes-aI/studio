@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import { GenerationRequest, generateMusic, getLLMModels, generateLyrics } from "@/utils/api";
 import { useStudioStore, MusicFormat } from "@/utils/store";
 import { Play, Loader2, ChevronDown, ChevronUp, Sparkles, X, Wand2 } from "lucide-react";
@@ -33,7 +34,9 @@ export default function ControlPanel() {
         retakeVariance, setRetakeVariance,
         repaintStart, repaintEnd, setRepaintRegion,
         setActiveJobId,
-        coverImage
+        coverImage,
+        parentId,
+        setParentId
     } = useStudioStore();
 
     const [loading, setLoading] = useState(false);
@@ -49,6 +52,13 @@ export default function ControlPanel() {
     const [lyricsLang, setLyricsLang] = useState("English");
     const [selectedModel, setSelectedModel] = useState("");
     const [generatingLyrics, setGeneratingLyrics] = useState(false);
+
+    const searchParams = useSearchParams();
+
+    useEffect(() => {
+        const pid = searchParams.get('parentId');
+        if (pid && setParentId) setParentId(pid);
+    }, [searchParams, setParentId]);
 
     useEffect(() => {
         getLLMModels().then(models => {
@@ -76,7 +86,9 @@ export default function ControlPanel() {
                 task: isRepaint ? "repainting" : (isRetake ? "retake" : "text2music"),
                 retake_variance: retakeVariance,
                 repaint_start: isRepaint ? repaintStart! : undefined,
+
                 repaint_end: isRepaint ? repaintEnd! : undefined,
+                parent_id: parentId || undefined,
             };
             const job = await generateMusic(req);
             setActiveJobId(job.job_id);

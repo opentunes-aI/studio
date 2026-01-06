@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState, useRef } from 'react';
-import { Play, Heart, Share2, MoreHorizontal, Flame, Clock, Trophy, Repeat, Download, UserPlus, MessageCircle, UserCheck } from 'lucide-react';
+import { Play, Heart, Share2, MoreHorizontal, Flame, Clock, Trophy, Repeat, Download, UserPlus, MessageCircle, UserCheck, GitFork } from 'lucide-react';
 import { supabase } from '../utils/supabase';
 import { API_URL } from '../utils/config';
 import { useRouter } from 'next/navigation';
@@ -22,6 +22,10 @@ interface Song {
     } | null;
     // Likes loaded for current user
     likes: { user_id: string }[];
+    parent?: {
+        id: string;
+        title: string;
+    } | null;
 }
 
 type SortMode = 'latest' | 'trending' | 'top';
@@ -97,7 +101,26 @@ export default function CommunityFeed() {
             const { data, error } = await query.limit(50);
 
             if (error) throw error;
-            if (data) setSongs(data as any);
+
+            if (data) {
+                // Manual Join for Parents (Fixes PGRST200)
+                const parentIds = [...new Set(data.map(s => s.parent_id).filter(Boolean))];
+                let parentMap: Record<string, string> = {};
+
+                if (parentIds.length > 0) {
+                    const { data: parents } = await supabase.from('songs').select('id, title').in('id', parentIds);
+                    if (parents) {
+                        parents.forEach(p => parentMap[p.id] = p.title);
+                    }
+                }
+
+                const songsWithParents = data.map(s => ({
+                    ...s,
+                    parent: s.parent_id ? { id: s.parent_id, title: parentMap[s.parent_id] || "Unknown Track" } : null
+                }));
+
+                setSongs(songsWithParents as any);
+            }
         } catch (error) {
             console.error('Error fetching community feed:', error);
         } finally {
@@ -167,9 +190,16 @@ export default function CommunityFeed() {
         alert(`Opening chat with user ${targetUserId} (Feature coming soon)`);
     };
 
-    const handleRemix = (prompt: string | null) => {
+    const handleShare = (id: string, title: string) => {
+        const url = `${window.location.origin}/studio/song/${id}`;
+        navigator.clipboard.writeText(url);
+        // Simple alert for now, could be a proper toast
+        alert(`Link copied for "${title}"`);
+    };
+
+    const handleRemix = (prompt: string | null, parentId: string) => {
         if (!prompt) return;
-        router.push(`/studio?initialPrompt=${encodeURIComponent(prompt)}`);
+        router.push(`/studio?initialPrompt=${encodeURIComponent(prompt)}&parentId=${parentId}`);
     };
 
     return (
@@ -289,6 +319,13 @@ export default function CommunityFeed() {
                                 <div className="relative z-10 pointer-events-none">
                                     <div className="pointer-events-auto">
                                         <h3 className="font-bold text-sm text-white mb-0.5 line-clamp-1">{song.title || "Untitled"}</h3>
+
+                                        {song.parent && (
+                                            <div className="flex items-center gap-1 text-[9px] text-purple-300/80 mb-1 opacity-80 hover:opacity-100 transition-opacity">
+                                                <GitFork size={10} />
+                                                <span>Remixed from {song.parent.title}</span>
+                                            </div>
+                                        )}
                                         <p className="text-[10px] text-gray-400 line-clamp-1 mb-2 opacity-80">
                                             {song.prompt || "AI generated track"}
                                         </p>
@@ -302,7 +339,10 @@ export default function CommunityFeed() {
                                                     <Heart size={12} fill={isLiked ? "currentColor" : "none"} />
                                                     <span>{song.likes.length > 0 ? song.likes.length : 'Like'}</span>
                                                 </button>
-                                                <button className="flex items-center gap-1 text-[10px] hover:text-blue-400 transition-colors">
+                                                <button
+                                                    onClick={() => handleShare(song.id, song.title || "Untitled")}
+                                                    className="flex items-center gap-1 text-[10px] hover:text-blue-400 transition-colors"
+                                                >
                                                     <Share2 size={12} />
                                                 </button>
                                             </div>
@@ -321,7 +361,7 @@ export default function CommunityFeed() {
                                                     </a>
                                                 )}
                                                 <button
-                                                    onClick={() => handleRemix(song.prompt)}
+                                                    onClick={() => handleRemix(song.prompt, song.id)}
                                                     className="flex items-center gap-1 text-[10px] font-bold text-purple-400 hover:text-purple-300 bg-purple-500/10 px-1.5 py-0.5 rounded border border-purple-500/20 hover:bg-purple-500/20 transition-all"
                                                 >
                                                     <Repeat size={10} />

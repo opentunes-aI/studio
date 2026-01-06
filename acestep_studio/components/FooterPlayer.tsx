@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState, useRef } from "react";
 import { useStudioStore } from "@/utils/store";
-import { Play, Pause, SkipForward, SkipBack, Volume2 } from "lucide-react";
+import { Play, Pause, SkipForward, SkipBack, Volume2, Download } from "lucide-react";
 
 export default function FooterPlayer() {
     const { currentTrackName, currentTrackUrl } = useStudioStore();
@@ -89,9 +89,26 @@ export default function FooterPlayer() {
             </div>
 
             {/* Volume / Extras */}
-            <div className="w-1/3 flex justify-end gap-3">
-                <Volume2 className="w-5 h-5 text-muted-foreground" />
-                <div className="w-24 h-1.5 bg-secondary rounded-full mt-2" />
+            <div className="w-1/3 flex justify-end items-center gap-4">
+                <button
+                    onClick={() => {
+                        if (!currentTrackUrl) return;
+                        const a = document.createElement('a');
+                        a.href = currentTrackUrl;
+                        a.download = currentTrackName ? `${currentTrackName}.wav` : 'track.wav';
+                        document.body.appendChild(a);
+                        a.click();
+                        document.body.removeChild(a);
+                    }}
+                    className="text-muted-foreground hover:text-foreground transition-colors"
+                    title="Download Track"
+                >
+                    <Download className="w-5 h-5" />
+                </button>
+                <div className="flex items-center gap-2">
+                    <Volume2 className="w-5 h-5 text-muted-foreground" />
+                    <div className="w-24 h-1.5 bg-secondary rounded-full" />
+                </div>
             </div>
         </div>
     );

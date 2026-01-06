@@ -15,6 +15,7 @@ export interface GenerationRequest {
     repaint_start?: number;
     repaint_end?: number;
     task?: string;
+    parent_id?: string;
 }
 
 export interface JobStatus {
@@ -69,6 +70,16 @@ export async function deleteLocalFile(filename: string): Promise<void> {
         method: "DELETE",
     });
     if (!res.ok) throw new Error("Failed to delete file");
+}
+
+export async function renameLocalFile(filename: string, newName: string): Promise<void> {
+    const res = await fetch(`${API_BASE}/files/${filename}/rename?new_name=${encodeURIComponent(newName)}`, {
+        method: "PATCH",
+    });
+    if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.detail || "Rename failed");
+    }
 }
 
 // Ollama Integration
