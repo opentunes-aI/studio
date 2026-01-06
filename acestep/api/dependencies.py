@@ -1,12 +1,12 @@
 
 import logging
-from acestep.pipeline_ace_step import ACEStepPipeline
+from acestep.models.factory import get_audio_engine
 
 logger = logging.getLogger("ace_step_api")
 
 class ModelManager:
     _instance = None
-    pipeline = None
+    engine = None
 
     def __new__(cls):
         if cls._instance is None:
@@ -14,33 +14,23 @@ class ModelManager:
         return cls._instance
 
     def load_model(self, checkpoint_path=None):
-        if self.pipeline is not None:
+        if self.engine is not None:
             logger.info("Model already loaded.")
             return
 
-        logger.info(f"Loading ACE-Step model from {checkpoint_path}...")
+        logger.info(f"Initializing Audio Engine...")
         try:
-            # Initialize the pipeline
-            # Note: We might need to pass arguments like device_id, dtype etc.
-            # For now using defaults or env vars could be an option
-            self.pipeline = ACEStepPipeline(
-                checkpoint_dir=checkpoint_path,
-                dtype="bfloat16",  # Default from gui.py
-                torch_compile=False,
-                cpu_offload=True # Enabled for 8GB VRAM GPUs
-            )
-            logger.info("Pipeline initialized. Pre-loading weights to RAM...")
-            # Eagerly load weights so first generation is fast
-            self.pipeline.load_checkpoint(self.pipeline.checkpoint_dir)
-            logger.info("Model weights loaded successfully.")
+            self.engine = get_audio_engine()
+            self.engine.load_model(checkpoint_path)
+            logger.info("Audio Engine initialized successfully.")
         except Exception as e:
             logger.error(f"Failed to load model: {e}")
             raise e
 
-    def get_pipeline(self):
-        if self.pipeline is None:
+    def get_engine(self):
+        if self.engine is None:
             raise RuntimeError("Model not initialized. Call load_model() first.")
-        return self.pipeline
+        return self.engine
 
 # Singleton instance
 manager = ModelManager()

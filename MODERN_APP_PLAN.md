@@ -42,14 +42,14 @@ Scope: **Foundation -> Studio (Creation) -> Community (Discovery) -> Agentic Int
     *   [x] **Adapter**: Integrated `LiteLLMModel` in `director.py`.
     *   [x] **Config**: Environment-based Model ID routing (`AGENT_MODEL_ID`).
 
-### 0.4 Audio Model Agnostic Infrastructure [🚧 PLANNED / TECH DEBT]
+### 0.4 Audio Model Agnostic Infrastructure [✅ COMPLETE]
 *Goal: Decouple Audio Generation from specific model weights.*
 
 *   **Context**: Currently, `ACEStepPipeline` is hardcoded. We want to support future models (Stable Audio, AudioLDM) without backend refactors.
 *   **Action Plan**:
-    *   [ ] **Interface**: Create abstract `AudioEngine` class (methods: `load()`, `generate()`).
-    *   [ ] **Adapter**: Wrap `ACEStepPipeline` into `ACEStepEngine`.
-    *   [ ] **Registry**: Build Factory pattern to load Engine based on `AUDIO_MODEL_TYPE` env var.
+    *   [x] **Interface**: Created abstract `AudioEngine` class (`acestep/models/engine.py`).
+    *   [x] **Adapter**: Wrapped `ACEStepPipeline` into `ACEStepEngine` (`acestep/models/wrappers/acestep_engine.py`).
+    *   [x] **Registry**: Built Factory pattern to load Engine based on `AUDIO_MODEL_TYPE` env var (`acestep/models/factory.py`).
 
 ### 0.5 Mobile App Strategy
 *   **Stage 1: PWA (Progressive Web App)**:

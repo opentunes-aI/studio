@@ -192,34 +192,32 @@ async def process_jobs():
             
             # Run blocking inference in a separate thread
             logger.info(f"Sending job {job_id} to executor...")
-            pipeline = manager.get_pipeline()
+            engine = manager.get_engine()
             
-            # Prepare args for pipeline
-            # ACEStepPipeline.__call__ signature
-            # We map request params to pipeline params
+            # Prepare generic parameters for AudioEngine
+            pipeline_params = {
+                "prompt": req.prompt,
+                "lyrics": req.lyrics or "",
+                "duration": req.duration,
+                "steps": req.infer_steps,
+                "cfg_scale": req.guidance_scale,
+                "seed": req.seed,
+                # Engine-specific args (passed as kwargs)
+                "oss_steps": "",
+                "cfg_type": req.cfg_type,
+                "scheduler_type": req.scheduler_type,
+                "use_erg_lyric": False,
+                "format": req.format,
+                "progress": progress_callback,
+                "task": req.task,
+                "retake_variance": req.retake_variance,
+                "repaint_start": req.repaint_start,
+                "repaint_end": req.repaint_end
+            }
             
             output_paths = await loop.run_in_executor(
                 None, 
-                lambda: pipeline(
-                    prompt=req.prompt,
-                    lyrics=req.lyrics or "", 
-                    oss_steps="",
-                    audio_duration=req.duration,
-                    infer_step=req.infer_steps,
-                    guidance_scale=req.guidance_scale,
-                    cfg_type=req.cfg_type,
-                    scheduler_type=req.scheduler_type,
-                    use_erg_lyric=False, # Match Gradio default for better vocals
-                    manual_seeds=[req.seed] if req.seed is not None else None,
-                    format=req.format,
-                    progress=progress_callback,
-                    # Retake params
-                    task=req.task,
-                    retake_variance=req.retake_variance,
-                    # Repaint params
-                    repaint_start=req.repaint_start,
-                    repaint_end=req.repaint_end
-                )
+                lambda: engine.generate(pipeline_params)
             )
             
             # The pipeline returns [path1, path2... params_json]
