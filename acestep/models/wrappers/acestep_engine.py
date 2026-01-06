@@ -50,8 +50,8 @@ class ACEStepEngine(AudioEngine):
         output_paths = self.pipeline(
             prompt=prompt,
             lyrics=lyrics if lyrics else None,
-            duration=duration,
-            infer_steps=steps,
+            audio_duration=duration,
+            infer_step=steps,
             guidance_scale=cfg_scale,
             manual_seeds=seed if seed != -1 else None,
             # Pass through any extra kwargs if they exist in params
