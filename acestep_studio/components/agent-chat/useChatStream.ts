@@ -45,8 +45,19 @@ export function useChatStream() {
     }, [lastCompletedTrack]);
 
     function handleSideEffect(act: any) {
+        // console.log("Side Effect:", act);
         if (!act) return;
         const params = act.params || act;
+
+        // Debug confirmation in chat (Temporary)
+        /*
+        setMessages(prev => [...prev, { 
+            role: "agent", 
+            content: [{ type: 'log', message: `Debug: Action=${act.action}` }], 
+            id: Date.now() 
+        }]);
+        */
+
         if (act.action === 'configure' || (params?.prompt && !act.message)) {
             if (params.prompt) setPrompt(String(params.prompt));
             if (params.steps) setSteps(Number(params.steps) || 30);
@@ -54,7 +65,24 @@ export function useChatStream() {
             if (params.duration) setDuration(Number(params.duration) || 30);
             if (params.seed) setSeed(Number(params.seed) || null);
         } else if (act.action === 'update_lyrics') {
-            const text = params.lyrics || params.content || params.lyric_content || "";
+            let text = params.lyrics || params.content || params.lyric_content || "";
+
+            // Unpack if it's a nested JSON string (common LLM artifact)
+            if (typeof text === 'string' && text.trim().startsWith('{')) {
+                try {
+                    const parsed = JSON.parse(text);
+                    if (parsed.lyrics) text = parsed.lyrics;
+                    else if (parsed.content) text = parsed.content;
+                } catch { }
+            }
+
+            // Handle Arrays (e.g. line lists)
+            if (Array.isArray(text)) {
+                text = text.join("\n");
+            } else if (typeof text === 'object') {
+                text = JSON.stringify(text);
+            }
+
             if (text) setLyrics(String(text));
         } else if (act.action === 'generate_cover_art') {
             if (params.image_url) setCoverImage(String(params.image_url));

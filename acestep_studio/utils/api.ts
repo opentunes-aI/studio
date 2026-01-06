@@ -16,6 +16,7 @@ export interface GenerationRequest {
     repaint_end?: number;
     task?: string;
     parent_id?: string;
+    cover_image?: string;
 }
 
 export interface JobStatus {

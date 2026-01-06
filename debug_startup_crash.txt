@@ -1,0 +1,38 @@
+Error: [Errno 28] No space left on device
+
+Traceback:
+Traceback (most recent call last):
+  File "C:\Coding\Opentunes\ACE-Step\debug_full_startup.py", line 22, in <module>
+    manager.load_model(checkpoint_path=os.environ["ACE_CHECKPOINT_PATH"])
+  File "C:\Coding\Opentunes\ACE-Step\acestep\api\dependencies.py", line 28, in load_model
+    raise e
+  File "C:\Coding\Opentunes\ACE-Step\acestep\api\dependencies.py", line 24, in load_model
+    self.engine.load_model(checkpoint_path)
+  File "C:\Coding\Opentunes\ACE-Step\acestep\models\wrappers\acestep_engine.py", line 30, in load_model
+    raise e
+  File "C:\Coding\Opentunes\ACE-Step\acestep\models\wrappers\acestep_engine.py", line 26, in load_model
+    self.pipeline.load_checkpoint(self.pipeline.checkpoint_dir)
+  File "C:\Coding\Opentunes\ACE-Step\acestep\pipeline_ace_step.py", line 213, in load_checkpoint
+    self.music_dcae = MusicDCAE(
+                      ^^^^^^^^^^
+  File "C:\Coding\Opentunes\ACE-Step\venv\Lib\site-packages\diffusers\configuration_utils.py", line 699, in inner_init
+    init(self, *args, **init_kwargs)
+  File "C:\Coding\Opentunes\ACE-Step\acestep\music_dcae\music_dcae_pipeline.py", line 40, in __init__
+    self.dcae = AutoencoderDC.from_pretrained(dcae_checkpoint_path)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Coding\Opentunes\ACE-Step\venv\Lib\site-packages\huggingface_hub\utils\_validators.py", line 114, in _inner_fn
+    return fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^
+  File "C:\Coding\Opentunes\ACE-Step\venv\Lib\site-packages\diffusers\models\modeling_utils.py", line 1062, in from_pretrained
+    config, unused_kwargs, commit_hash = cls.load_config(
+                                         ^^^^^^^^^^^^^^^^
+  File "C:\Coding\Opentunes\ACE-Step\venv\Lib\site-packages\huggingface_hub\utils\_validators.py", line 114, in _inner_fn
+    return fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^
+  File "C:\Coding\Opentunes\ACE-Step\venv\Lib\site-packages\diffusers\configuration_utils.py", line 443, in load_config
+    config_dict = cls._dict_from_json_file(config_file, dduf_entries=dduf_entries)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Coding\Opentunes\ACE-Step\venv\Lib\site-packages\diffusers\configuration_utils.py", line 573, in _dict_from_json_file
+    text = reader.read()
+           ^^^^^^^^^^^^^
+OSError: [Errno 28] No space left on device

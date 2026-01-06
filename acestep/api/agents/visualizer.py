@@ -18,7 +18,7 @@ def generate_cover_art(description: str) -> Dict[str, Any]:
     """
     encoded = urllib.parse.quote(description)
     seed = random.randint(1, 100000)
-    url = f"https://image.pollinations.ai/prompt/{encoded}?seed={seed}"
+    url = f"https://image.pollinations.ai/prompt/{encoded}?seed={seed}&model=flux&width=768&height=432"
     return {
         "action": "generate_cover_art",
         "params": { "image_url": url, "description": description, "seed": seed }

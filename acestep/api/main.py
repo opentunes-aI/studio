@@ -76,6 +76,7 @@ class GenerationRequest(BaseModel):
     repaint_start: Optional[float] = None
     repaint_end: Optional[float] = None
     parent_id: Optional[str] = None
+    cover_image: Optional[str] = None
 
 class JobStatus(BaseModel):
     job_id: str
@@ -226,21 +227,28 @@ async def process_jobs():
             
             file_results = [p for p in output_paths if isinstance(p, str)]
             
-            # Inject parent_id into JSON sidecar
-            if req.parent_id and file_results:
+            # Inject metadata (parent_id, cover_image) into JSON sidecar
+            if (req.parent_id or req.cover_image) and file_results:
                 try:
                     import json
                     for result_path in file_results:
                          if result_path.lower().endswith(('.wav', '.mp3', '.flac')):
                              json_path = os.path.splitext(result_path)[0] + ".json"
+                             # If .json doesn't exist, try _input_params.json
+                             if not os.path.exists(json_path):
+                                 json_path = os.path.splitext(result_path)[0] + "_input_params.json"
+                             
                              if os.path.exists(json_path):
-                                 with open(json_path, 'r') as f:
+                                 with open(json_path, 'r', encoding='utf-8') as f:
                                      meta = json.load(f)
-                                 meta['parent_id'] = req.parent_id
-                                 with open(json_path, 'w') as f:
-                                     json.dump(meta, f, indent=4)
+                                 
+                                 if req.parent_id: meta['parent_id'] = req.parent_id
+                                 if req.cover_image: meta['cover_image'] = req.cover_image
+                                 
+                                 with open(json_path, 'w', encoding='utf-8') as f:
+                                     json.dump(meta, f, indent=4, ensure_ascii=False)
                 except Exception as e:
-                    logger.error(f"Failed to patch parent_id: {e}")
+                    logger.error(f"Failed to patch metadata: {e}")
             
             # Hybrid Storage: Upload to Supabase (Async/Block for now)
             # We want to return the Public URL if possible.

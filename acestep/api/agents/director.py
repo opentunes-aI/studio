@@ -28,6 +28,8 @@ class AgentPlan(BaseModel):
     lyrics: bool
     art: bool
 
+import ast
+
 def parse_llm_json(text: str) -> Optional[Dict]:
     """Robust JSON extraction from LLM output."""
     clean_text = text.strip()
@@ -36,18 +38,35 @@ def parse_llm_json(text: str) -> Optional[Dict]:
     try: return json.loads(clean_text)
     except: pass
 
-    # Attempt 2: Markdown Code Block
+    # Attempt 2: Python Literal Evaluation (Handles {'key': 'value'} single quotes)
+    try:
+        val = ast.literal_eval(clean_text)
+        if isinstance(val, dict): return val
+    except: pass
+
+    # Attempt 3: Markdown Code Block
     match = re.search(r"```(?:json)?\s*(\{.*?\})\s*```", clean_text, re.DOTALL)
     if match:
         try: return json.loads(match.group(1))
         except: pass
+        # Try literal eval on code block too
+        try: 
+            val = ast.literal_eval(match.group(1))
+            if isinstance(val, dict): return val
+        except: pass
 
-    # Attempt 3: Fuzzy extraction of first object
+    # Attempt 4: Fuzzy extraction of first object
     try:
         start = clean_text.find('{')
         end = clean_text.rfind('}')
         if start != -1 and end != -1:
-            return json.loads(clean_text[start:end+1])
+            candidate = clean_text[start:end+1]
+            try: return json.loads(candidate)
+            except: pass
+            try: 
+                val = ast.literal_eval(candidate)
+                if isinstance(val, dict): return val
+            except: pass
     except: pass
             
     return None
@@ -79,6 +98,7 @@ async def process_user_intent(user_input: str, history: List[Dict[str, str]] = [
         plan_query = (
             f"{context_str}\n"
             "Analyze intent. Return JSON: { \"music\": bool, \"lyrics\": bool, \"art\": bool }\n"
+            "Rules: Default to TRUE for all unless explicitly requested otherwise (e.g. 'instrumental' -> lyrics=false).\n"
             "Example: User='Make a song about love' -> {\"music\": true, \"lyrics\": true, \"art\": true}"
         )
         plan_raw = await asyncio.to_thread(director_agent.run, plan_query)
@@ -100,6 +120,10 @@ async def process_user_intent(user_input: str, history: List[Dict[str, str]] = [
     # Heuristic Overrides
     u = user_input.lower()
     if "instrumental" in u: plan['lyrics'] = False
+    elif "song" in u or "track" in u or "write" in u: 
+        # If explicit request for audio creation, assume we want full package unless denied
+        if plan.get('lyrics') is False and "no lyrics" not in u: plan['lyrics'] = True
+        if plan.get('art') is False and "no art" not in u: plan['art'] = True
     
     # Failsafe: If user asked to create something, assume music is needed
     if any(k in u for k in ["song", "track", "music", "beat", "make", "create"]):
@@ -197,6 +221,7 @@ async def process_user_intent(user_input: str, history: List[Dict[str, str]] = [
                         
                         # STREAM RESULT IMMEDIATELY
                         if valid_result:
+                            print(f"DEBUG: Yielding Result for {name}: {str(valid_result)[:100]}...")
                             yield json.dumps({"type": "result", "data": [valid_result]})
                             
                         # Visual Indicator that others are working

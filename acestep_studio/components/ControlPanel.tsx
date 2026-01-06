@@ -89,6 +89,7 @@ export default function ControlPanel() {
 
                 repaint_end: isRepaint ? repaintEnd! : undefined,
                 parent_id: parentId || undefined,
+                cover_image: coverImage || undefined,
             };
             const job = await generateMusic(req);
             setActiveJobId(job.job_id);
@@ -125,7 +126,7 @@ export default function ControlPanel() {
 
             {/* Cover Art Preview (Visualizer) */}
             {coverImage && (
-                <div className="relative w-full aspect-square rounded-xl overflow-hidden border border-white/10 group shadow-lg shrink-0 animate-in fade-in zoom-in-95 duration-500">
+                <div className="relative w-full aspect-video rounded-xl overflow-hidden border border-white/10 group shadow-lg shrink-0 animate-in fade-in zoom-in-95 duration-500">
                     <img src={coverImage} className="object-cover w-full h-full transition-transform group-hover:scale-105 duration-700" alt="Cover Art" />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-3">
                         <span className="text-xs font-bold text-white flex items-center gap-1"><Sparkles className="w-3 h-3 text-purple-400" /> Generated Art</span>
@@ -134,7 +135,7 @@ export default function ControlPanel() {
             )}
 
             {/* Genre Preset */}
-            <div className="space-y-3 shrink-0">
+            <div className="space-y-3 shrink-0 relative z-30">
                 <button
                     onClick={() => setShowPresets(!showPresets)}
                     className="w-full text-xs font-bold uppercase tracking-wider text-gray-400 flex justify-between items-center hover:text-white transition-colors"

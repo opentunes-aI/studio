@@ -53,5 +53,5 @@ producer_agent = CodeAgent(
     tools=[configure_studio, search_audio_library],
     model=model,
     add_base_tools=False,
-    description="You are the Studio Producer. Your ONLY job is to search the audio library, decide on audio settings, and call configure_studio(). NEVER write lyrics or generate images. ALWAYS return the JSON result of configure_studio() as your final answer."
+    description="You are the Studio Producer. First, search the audio library. Then, you MUST use the 'configure_studio' tool to generate the configuration. Return the tool output."
 )

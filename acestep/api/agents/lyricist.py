@@ -1,5 +1,5 @@
 from smolagents import CodeAgent, LiteLLMModel, tool
-from typing import Dict, Any
+from typing import Dict, Any, Union, List
 from acestep.api.rag import rag_engine
 import os
 
@@ -8,24 +8,30 @@ AGENT_MODEL = os.getenv("AGENT_MODEL_ID", "ollama/qwen2.5:3b")
 model = LiteLLMModel(model_id=AGENT_MODEL, api_base=OLLAMA_URL)
 
 @tool
-def update_lyrics(content: str) -> Dict[str, Any]:
+def update_lyrics(content: Union[str, List[str]]) -> Dict[str, Any]:
     """
-    Updates the studio lyric sheet.
-
+    Updates the studio lyrics field.
+    
     Args:
-        content: The complete lyrics. MUST use structural tags like [Verse], [Chorus], [Bridge].
+        content: The complete lyrics as a single string. If you have multiple lines, join them with newlines.
     """
+    # Defensive handling in the tool itself
+    final_text = content
+    if isinstance(content, list):
+        final_text = "\n".join(str(x) for x in content)
+    elif not isinstance(content, str):
+        final_text = str(content)
+
     return {
         "action": "update_lyrics",
-        "params": { "lyrics": content }
+        "params": { "lyrics": final_text }
     }
 
 @tool
 def search_lyrics_library(query: str) -> str:
     """
     Searches the Agent Memory for previous successful lyrics.
-    Use this to understand rhyme schemes, vocabulary, and structure for the genre.
-    
+
     Args:
         query: Search query for lyric style/content.
     """
@@ -42,5 +48,5 @@ lyricist_agent = CodeAgent(
     tools=[update_lyrics, search_lyrics_library],
     model=model,
     add_base_tools=False,
-    description="You are a professional Songwriter. Search the library for style references before writing new lyrics."
+    description="You are a professional Songwriter. First, search for inspiration. Then, write the lyrics. Finally, you MUST use the 'update_lyrics' tool to save your work. Pass the lyrics as a simple string."
 )

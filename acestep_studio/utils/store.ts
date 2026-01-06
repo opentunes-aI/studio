@@ -88,7 +88,7 @@ export const useStore = create<StudioState>((set) => ({
     seed: null,
     steps: 60,
     cfgScale: 15.0,
-    retakeVariance: 0.2,
+    retakeVariance: 0.0,
     repaintStart: null,
     repaintEnd: null,
     activeJobId: null,
