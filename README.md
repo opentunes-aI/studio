@@ -86,6 +86,7 @@ Opentunes uses a modern **Split Architecture**:
 *   [**Product Requirements (PRD)**](PRD.md): Vision, Audience, and Feature Checklist.
 *   [**Technical Requirements (TRD)**](TRD.md): Architecture, Stack, and Deployment Strategy.
 *   [**Data Design (DDD)**](DDD.md): Schema, Data Flow, and Privacy.
+*   [**Testing Stragegy (TEST)**](TEST.md): QA Tiers, Performance Benchmarks, and UAT.
 *   [**Model Training Guide**](docs/TRAINING.md): Learn how to fine-tune ACE-Step on your own datasets.
 *   [**RapMachine LoRA**](docs/ZH_RAP_LORA.md): Instructions for the specialized Rap model.
 *   [**Legacy Usage Guide**](docs/USE-GUIDE.md): Original command-line usage instructions.
