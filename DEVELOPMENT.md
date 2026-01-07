@@ -23,8 +23,16 @@ This document outlines the execution phases for Opentunes.ai, mapping strategic 
     *   [x] **Viral Loop**: Sharing, Feeds, Remix Lineage.
 *   **1.5 Marketing & Acquisition** (Ref: PRD 2.0)
     *   [x] **Landing Page**: Aurora UI, High-conversion design.
-    *   [x] **Showcase**: Featured Tracks component.
     *   [x] **Handover**: Seamless Context passing (Landing -> Studio).
+*   **1.6 Production Infrastructure (Cloud)** (Ref: TRD 6.0)
+    *   [ ] **Frontend (Cloudflare Pages)**:
+        *   Install `@cloudflare/next-on-pages` adapter.
+        *   Configure Build Script: `npm run pages:build`.
+        *   Deploy to Cloudflare Dashboard (Connect GitHub).
+    *   [ ] **Backend (GPU Cloud)**:
+        *   Create `Dockerfile` (Pinned PyTorch version).
+        *   Select Provider (Modal is recommended for flexible Serverless GPU).
+        *   Deploy and secure API Endpoint (HTTPS).
 
 ---
 

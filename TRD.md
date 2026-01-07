@@ -64,7 +64,9 @@
 *   [ ] **Rate Limiting**: Prevent API abuse in Cloud variant.
 
 ## 6. Future Cloud & Deployment Strategy
-*   **Frontend**: Stateless. Deployable to **Vercel** or **Cloudflare Pages** (Edge).
+*   **Frontend**: Deployed to **Cloudflare Pages** (Edge).
+    *   **Adapter**: `@cloudflare/next-on-pages`.
+    *   **Reasoning**: Unmetered bandwidth for media apps, global low-latency.
     *   *Enabler*: Fully decoupled from Backend via `NEXT_PUBLIC_API_URL`.
 *   **Backend (Inference)**: Containerized deployment (Docker).
     *   **Audio Agnosticism**: The `AudioEngine` abstraction allows us to deploy specialized containers (e.g., "Stable Audio Container" vs "ACE-Step Container") to different GPU providers (Modal, Replicate) without changing the API contract.
