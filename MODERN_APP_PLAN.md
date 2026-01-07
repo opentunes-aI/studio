@@ -42,7 +42,7 @@ Scope: **Foundation -> Studio (Creation) -> Community (Discovery) -> Agentic Int
     *   [x] **Adapter**: Integrated `LiteLLMModel` in `director.py`.
     *   [x] **Config**: Environment-based Model ID routing (`AGENT_MODEL_ID`).
 
-### 0.4 Audio Model Agnostic Infrastructure [✅ COMPLETE]
+### 0.5 Audio Model Agnostic Infrastructure [✅ COMPLETE]
 *Goal: Decouple Audio Generation from specific model weights.*
 
 *   **Context**: Currently, `ACEStepPipeline` is hardcoded. We want to support future models (Stable Audio, AudioLDM) without backend refactors.
@@ -51,7 +51,16 @@ Scope: **Foundation -> Studio (Creation) -> Community (Discovery) -> Agentic Int
     *   [x] **Adapter**: Wrapped `ACEStepPipeline` into `ACEStepEngine` (`acestep/models/wrappers/acestep_engine.py`).
     *   [x] **Registry**: Built Factory pattern to load Engine based on `AUDIO_MODEL_TYPE` env var (`acestep/models/factory.py`).
 
-### 0.5 Mobile App Strategy
+### 0.6 Performance Optimization [✅ COMPLETE]
+*Goal: Ensure Rapid Startup and Robust Error Handling.*
+
+*   **Implementations**:
+    *   [x] **Lazy Loading**: Restored lazy loading in `dependencies.py` to prevent startup timeouts and OOM errors. Model loads on first generation request.
+    *   [x] **Non-Blocking Checks**: Removed synchronous health checks from `/generate` endpoint to fix "503 blocks UI" issue.
+    *   [x] **Agent Robustness**: Enhanced `Director` JSON parser (`ast.literal_eval`) and stricter Prompts to fix "Invalid JSON" errors.
+    *   [x] **Frontend Handling**: Robust nested JSON parsing in `useChatStream.ts` for handling raw LLM outputs.
+
+### 0.7 Mobile App Strategy
 *   **Stage 1: PWA (Progressive Web App)**:
     *   *Impact*: Instant "App-like" experience. Users install via browser. Zero code rewrite.
 *   **Stage 2: Capacitor / React Native**:

@@ -73,7 +73,7 @@ def parse_llm_json(text: str) -> Optional[Dict]:
 
 async def run_producer(context: str):
     # Returns (name, result)
-    return ("producer", await asyncio.to_thread(producer_agent.run, f"{context}\nTASK: Search library for inspiration. IF NO MATCHES, use your own knowledge. ALWAYS Configure studio parameters and Return JSON."))
+    return ("producer", await asyncio.to_thread(producer_agent.run, f"{context}\nTASK: Search library for inspiration. IF NO MATCHES, use your own knowledge. ALWAYS Configure studio parameters. FINAL ANSWER MUST BE THE JSON OUTPUT OF THE CONFIGURE TOOL."))
 
 async def run_lyricist(context: str):
     # Returns (name, result)
@@ -194,7 +194,7 @@ async def process_user_intent(user_input: str, history: List[Dict[str, str]] = [
                                 res = res.split("Calling tools:")[0].strip()
                             
                             extracted = parse_llm_json(res)
-                            if extracted:
+                            if extracted and isinstance(extracted, dict):
                                 valid_result = extracted
                                 if extracted.get("action") == "configure":
                                     p = extracted.get("params", {})

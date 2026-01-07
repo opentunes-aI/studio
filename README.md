@@ -76,7 +76,8 @@ Opentunes uses a modern **Split Architecture**:
 
 1.  **Backend (`/acestep`)**: 
     *   **Technology**: FastAPI, PyTorch.
-    *   **Role**: The "Brain". Runs the ACE-Step Diffusion Model & Ollama Agents. Handles heavy compute, audio rendering, and GPU management.
+    *   **Role**: The "Brain". Runs the **Model Agnostic Audio Engine** (supporting ACE-Step and future models) & Ollama Agents. Handles heavy compute, audio rendering, and GPU management.
+    *   **Features**: Lazy Loading (Fast Startup), Agentic RAG Memory, and Background Job Processing.
 2.  **Frontend (`/acestep_studio`)**:
     *   **Technology**: Next.js 14, Tailwind CSS, Zustand.
     *   **Role**: The "Face". A responsive web application that manages the session, connects to Supabase, and visualizes the audio.

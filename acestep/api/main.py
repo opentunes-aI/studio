@@ -132,10 +132,14 @@ async def lifespan(app: FastAPI):
     # Load model in executor to avoid blocking if it was pure python, 
     # but ACEStepPipeline checks for GPU etc.
     # Just call it directly, it's startup.
-    try:
-        manager.load_model(checkpoint_path=checkpoint_path)
-    except Exception as e:
-        logger.error(f"CRITICAL: Model failed to load: {e}")
+    # Load model in executor to avoid blocking if it was pure python, 
+    # but ACEStepPipeline checks for GPU etc.
+    # Just call it directly, it's startup.
+    # try:
+    #     manager.load_model(checkpoint_path=checkpoint_path)
+    # except Exception as e:
+    #     logger.error(f"CRITICAL: Model failed to load: {e}")
+    # Lazy loading is now handled in manager.get_engine()
 
     # Start Worker
     worker_task = asyncio.create_task(process_jobs())
@@ -363,12 +367,9 @@ async def generate_lyrics_endpoint(req: LyricsRequest):
 
 @app.post("/generate", response_model=JobStatus)
 async def generate_music(req: GenerationRequest):
-    pipeline_check = None
-    try:
-        pipeline_check = manager.get_pipeline()
-    except:
-        raise HTTPException(status_code=503, detail="Model not loaded yet")
-
+    # Pipeline loading is handled by the worker (Lazy Loading)
+    # We do NOT check here to avoid blocking the request.
+    
     job_id = str(uuid.uuid4())
     job = JobStatus(
         job_id=job_id,

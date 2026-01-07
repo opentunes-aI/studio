@@ -29,8 +29,14 @@ class ModelManager:
 
     def get_engine(self):
         if self.engine is None:
-            raise RuntimeError("Model not initialized. Call load_model() first.")
+            logger.info("Lazy loading model triggered...")
+            import os
+            checkpoint = os.getenv("ACE_CHECKPOINT_PATH", "")
+            self.load_model(checkpoint)
         return self.engine
+
+    def get_pipeline(self):
+        return self.get_engine().pipeline
 
 # Singleton instance
 manager = ModelManager()
