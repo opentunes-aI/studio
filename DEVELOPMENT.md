@@ -14,7 +14,7 @@ This document outlines the execution phases for Opentunes.ai, mapping strategic 
     *   [x] **UI/UX**: Responsive Next.js App with Glassmorphism theme.
     *   [x] **Waveform**: Interactive Visualization (`wavesurfer.js`).
     *   [x] **Console**: Real-time Agent Log streaming.
-    *   [ ] **Immersive Mode**: Implement collapsible Sidebars for "Focus Mode" waveform editing.
+    *   [x] **Immersive Mode**: Implement collapsible Sidebars for "Focus Mode" waveform editing.
     *   [ ] **Agent Feedback**: Add visual "Thinking/Pulse" indicators for active Agent steps.
     *   [ ] **Mobile Layout**: Implement "Swiper" navigation for small screens.
 *   **1.3 Agentic Intelligence** (Ref: PRD 4.2, TRD 2.2)

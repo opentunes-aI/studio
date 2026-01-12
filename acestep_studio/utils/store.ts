@@ -33,6 +33,8 @@ interface StudioState {
     repaintEnd: number | null;
     activeJobId: string | null;
     isConsoleOpen: boolean;
+    isLibraryOpen: boolean;
+    isControlsOpen: boolean;
     coverImage: string | null;
     parentId: string | null;
 
@@ -57,6 +59,8 @@ interface StudioState {
     setRepaintRegion: (start: number | null, end: number | null) => void;
     setActiveJobId: (id: string | null) => void;
     setConsoleOpen: (v: boolean) => void;
+    setLibraryOpen: (v: boolean) => void;
+    setControlsOpen: (v: boolean) => void;
     setCoverImage: (v: string | null) => void;
     setParentId: (id: string | null) => void;
 
@@ -107,6 +111,8 @@ export const useStore = create<StudioState>((set) => ({
     repaintEnd: null,
     activeJobId: null,
     isConsoleOpen: false,
+    isLibraryOpen: true,
+    isControlsOpen: true,
     coverImage: null,
     parentId: null,
 
@@ -128,6 +134,8 @@ export const useStore = create<StudioState>((set) => ({
     setRepaintRegion: (s, e) => set({ repaintStart: s, repaintEnd: e }),
     setActiveJobId: (id) => set({ activeJobId: id, isConsoleOpen: true }),
     setConsoleOpen: (v) => set({ isConsoleOpen: v }),
+    setLibraryOpen: (v) => set({ isLibraryOpen: v }),
+    setControlsOpen: (v) => set({ isControlsOpen: v }),
     setCoverImage: (v) => set({ coverImage: v }),
     setParentId: (id) => set({ parentId: id }),
 
