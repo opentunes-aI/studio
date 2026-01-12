@@ -46,9 +46,13 @@ export async function getStatus(jobId: string): Promise<JobStatus> {
 }
 
 export async function getHistory(): Promise<{ files: string[] }> {
-    const res = await fetch(`${API_BASE}/history`);
-    if (!res.ok) return { files: [] };
-    return res.json();
+    try {
+        const res = await fetch(`${API_BASE}/history`);
+        if (!res.ok) return { files: [] };
+        return res.json();
+    } catch (e) {
+        return { files: [] };
+    }
 }
 
 export async function getTrackMetadata(filename: string): Promise<GenerationRequest | null> {

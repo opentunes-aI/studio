@@ -79,19 +79,30 @@ export default function Sidebar() {
     useEffect(() => {
         load();
 
-        // Realtime Wallet Subscription
-        if (supabase) {
-            const channel = supabase
-                .channel('wallet-changes')
-                .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'wallets' }, (payload: any) => {
-                    const newBal = payload.new.balance;
-                    // Only update if it belongs to us (RLS usually filters, but double check)
-                    setCredits(newBal);
-                })
-                .subscribe();
-
-            return () => { supabase?.removeChannel(channel); };
+        let channel: any = null;
+        async function initSub() {
+            if (supabase) {
+                const { data: { user } } = await supabase.auth.getUser();
+                if (user) {
+                    // Remove existing if any (cleanup handles it, but safety)
+                    channel = supabase
+                        .channel('wallet-changes')
+                        .on('postgres_changes', {
+                            event: 'UPDATE',
+                            schema: 'public',
+                            table: 'wallets',
+                            filter: `user_id=eq.${user.id}`
+                        }, (payload: any) => {
+                            const newBal = payload.new.balance;
+                            setCredits(newBal);
+                        })
+                        .subscribe();
+                }
+            }
         }
+        initSub();
+
+        return () => { if (channel) supabase?.removeChannel(channel); };
     }, [tab]);
 
     const API_BASE = API_URL;
