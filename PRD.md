@@ -23,7 +23,8 @@
 ### 4.1 Core Studio Experience (MVP)
 *   [x] **Agentic Chat Interface**: Real-time collaboration with AI Squad (Director, Producer, Lyricist).
 *   [x] **Waveform Visualization**: Interactive audio player with regions.
-*   [x] **Studio Controls**: Control Panel for BPM, Duration, Steps, Guidance Scale.
+*   [x] **Immersive Mode**: Collapsible Sidebars for maximum workspace focus.
+*   [x] **Studio Controls**: Collapsible Control Panel for BPM, Duration, Steps, Guidance Scale.
 *   [x] **Lazy Loading**: Instant app startup with on-demand model loading.
 *   [x] **Real-time Console**: Visibility into what the AI is "thinking" (Streaming Logs).
 

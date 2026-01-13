@@ -12,6 +12,7 @@
 *   [x] **Framework**: Next.js 14 (App Router).
 *   [x] **Language**: TypeScript.
 *   [x] **Styling**: Tailwind CSS (Vanilla CSS variables for themes).
+*   [x] **Layout**: Immersive Mode with Collapsible Panels (Zustand State).
 *   [x] **State Management**: Zustand (Global Store).
 *   [x] **Data Fetching**: Supabase JS Client + Native `fetch`.
 *   [x] **Audio Visualization**: `wavesurfer.js`.
