@@ -400,7 +400,7 @@ async def generate_music(req: GenerationRequest):
             
             if wallet_res.data:
                 balance = wallet_res.data.get("balance", 0)
-                cost = 10  # Standard Cost
+                cost = 5  # Standard Cost (User requested 5)
                 
                 if balance < cost:
                     raise HTTPException(status_code=402, detail=f"Insufficient credits ({balance} < {cost}). Please top up.")

@@ -39,7 +39,7 @@
 *   [x] **Local Library**: Save/Delete tracks on local disk.
 *   [x] **Dual-Write Sync**: Metadata syncs to Supabase (Cloud) for portability.
 *   [x] **Download**: Export tracks as MP3/WAV.
-*   [ ] **In-Painting/Repaint**: Select region to regenerate (Partially Implemented in Backend).
+*   [x] **In-Painting/Repaint**: Select region to regenerate (Partially Implemented in Backend).
 *   [ ] **Stem Separation**: Split Audio into Vocals/Drums/Bass.
 
 ### 4.4 Social & Community
@@ -50,8 +50,8 @@
 *   [x] **Forking/Remixing**: "Remix this track" button preserves lineage (Parent/Child).
 
 ### 4.5 Commercialization (SaaS Model) - Phase 2
-*   [ ] **Credit System**: Virtual currency for compute usage (e.g., 10 credits per song).
-*   [ ] **Tiers**:
+*   [x] **Credit System**: Virtual currency for compute usage (e.g., 5 points per song).
+*   [x] **Tiers**:
     *   **Free**: Daily credit grant (e.g., 50/day), Public tracks only, Standard Queue.
     *   **Pro ($15/mo)**: Monthly credit grant (e.g., 1000/mo), Private tracks, Stem Separation, Priority Queue.
 *   [ ] **Payments**: Stripe Integration for Subscriptions and Credit Top-ups.
