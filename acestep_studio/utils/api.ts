@@ -2,6 +2,7 @@ import { API_URL } from "./config";
 export const API_BASE = API_URL;
 
 export interface GenerationRequest {
+    title?: string;
     prompt: string;
     lyrics?: string;
     duration: number;

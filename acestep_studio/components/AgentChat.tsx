@@ -4,6 +4,7 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { Bot, X, Send, Sparkles, Menu, Plus, MessageSquare, Trash2 } from "lucide-react";
 import { useChatStream } from "./agent-chat/useChatStream";
 import { MessageBubble } from "./agent-chat/MessageBubble";
+import { useStudioStore } from "@/utils/store";
 
 export default function AgentChat() {
     const [isOpen, setIsOpen] = useState(false);
@@ -51,9 +52,19 @@ export default function AgentChat() {
         }
     }, [searchParams]);
 
+    const trackTitle = useStudioStore(s => s.trackTitle);
+
     const handleSend = () => {
         if (!input.trim()) return;
-        sendMessage(input);
+
+        let message = input;
+
+        // Inject Context if valid (Defense against non-string state)
+        if (typeof trackTitle === 'string' && trackTitle.trim().length > 0) {
+            message = `[Context: Project Title="${trackTitle}"] ${input}`;
+        }
+
+        sendMessage(message);
         setInput("");
     };
 

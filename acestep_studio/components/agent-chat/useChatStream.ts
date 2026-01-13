@@ -231,7 +231,15 @@ export function useChatStream() {
                 }
             }
         } catch (e: any) {
-            const msg = e.message || String(e);
+            let msg = "Unknown Error";
+            if (e instanceof Error) msg = e.message;
+            else if (typeof e === 'string') msg = e;
+            else if (typeof e === 'object') {
+                try { msg = JSON.stringify(e); } catch { msg = "Object Error"; }
+            }
+
+            console.error("Chat Stream Error:", msg);
+
             if (msg !== 'AbortError' && !msg.includes('The user aborted')) {
                 setMessages(prev => prev.map(m =>
                     m.id === tempId ? { ...m, content: [...(Array.isArray(m.content) ? m.content : []), { message: `Error: ${msg}` }] } : m

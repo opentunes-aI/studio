@@ -48,7 +48,10 @@ This document outlines the execution phases for Opentunes.ai, mapping strategic 
     *   [x] **Flatten Hierarchy**: Un-collapse Prompt and Lyrics sections for dashboard-style access.
     *   [x] **Title Input**: Add visual Title field (prepended to prompt logic).
     *   [x] **Input Card Design**: Restyle inputs to be distinct "Blocks" with high contrast headers.
-*   **1.5.2 Layout Optimization**
+*   **1.5.2 Functional Modernization**
+    *   [x] **Agent Context**: Inject "Title" into Agent Chat context for project-aware suggestions.
+    *   [x] **Smart File Naming**: Auto-rename generated files to match project title (e.g. `My_Song_123.wav`).
+*   **1.5.3 Layout Optimization**
     *   [x] **Persistent History**: Move History from toggle-sidebar to persistent Right Column (if space permits) or improved drawer.
     *   [x] **Visual Contrast**: Increase contrast on active elements vs background for "Lab" feel.
 

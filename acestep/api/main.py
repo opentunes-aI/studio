@@ -13,6 +13,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 import requests
+import re
 from dotenv import load_dotenv
 from supabase import create_client
 
@@ -62,6 +63,7 @@ if SUPABASE_URL and SUPABASE_KEY:
 # --- Data Models ---
 
 class GenerationRequest(BaseModel):
+    title: Optional[str] = None
     prompt: str
     lyrics: Optional[str] = ""
     duration: float = Field(60.0, ge=10.0, le=240.0)
@@ -249,26 +251,63 @@ async def process_jobs():
             
             file_results = [p for p in output_paths if isinstance(p, str)]
             
-            # Inject metadata (parent_id, cover_image) into JSON sidecar
-            if (req.parent_id or req.cover_image) and file_results:
+            # 1. Rename File if Title is present
+            final_results = []
+            if req.title and file_results:
+                import re
+                try:
+                    # Sanitize Title
+                    safe_title = re.sub(r'[\\/*?:"<>|]', "", req.title).replace(" ", "_")
+                    safe_title = safe_title[:50] # Limit length
+                    
+                    for i, old_path in enumerate(file_results):
+                        if not old_path.lower().endswith(('.wav', '.mp3', '.flac')):
+                            final_results.append(old_path)
+                            continue
+
+                        dir_name = os.path.dirname(old_path)
+                        ext = os.path.splitext(old_path)[1]
+                        short_id = job_id[:8]
+                        
+                        # Format: Title_ShortID.wav (Uniqueness guaranteed by ID)
+                        new_filename = f"{safe_title}_{short_id}{ext}"
+                        new_path = os.path.join(dir_name, new_filename)
+                        
+                        os.rename(old_path, new_path)
+                        final_results.append(new_path)
+                        
+                        # Rename JSON Sidecar if exists (from engine)
+                        old_json = os.path.splitext(old_path)[0] + ".json"
+                        if os.path.exists(old_json):
+                             new_json = os.path.splitext(new_path)[0] + ".json"
+                             os.rename(old_json, new_json)
+                    
+                    file_results = final_results # Update reference
+                except Exception as e:
+                    logger.error(f"Auto-rename failed: {e}") 
+
+            # 2. Inject Metadata
+            if (req.parent_id or req.cover_image or req.title) and file_results:
                 try:
                     import json
                     for result_path in file_results:
                          if result_path.lower().endswith(('.wav', '.mp3', '.flac')):
+                             # We renamed it, so use the new path base
                              json_path = os.path.splitext(result_path)[0] + ".json"
-                             # If .json doesn't exist, try _input_params.json
-                             if not os.path.exists(json_path):
-                                 json_path = os.path.splitext(result_path)[0] + "_input_params.json"
                              
+                             # Create if not exists (renaming above might have missed non-standard jsons)
+                             meta = {}
                              if os.path.exists(json_path):
                                  with open(json_path, 'r', encoding='utf-8') as f:
-                                     meta = json.load(f)
-                                 
-                                 if req.parent_id: meta['parent_id'] = req.parent_id
-                                 if req.cover_image: meta['cover_image'] = req.cover_image
-                                 
-                                 with open(json_path, 'w', encoding='utf-8') as f:
-                                     json.dump(meta, f, indent=4, ensure_ascii=False)
+                                     try: meta = json.load(f)
+                                     except: pass
+                             
+                             if req.title: meta['title'] = req.title
+                             if req.parent_id: meta['parent_id'] = req.parent_id
+                             if req.cover_image: meta['cover_image'] = req.cover_image
+                             
+                             with open(json_path, 'w', encoding='utf-8') as f:
+                                 json.dump(meta, f, indent=4, ensure_ascii=False)
                 except Exception as e:
                     logger.error(f"Failed to patch metadata: {e}")
             

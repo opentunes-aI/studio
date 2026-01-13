@@ -53,7 +53,7 @@ export async function syncTrackToCloud(filename: string): Promise<boolean> {
 
         const { error } = await supabase.from('songs').insert({
             user_id: user.id,
-            title: meta.prompt.substring(0, 50) || "Untitled",
+            title: meta.title || meta.prompt.substring(0, 50) || "Untitled",
             prompt: meta.prompt,
             lyrics: meta.lyrics,
             duration: meta.duration,

@@ -74,11 +74,12 @@ export default function ControlPanel() {
             const isRepaint = repaintStart !== null && repaintEnd !== null;
             const isRetake = seed !== null && retakeVariance > 0;
 
-            // Prepend Title to prompt if present
-            const effectivePrompt = trackTitle ? `Title: ${trackTitle}. ${prompt}` : prompt;
+            // Prepend Title to prompt if present -> DEPRECATED. Now passing as metadata.
+            // const effectivePrompt = trackTitle ? `Title: ${trackTitle}. ${prompt}` : prompt;
 
             const req: GenerationRequest = {
-                prompt: effectivePrompt,
+                title: trackTitle || undefined,
+                prompt,
                 lyrics,
                 duration,
                 infer_steps: steps,
