@@ -21,7 +21,7 @@ export default function GlobalLayout({ children }: { children: React.ReactNode }
                 {children}
 
                 {/* Global Library Sidebar (Right Panel) */}
-                <div className={`transition-all duration-300 ease-in-out flex flex-col ${isLibraryOpen ? 'w-72 opacity-100 translate-x-0' : 'w-0 opacity-0 translate-x-20 overflow-hidden'}`}>
+                <div className={`transition-all duration-300 ease-in-out flex flex-col ${isLibraryOpen ? 'w-80 opacity-100 translate-x-0' : 'w-0 opacity-0 translate-x-20 overflow-hidden'}`}>
                     <Sidebar />
                 </div>
 

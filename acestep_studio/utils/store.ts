@@ -21,6 +21,8 @@ interface StudioState {
     setIsPro: (v: boolean) => void;
 
     // Form State
+    trackTitle: string;
+    setTrackTitle: (v: string) => void;
     prompt: string;
     lyrics: string;
     duration: number;
@@ -122,6 +124,9 @@ export const useStore = create<StudioState>((set) => ({
         repaintStart: null,
         repaintEnd: null
     }),
+
+    trackTitle: "",
+    setTrackTitle: (v) => set({ trackTitle: v }),
 
     setPrompt: (v) => set({ prompt: v }),
     setLyrics: (v) => set({ lyrics: v }),

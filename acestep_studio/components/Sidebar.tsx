@@ -188,38 +188,42 @@ export default function Sidebar() {
     }
 
     return (
-        <div className="w-72 h-full flex flex-col shrink-0 z-10 bg-black/20 backdrop-blur-xl border-l border-white/10 shadow-2xl">
+        <div className="w-full h-full flex flex-col shrink-0 z-10 bg-black/40 backdrop-blur-3xl border-l border-white/10 shadow-2xl">
             {/* Header / Tabs */}
-            <div className="flex flex-col gap-2 px-4 py-3 border-b border-white/5 bg-white/5">
+            <div className="flex flex-col gap-4 p-5 border-b border-white/5">
                 <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">Library</span>
-                    <div className={`flex items-center gap-1.5 px-2 py-0.5 rounded-full border ${isPro ? 'bg-amber-500/10 border-amber-500/30 text-amber-500' : 'bg-green-500/10 border-green-500/30 text-green-400'}`}>
-                        <span className="text-[10px] font-mono font-bold">{credits} ¢</span>
+                    <h2 className="text-xl font-bold font-heading text-white tracking-tight flex items-center gap-2">
+                        <span className="w-2 h-6 bg-gradient-to-b from-cyan-500 to-blue-500 rounded-full"></span>
+                        Library
+                    </h2>
+                    <div className={`flex items-center gap-1.5 px-3 py-1 rounded-full border ${isPro ? 'bg-amber-500/10 border-amber-500/30 text-amber-500' : 'bg-green-500/10 border-green-500/30 text-green-400'}`}>
+                        <span className="text-xs font-mono font-bold">{credits} ¢</span>
                     </div>
                 </div>
-                <div className="flex items-center justify-between">
-                    <div className="flex gap-1 bg-black/40 p-1 rounded-lg border border-white/5">
+
+                <div className="flex items-center justify-between gap-2">
+                    <div className="flex gap-1 bg-black/40 p-1 rounded-lg border border-white/5 flex-1">
                         <button
                             onClick={() => setTab('local')}
-                            className={`px-3 py-1 rounded-md text-xs font-bold transition-all ${tab === 'local' ? 'bg-purple-600 text-white shadow-lg shadow-purple-900/50' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}
+                            className={`flex-1 px-3 py-1.5 rounded-md text-xs font-bold transition-all ${tab === 'local' ? 'bg-purple-600 text-white shadow-lg shadow-purple-900/50' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}
                         >
                             Local
                         </button>
                         <button
                             onClick={() => setTab('cloud')}
-                            className={`px-3 py-1 rounded-md text-xs font-bold transition-all ${tab === 'cloud' ? 'bg-cyan-600 text-white shadow-lg shadow-cyan-900/50' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}
+                            className={`flex-1 px-3 py-1.5 rounded-md text-xs font-bold transition-all ${tab === 'cloud' ? 'bg-cyan-600 text-white shadow-lg shadow-cyan-900/50' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}
                         >
                             Cloud
                         </button>
                     </div>
-                    <button onClick={load} className="text-gray-400 hover:text-white hover:bg-white/10 transition-all p-1.5 rounded-md">
-                        <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />
+                    <button onClick={load} className="text-gray-400 hover:text-white hover:bg-white/10 transition-all p-2 rounded-lg border border-white/5 bg-black/40">
+                        <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
                     </button>
                 </div>
             </div>
 
             {/* List */}
-            <div className="flex-1 overflow-y-auto p-3 space-y-2 custom-scrollbar">
+            <div className="flex-1 overflow-y-auto p-4 space-y-2 custom-scrollbar">
                 {tab === 'local' ? (
                     files.map(f => {
                         const isActive = currentTrackName === f;
@@ -231,19 +235,19 @@ export default function Sidebar() {
                             >
                                 <div className="flex items-start gap-3">
                                     <div
-                                        className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 transition-transform group-hover:scale-105 ${isActive ? 'shadow-inner' : ''}`}
+                                        className={`w-10 h-10 rounded-lg flex items-center justify-center shrink-0 transition-transform group-hover:scale-105 ${isActive ? 'shadow-inner' : ''}`}
                                         style={getSongGradient(f)}
                                     >
-                                        <FileAudio className="w-4 h-4 text-white drop-shadow-md" />
+                                        <FileAudio className="w-5 h-5 text-white drop-shadow-md" />
                                     </div>
                                     <div className="flex-1 min-w-0">
-                                        <div className={`text-xs font-bold truncate mb-0.5 font-heading ${isActive ? 'text-purple-300' : 'text-gray-200'}`}>{f}</div>
-                                        <div className="text-[10px] text-gray-400 truncate font-mono opacity-70">
+                                        <div className={`text-xs font-bold truncate mb-1 font-heading ${isActive ? 'text-purple-300' : 'text-gray-200'}`}>{f}</div>
+                                        <div className="text-[10px] text-gray-500 truncate font-mono opacity-70">
                                             {f.split('_')[1] || 'Unknown Date'}
                                         </div>
                                     </div>
                                 </div>
-                                <div className="absolute right-2 top-2 opacity-0 group-hover:opacity-100 transition-opacity flex gap-1.5 bg-black/60 p-1 rounded-lg backdrop-blur-md">
+                                <div className="absolute right-2 top-2 opacity-0 group-hover:opacity-100 transition-opacity flex gap-1.5 bg-black/80 p-1.5 rounded-lg backdrop-blur-md shadow-xl border border-white/10 z-20">
                                     <button
                                         onClick={(e) => {
                                             e.stopPropagation();
@@ -307,26 +311,26 @@ export default function Sidebar() {
                             >
                                 <div className="flex items-start gap-3">
                                     <div
-                                        className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 transition-transform group-hover:scale-105 ${isActive ? 'shadow-inner' : ''}`}
+                                        className={`w-10 h-10 rounded-lg flex items-center justify-center shrink-0 transition-transform group-hover:scale-105 ${isActive ? 'shadow-inner' : ''}`}
                                         style={getSongGradient(song.id)}
                                     >
-                                        <Music2 className="w-4 h-4 text-white drop-shadow-md" />
+                                        <Music2 className="w-5 h-5 text-white drop-shadow-md" />
                                     </div>
                                     <div className="flex-1 min-w-0">
-                                        <div className={`text-xs font-bold truncate mb-0.5 font-heading ${isActive ? 'text-cyan-300' : 'text-gray-200'}`}>{song.title || song.local_filename}</div>
+                                        <div className={`text-xs font-bold truncate mb-1 font-heading ${isActive ? 'text-cyan-300' : 'text-gray-200'}`}>{song.title || song.local_filename}</div>
                                         {song.parent && (
                                             <div className="flex items-center gap-1 text-[9px] text-zinc-500 mb-0.5">
                                                 <GitFork size={10} className="text-zinc-600" />
                                                 <span className="truncate">Remix of {song.parent.title}</span>
                                             </div>
                                         )}
-                                        <div className="text-[10px] text-gray-400 truncate font-mono opacity-70 flex gap-2">
+                                        <div className="text-[10px] text-gray-500 truncate font-mono opacity-70 flex gap-2">
                                             <span>{new Date(song.created_at).toLocaleDateString()}</span>
                                             <span>{song.duration}s</span>
                                         </div>
                                     </div>
                                 </div>
-                                <div className="absolute right-2 top-2 opacity-0 group-hover:opacity-100 transition-opacity flex gap-1.5 bg-black/60 p-1 rounded-lg backdrop-blur-md">
+                                <div className="absolute right-2 top-2 opacity-0 group-hover:opacity-100 transition-opacity flex gap-1.5 bg-black/80 p-1.5 rounded-lg backdrop-blur-md shadow-xl border border-white/10 z-20">
                                     <button
                                         onClick={(e) => handleShare(e, song.id)}
                                         title="Share Link"

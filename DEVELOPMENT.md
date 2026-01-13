@@ -40,6 +40,20 @@ This document outlines the execution phases for Opentunes.ai, mapping strategic 
 
 ---
 
+## 🎨 Phase 1.5: UX/UI Modernization (Studio V2) [COMPLETED]
+*Goal: Evolve the specific "App" feel to a pro-grade "Lab" environment, maximizing screen real estate and accessibility.*
+
+*   **1.5.1 Control Panel Redesign**
+    *   [x] **Style Tag Cloud**: Move Genres from dropdown to visible "Pill" cloud at top.
+    *   [x] **Flatten Hierarchy**: Un-collapse Prompt and Lyrics sections for dashboard-style access.
+    *   [x] **Title Input**: Add visual Title field (prepended to prompt logic).
+    *   [x] **Input Card Design**: Restyle inputs to be distinct "Blocks" with high contrast headers.
+*   **1.5.2 Layout Optimization**
+    *   [x] **Persistent History**: Move History from toggle-sidebar to persistent Right Column (if space permits) or improved drawer.
+    *   [x] **Visual Contrast**: Increase contrast on active elements vs background for "Lab" feel.
+
+---
+
 ## 🚀 Phase 2: Commercialization (SaaS Economy) [NEXT UP]
 *Goal: Implement a sustainable Credit-based business model.*
 
