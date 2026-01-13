@@ -1,7 +1,6 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import WaveSurfer from "wavesurfer.js";
-// @ts-expect-error Regions plugin lacks types
 import RegionsPlugin from 'wavesurfer.js/dist/plugins/regions.esm.js';
 import { useStudioStore } from "@/utils/store";
 import { Play, Pause, AlertCircle } from "lucide-react";

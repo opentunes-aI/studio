@@ -43,6 +43,8 @@ export default function ControlPanel() {
     const [loading, setLoading] = useState(false);
     const [showAdvanced, setShowAdvanced] = useState(false);
     const [showPresets, setShowPresets] = useState(false);
+    const [showPrompt, setShowPrompt] = useState(true);
+    const [showLyrics, setShowLyrics] = useState(true);
     const [lyricsTab, setLyricsTab] = useState<'text' | 'visual'>('text');
 
     // Lyrics Wizard State
@@ -163,55 +165,75 @@ export default function ControlPanel() {
             </div>
 
             {/* Prompt */}
-            <div className="space-y-1.5">
-                <label className="text-xs font-bold uppercase tracking-wider text-gray-400">Prompt</label>
-                <textarea
-                    className="w-full h-24 bg-black/20 border border-white/10 rounded-xl p-3 text-sm focus:outline-none focus:ring-1 focus:ring-purple-500/50 focus:border-purple-500/50 text-white placeholder:text-gray-600 resize-none transition-all shadow-inner"
-                    value={prompt}
-                    onChange={e => setPrompt(e.target.value)}
-                    placeholder="Describe style, instruments, mood..."
-                />
+            <div className="space-y-1.5 shrink-0">
+                <button
+                    onClick={() => setShowPrompt(!showPrompt)}
+                    className="w-full text-xs font-bold uppercase tracking-wider text-gray-400 flex justify-between items-center hover:text-white transition-colors"
+                >
+                    <span>Prompt</span>
+                    {showPrompt ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                </button>
+
+                {showPrompt && (
+                    <textarea
+                        className="w-full h-24 bg-black/20 border border-white/10 rounded-xl p-3 text-sm focus:outline-none focus:ring-1 focus:ring-purple-500/50 focus:border-purple-500/50 text-white placeholder:text-gray-600 resize-none transition-all shadow-inner animate-in fade-in slide-in-from-top-1"
+                        value={prompt}
+                        onChange={e => setPrompt(e.target.value)}
+                        placeholder="Describe style, instruments, mood..."
+                    />
+                )}
             </div>
 
             {/* Lyrics */}
-            <div className="space-y-1.5 flex flex-col h-64 shrink-0 transition-all">
+            <div className={`space-y-1.5 flex flex-col shrink-0 transition-all ${showLyrics ? 'h-64' : 'h-auto'}`}>
                 <div className="flex justify-between items-center mb-1">
-                    <div className="flex items-center gap-2">
-                        <label className="text-xs font-bold uppercase tracking-wider text-gray-400">Lyrics</label>
-                        <div className="flex bg-white/5 rounded-lg p-0.5 ml-2 border border-white/5">
+                    <button
+                        onClick={() => setShowLyrics(!showLyrics)}
+                        className="text-xs font-bold uppercase tracking-wider text-gray-400 hover:text-white transition-colors flex items-center gap-2 group flex-1"
+                    >
+                        <span>Lyrics</span>
+                        {showLyrics ? <ChevronUp className="w-4 h-4 ml-auto" /> : <ChevronDown className="w-4 h-4 ml-auto" />}
+                    </button>
+
+                    {showLyrics && (
+                        <div className="flex items-center gap-2 animate-in fade-in zoom-in-95 ml-2">
+                            <div className="flex bg-white/5 rounded-lg p-0.5 border border-white/5">
+                                <button
+                                    onClick={() => setLyricsTab('text')}
+                                    className={`px-2 py-0.5 rounded-md text-[10px] font-bold transition-colors ${lyricsTab === 'text' ? 'bg-purple-500 text-white shadow' : 'text-gray-500 hover:text-white'}`}
+                                >
+                                    Text
+                                </button>
+                                <button
+                                    onClick={() => setLyricsTab('visual')}
+                                    className={`px-2 py-0.5 rounded-md text-[10px] font-bold transition-colors ${lyricsTab === 'visual' ? 'bg-purple-500 text-white shadow' : 'text-gray-500 hover:text-white'}`}
+                                >
+                                    Blocks
+                                </button>
+                            </div>
                             <button
-                                onClick={() => setLyricsTab('text')}
-                                className={`px-2 py-0.5 rounded-md text-[10px] font-bold transition-colors ${lyricsTab === 'text' ? 'bg-purple-500 text-white shadow' : 'text-gray-500 hover:text-white'}`}
+                                onClick={() => setShowLyricsWizard(true)}
+                                className="text-xs flex items-center gap-1 text-cyan-400 hover:text-cyan-300 transition-colors font-bold"
                             >
-                                Text
-                            </button>
-                            <button
-                                onClick={() => setLyricsTab('visual')}
-                                className={`px-2 py-0.5 rounded-md text-[10px] font-bold transition-colors ${lyricsTab === 'visual' ? 'bg-purple-500 text-white shadow' : 'text-gray-500 hover:text-white'}`}
-                            >
-                                Blocks
+                                <Sparkles className="w-3 h-3" /> <span className="hidden sm:inline">Wizard</span>
                             </button>
                         </div>
-                    </div>
-                    <button
-                        onClick={() => setShowLyricsWizard(true)}
-                        className="text-xs flex items-center gap-1 text-cyan-400 hover:text-cyan-300 transition-colors font-bold"
-                    >
-                        <Sparkles className="w-3 h-3" /> <span className="hidden sm:inline">Wizard</span>
-                    </button>
+                    )}
                 </div>
 
-                {lyricsTab === 'text' ? (
-                    <textarea
-                        className="w-full h-full bg-black/20 border border-white/10 rounded-xl p-3 text-sm focus:outline-none focus:ring-1 focus:ring-purple-500/50 text-white placeholder:text-gray-600 resize-none font-mono custom-scrollbar"
-                        value={lyrics}
-                        onChange={e => setLyrics(e.target.value)}
-                        placeholder="[verse]&#10;Line 1...&#10;Line 2..."
-                    />
-                ) : (
-                    <div className="h-full border border-white/10 rounded-xl bg-black/20 p-1 overflow-hidden">
-                        <StructureBuilder value={lyrics} onChange={setLyrics} />
-                    </div>
+                {showLyrics && (
+                    lyricsTab === 'text' ? (
+                        <textarea
+                            className="w-full h-full bg-black/20 border border-white/10 rounded-xl p-3 text-sm focus:outline-none focus:ring-1 focus:ring-purple-500/50 text-white placeholder:text-gray-600 resize-none font-mono custom-scrollbar animate-in fade-in slide-in-from-top-1"
+                            value={lyrics}
+                            onChange={e => setLyrics(e.target.value)}
+                            placeholder="[verse]&#10;Line 1...&#10;Line 2..."
+                        />
+                    ) : (
+                        <div className="h-full border border-white/10 rounded-xl bg-black/20 p-1 overflow-hidden animate-in fade-in slide-in-from-top-1">
+                            <StructureBuilder value={lyrics} onChange={setLyrics} />
+                        </div>
+                    )
                 )}
             </div>
 
