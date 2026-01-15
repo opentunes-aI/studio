@@ -8,7 +8,7 @@ from datetime import datetime
 from contextlib import asynccontextmanager
 from typing import List, Optional, Dict, Any
 
-from fastapi import FastAPI, BackgroundTasks, HTTPException
+from fastapi import FastAPI, BackgroundTasks, HTTPException, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
@@ -171,9 +171,15 @@ async def lifespan(app: FastAPI):
     worker_task.cancel()
 
 app = FastAPI(title="ACE-Step API", lifespan=lifespan)
+print("DEBUG: DEFINING APP ENDPOINTS NOW")
+
+@app.get("/ping")
+def ping():
+    return {"status": "pong"}
 
 # CORS Configuration
-origins = os.getenv("CORS_ALLOWED_ORIGINS", "*").split(",")
+origins = ["*"]
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,

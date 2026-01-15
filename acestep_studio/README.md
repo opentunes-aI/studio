@@ -25,7 +25,7 @@ Copy the `.env.local.example` (or `env.local`) to `.env.local` and fill in your 
 NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=...
 # Optional: Point to deployed backend
-NEXT_PUBLIC_API_URL=http://localhost:8000
+NEXT_PUBLIC_API_URL=http://localhost:7866
 ```
 
 ### 1a. Backend Environment (For Deployment)
@@ -63,7 +63,7 @@ Open [http://localhost:7865](http://localhost:7865).
     *   `app/page.tsx`: Public landing page (`opentunes.ai`).
     *   `app/studio/`: Main application (`app.opentunes.ai`).
 *   **`components/`**: UI Building blocks (ControlPanel, WaveformVisualizer, Sidebar).
-*   **`utils/api.ts`**: Client for the Python Backend (`localhost:8000`).
+*   **`utils/api.ts`**: Client for the Python Backend (`localhost:7866`).
 *   **`utils/supabase.ts`**: Supabase Client instance.
 *   **`utils/store.ts`**: Zustand Global State (Prompt, Parameters, current track).
 

@@ -11,7 +11,7 @@
 ## 🎵 What is Opentunes?
 Opentunes is a commercial-grade **Agentic DAW (Digital Audio Workstation)** built for the future of decentralized music creation. Unlike simple "text-to-music" toys, Opentunes provides a granular **Studio Environment** where you collaborate with AI Agents (Producer, Lyricist, Critic) to craft professional tracks.
 
-**Powered by [ACE-Step](https://github.com/ace-step/ACE-Step), the state-of-the-art Music Foundation Model.** 🚀
+**Powered by [Opentunes AI Studio](https://github.com/opentunes-aI/studio), the state-of-the-art Music Foundation Model.** 🚀
 
 ## ✨ Key Features
 *   **🎹 The Studio**: A specialized React Next.js application for high-fidelity audio control.
@@ -108,4 +108,4 @@ We welcome contributors! Opentunes is open-source software.
 *   **Debugging**: Run `python tools/test_api.py` to verify the backend API is responding correctly.
 
 ## 📜 License
-Apache 2.0. This project builds upon the open-source ACE-Step research.
+Apache 2.0. This project builds upon the open-source Opentunes AI Studio research.
