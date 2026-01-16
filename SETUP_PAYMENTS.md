@@ -21,15 +21,25 @@ NEXT_PUBLIC_APP_URL=http://localhost:7865
 ```
 
 ## 3. Create Products (Price IDs)
-The frontend (`CreditDialog.tsx`) expects specific Price IDs. You must create these **Products** in your Stripe Dashboard matching these IDs (or update the code to match your Stripe IDs):
 
-| Plan Name | Credits | Price | ID (Code Expectation) |
+### A. Subscription Plans (Recurring)
+These should be set up as **Recurring** prices in Stripe.
+
+| Plan Name | Credits | Price/Mo | Features | ID (Code Expectation) |
+| :--- | :--- | :--- | :--- | :--- |
+| **Starter** | 500 | $5.00 | Standard Queue | `price_starter_sub` |
+| **Creator** | 1,200 | $10.00 | Priority, Commercial | `price_creator_sub` |
+| **Studio** | 3,000 | $20.00 | Instant, Fine-tuning | `price_studio_sub` |
+
+### B. Top-up Packs (One-time)
+These should be set up as **One-time** prices in Stripe.
+
+| Pack Name | Credits | Price | ID (Code Expectation) |
 | :--- | :--- | :--- | :--- |
-| **Starter** | 500 | $5.00 | `price_basic` |
-| **Creator** | 1200 | $10.00 | `price_creator` |
-| **Studio** | 3000 | $20.00 | `price_studio` |
+| **Refill 500** | 500 | $5.00 | `price_pack_500` |
+| **Refill 1200** | 1,200 | $10.00 | `price_pack_1200` |
 
-*Note: In Stripe, create a Product named "Starter Pack", add a Price of $5.00, and copy the resulting `price_12345` ID. Then map it in `CreditDialog.tsx` or use the Lookup Keys feature.*
+*Note: You must create these Products in Stripe and update `CreditDialog.tsx` with your actual price IDs (`price_...`) unless you configure Lookup Keys.*
 
 ## 4. Testing Webhooks (Local Development)
 To test if credits are actually added after payment, you need to forward Stripe webhooks to your local API.

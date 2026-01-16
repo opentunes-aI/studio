@@ -53,8 +53,8 @@
 *   [x] **Credit System**: Virtual currency for compute usage (e.g., 5 points per song).
 *   [x] **Tiers**:
     *   **Free**: Daily credit grant (e.g., 50/day), Public tracks only, Standard Queue.
-    *   **Pro ($15/mo)**: Monthly credit grant (e.g., 1000/mo), Private tracks, Stem Separation, Priority Queue.
-*   [ ] **Payments**: Stripe Integration for Subscriptions and Credit Top-ups.
+    *   **Pro ($5-20/mo)**: Monthly credit grant (Subscriptions), Private tracks, Stem Separation, Priority Queue.
+*   [x] **Payments**: Stripe Integration for Subscriptions and Credit Top-ups (Hybrid Model).
 *   [ ] **Web3 (Future)**: Optional wallet connection for NFT minting (Phase 3+).
 
 ### 4.6 Platform Support

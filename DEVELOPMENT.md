@@ -82,9 +82,9 @@ This document outlines the execution phases for Opentunes.ai, mapping strategic 
     *   [x] **UI Component**: "Credit Balance" badge in Sidebar.
     *   [x] **Backend Logic**: Enforce credit checks in `POST /generate`.
 *   **2.2 Payments & Subscriptions** (Ref: PRD 4.5)
-    *   [x] **Stripe Integration**: Checkout for "Credit Packs" and "Pro Plans".
-    *   [x] **Webhooks**: Secure idempotent handling of `payment.succeeded`.
-    *   [ ] **Billing Dashboard**: User Settings UI to view Transaction History.
+    *   [x] **Stripe Integration**: Hybrid Billing (Subscriptions + Top-ups).
+    *   [x] **Webhooks**: Secure idempotent handling of `payment.succeeded` and `invoice.payment_succeeded`.
+    *   [x] **Billing Dashboard**: User Settings UI (Tabs: Account, Billing History).
     *   [ ] **Pro Features**: Gate "Stem Separation" and "Private Mode" behind `is_pro` flag.
 *   **2.3 Web 3 Integration (Deferred)**
     *   [ ] **Wallet Login**: Implementation moved to Phase 3.

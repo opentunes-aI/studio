@@ -22,16 +22,22 @@ export function useBillingHistory() {
     async function fetchHistory() {
         setLoading(true);
         try {
-            const user = await supabase?.auth.getUser();
-            if (!user?.data?.user?.id) return;
+            const { data: { user } } = await supabase.auth.getUser();
+            if (!user) {
+                setHistory([]);
+                return;
+            }
 
-            const res = await fetch(`${API_BASE}/billing/history/${user.data.user.id}`);
+            const res = await fetch(`${API_BASE}/billing/history/${user.id}`);
             if (res.ok) {
                 const data = await res.json();
-                setHistory(data.history || []);
+                setHistory(Array.isArray(data.history) ? data.history : []);
+            } else {
+                setHistory([]);
             }
         } catch (e) {
-            console.error(e);
+            console.error("Billing History Error:", e);
+            setHistory([]);
         } finally {
             setLoading(false);
         }

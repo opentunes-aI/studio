@@ -26,6 +26,8 @@ NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=...
 # Optional: Point to deployed backend
 NEXT_PUBLIC_API_URL=http://localhost:7866
+# Optional: Stripe (for Billing)
+NEXT_PUBLIC_APP_URL=http://localhost:7865
 ```
 
 ### 1a. Backend Environment (For Deployment)
@@ -79,6 +81,7 @@ Open [http://localhost:7865](http://localhost:7865).
     *   **User Identity**: Rich Profiles, Custom Avatars, and Persistent Settings.
     *   **Community Feed**: Global showcase of public tracks with Author attribution.
     *   **Cloud Sync**: Hybrid "Local-First" architecture. Files stay on disk; metadata syncs to Supabase.
+    *   **Billing & Credits**: New! Subscribe to monthly plans or top-up credits via Stripe.
 *   **AI Agent Chat**: A robust multi-agent orchestrator powered by `smolagents` and `Ollama`.
     *   **Retrieval-Augmented Generation (RAG)**: Agents search a "Memory" database (Supabase `pgvector`) to find previous successful prompts and lyrics before generating.
     *   **Real-Time Streaming**: Watch the "Director", "Producer", "Lyricist", and "Critic" think and collaborate live in the chat.

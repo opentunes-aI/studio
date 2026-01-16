@@ -22,6 +22,7 @@ Opentunes is a commercial-grade **Agentic DAW (Digital Audio Workstation)** buil
     *   **Remixing**: Generate variations with controlled variance.
     *   **Lyrics Wizard**: Auto-generate lyrics using local LLMs (Ollama).
 *   **🌐 Hybrid Cloud**: "Local-First" architecture. Run the backend on your GPU, store your library in the Cloud (Supabase).
+*   **💳 Billing & Credits**: Integrated SaaS economy with Subscriptions and One-time packs (Stripe).
 *   **🎨 Deep Space UX**: A premium, glassmorphism-based dark mode interface designed for creators.
 
 ## 🚀 Getting Started (Local)
