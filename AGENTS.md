@@ -24,9 +24,10 @@ Before answering complex requests, ALWAYS establish context by reading:
 
 ## 📍 Architecture Cheat Sheet
 *   **Frontend**: Next.js 14 -> **Cloudflare Pages** (Static Export or Edge).
-*   **Backend**: FastAPI -> **Docker Container** (GPU Cloud like Modal).
+*   **Backend**: FastAPI (Modular Monolith: Routers/Services/Core) -> **Docker Container**.
 *   **Database**: Supabase (Postgres + Vector).
-*   **Auth**: Supabase Auth (JWT).
+*   **Auth**: Supabase Auth (JWT) + Local Guest Mode.
+*   **Agentic System**: Multi-Agent RAG (Director/Producer/Lyricist) with Feedback Loop (Starring).
 *   **Economy**: Credit System (SaaS) -> Stripe.
 
 ## 🔄 Common Workflows
