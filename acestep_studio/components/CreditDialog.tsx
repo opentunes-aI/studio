@@ -18,7 +18,7 @@ type Plan = {
 
 const PLANS: Plan[] = [
     {
-        id: "price_starter_sub",
+        id: "price_1SqJJQQSlQu7Rwj9wBMyU5qd",
         name: "Starter",
         price: 5,
         credits: 500,
@@ -26,7 +26,7 @@ const PLANS: Plan[] = [
         color: "blue"
     },
     {
-        id: "price_creator_sub",
+        id: "price_1SqJJRQSlQu7Rwj9DE1vwgBl",
         name: "Creator",
         price: 10,
         credits: 1200,
@@ -35,7 +35,7 @@ const PLANS: Plan[] = [
         color: "purple"
     },
     {
-        id: "price_studio_sub",
+        id: "price_1SqJJRQSlQu7Rwj9UGagxrde",
         name: "Studio",
         price: 20,
         credits: 3000,
@@ -45,8 +45,8 @@ const PLANS: Plan[] = [
 ];
 
 const PACKS: Plan[] = [
-    { id: "price_pack_500", name: "Refill 500", price: 5, credits: 500, features: [], color: "emerald", isPack: true },
-    { id: "price_pack_1200", name: "Refill 1200", price: 10, credits: 1200, features: [], color: "emerald", isPack: true },
+    { id: "price_1SqJJSQSlQu7Rwj91fFSYbmv", name: "Refill 500", price: 5, credits: 500, features: [], color: "emerald", isPack: true },
+    { id: "price_1SqJJSQSlQu7Rwj9tD86STRv", name: "Refill 1200", price: 10, credits: 1200, features: [], color: "emerald", isPack: true },
 ];
 
 export default function CreditDialog({ isOpen, onClose }: { isOpen: boolean, onClose: () => void }) {

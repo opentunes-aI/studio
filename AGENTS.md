@@ -28,7 +28,7 @@ Before answering complex requests, ALWAYS establish context by reading:
 *   **Database**: Supabase (Postgres + Vector).
 *   **Auth**: Supabase Auth (JWT) + Local Guest Mode.
 *   **Agentic System**: Multi-Agent RAG (Director/Producer/Lyricist) with Feedback Loop (Starring).
-*   **Economy**: Credit System (SaaS) -> Stripe.
+*   **Economy**: Credit System (SaaS) -> Stripe (Hybrid Billing: Subscriptions + Packs).
 
 ## 🔄 Common Workflows
 *   **Running Studio**: `run_studio.bat` (Windows) handles everything.
