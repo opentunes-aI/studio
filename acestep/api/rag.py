@@ -2,7 +2,7 @@ import os
 import logging
 from typing import List, Dict, Any
 from sentence_transformers import SentenceTransformer
-from supabase import create_client, Client
+from supabase import create_client, Client, ClientOptions
 
 logger = logging.getLogger(__name__)
 
@@ -38,13 +38,16 @@ class RAGEngine:
             if not self.model:
                 logger.info(f"Loading Embedding Model: {self.embedding_model_name}...")
                 self.model = SentenceTransformer(self.embedding_model_name)
+                logger.info("Embedding Model Loaded.")
             
             if not self.supabase:
                 url = os.getenv("NEXT_PUBLIC_SUPABASE_URL")
                 key = os.getenv("SUPABASE_SERVICE_ROLE_KEY") or os.getenv("NEXT_PUBLIC_SUPABASE_ANON_KEY")
                 
                 if url and key:
-                    self.supabase = create_client(url, key)
+                    # Set short timeout to avoid hanging
+                    opts = ClientOptions(postgrest_client_timeout=5)
+                    self.supabase = create_client(url, key, options=opts)
                 else:
                     logger.warning("Supabase credentials missing. RAG Disabled.")
                     self._ready_check_done = True

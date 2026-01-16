@@ -68,9 +68,11 @@
     ```
 *   **Processing**:
     1.  Frontend -> Backend API (`POST /generate`).
-    2.  Worker -> `AudioEngine` (Inference).
-    3.  Output -> Local Disk (`./outputs/*.wav`) + Metadata JSON (`_input_params.json`).
-    4.  Sync -> Background Task syncs File + DB Entry to Supabase.
+    2.  `MusicRouter` validates request -> calls `JobService.create_job()`.
+    3.  `JobService` checks Credits (`BillingService`) -> push to Queue.
+    4.  Worker -> `AudioEngine` (Inference).
+    5.  Output -> Local Disk (`./outputs/*.wav`) + Metadata JSON (`_input_params.json`).
+    6.  Sync -> Background Task syncs File + DB Entry to Supabase.
 
 ### 2.2 Agent Communication (Stream)
 *   **Format**: NDJSON (Newline Delimited JSON).

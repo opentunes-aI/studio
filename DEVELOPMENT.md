@@ -37,6 +37,20 @@ This document outlines the execution phases for Opentunes.ai, mapping strategic 
         *   Select Provider (Modal is recommended for flexible Serverless GPU).
         *   Deploy and secure API Endpoint (HTTPS).
 
+*   **1.7 Architecture Hardening (Refactor)** [COMPLETED]
+    *   *Goal: Optimize codebase with modular abstraction (Blackbox approach) for maintainability and isolated debugging.*
+    *   **Backend (Modular Monolith)**:
+        *   [x] **Router Isolation**: Defined `routers/music.py`, `routers/agent.py`, `routers/system.py`.
+        *   [x] **Service Layer**: Business logic separated into `services/job_service.py` (`JobService`) and `services/billing_service.py`.
+        *   [x] **Core Infrastructure**: Centralized Config/Env in `core/config.py` and Database in `core/database.py`.
+        *   [x] **Dependency Injection**: Removed global state; services now depend on injected singleton managers.
+    *   **Frontend (Feature-Based)**:
+        *   [x] **Custom Hooks**: Extracted logic to `hooks/useLocalLibrary.ts` (with RAG starring) and `hooks/useCloudLibrary.ts`.
+        *   [x] **UX Polish**: Modularized `Sidebar` with new "Star", "Sync", and "Rename" action components.
+    *   **Agentic Optimization**:
+        *   [x] **Agent Memory Feedback**: Implemented "Star" button to manually index tracks into RAG memory.
+        *   [x] **Defense in Depth**: Added fallback parsers to Director to handle local LLM hallucinations gracefully.
+
 
 ---
 

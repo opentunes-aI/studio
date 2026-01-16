@@ -73,11 +73,11 @@ def parse_llm_json(text: str) -> Optional[Dict]:
 
 async def run_producer(context: str):
     # Returns (name, result)
-    return ("producer", await asyncio.to_thread(producer_agent.run, f"{context}\nTASK: Search library for inspiration. IF NO MATCHES, use your own knowledge. ALWAYS Configure studio parameters. FINAL ANSWER MUST BE THE JSON OUTPUT OF THE CONFIGURE TOOL."))
+    return ("producer", await asyncio.to_thread(producer_agent.run, f"{context}\nTASK: Search library for inspiration. IF NO MATCHES, use your own knowledge. ALWAYS Configure studio parameters using the 'configure_studio' tool."))
 
 async def run_lyricist(context: str):
     # Returns (name, result)
-    return ("lyricist", await asyncio.to_thread(lyricist_agent.run, f"{context}\nTASK: Search library for rhymes/style, then Write lyrics. Return JSON."))
+    return ("lyricist", await asyncio.to_thread(lyricist_agent.run, f"{context}\nTASK: Search library for rhymes/style, then Write lyrics. You MUST use the 'update_lyrics' tool to return the result."))
 
 async def process_user_intent(user_input: str, history: List[Dict[str, str]] = []):
     """
@@ -205,7 +205,7 @@ async def process_user_intent(user_input: str, history: List[Dict[str, str]] = [
                                 # Fallback logic for Lyricist raw text
                                 if name == "lyricist":
                                      clean_res = re.sub(r"```.*?```", "", res, flags=re.DOTALL).strip()
-                                     if clean_res and (len(clean_res) > 20 or "[" in clean_res):
+                                     if clean_res and len(clean_res) > 5:
                                          valid_result = {
                                             "action": "update_lyrics",
                                             "params": { "lyrics": clean_res },
@@ -214,7 +214,31 @@ async def process_user_intent(user_input: str, history: List[Dict[str, str]] = [
                                          snippet = "Lyrics Drafted (Text Mode)"
                                 else:
                                     # Parsing Failed
-                                    snippet = f"Error: Invalid JSON from {name}. Raw: {res[:50]}..."
+                                    # Catch [Music Title: X] [Genre: Y] format which Qwen sometimes outputs
+                                    if name == "producer":
+                                        bracket_matches = re.findall(r"\[([^:]+):\s*([^\]]+)\]", res)
+                                        if bracket_matches:
+                                            # Convert to dict
+                                            data = {k.strip().lower(): v.strip() for k, v in bracket_matches}
+                                            
+                                            # Map to configure_studio params
+                                            params = {
+                                                "title": data.get("music title") or data.get("title") or "Untitled",
+                                                "prompt": data.get("genre") or data.get("style") or "Pop",
+                                                "steps": 30,
+                                                "duration": 60
+                                            }
+                                            # Append other descriptive fields to prompt
+                                            desc_parts = [v for k, v in data.items() if k not in ["music title", "title", "genre", "style"]]
+                                            if desc_parts:
+                                                params["prompt"] += ", " + ", ".join(desc_parts)
+
+                                            valid_result = {"action": "configure", "params": params}
+                                            snippet = f"Configured (Text Fixed): {params['title']}"
+                                        else:
+                                            snippet = f"Error: Invalid JSON from {name}. Raw: {res[:50]}..."
+                                    else:
+                                        snippet = f"Error: Invalid JSON from {name}. Raw: {res[:50]}..."
 
                         # Log the completion
                         yield json.dumps({"type": "log", "step": name.capitalize(), "message": snippet})

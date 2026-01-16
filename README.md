@@ -16,6 +16,7 @@ Opentunes is a commercial-grade **Agentic DAW (Digital Audio Workstation)** buil
 ## ✨ Key Features
 *   **🎹 The Studio**: A specialized React Next.js application for high-fidelity audio control.
 *   **🤖 Agentic Workflow**: Chat with the "Producer Agent" to refine your vibe, lyrics, and arrangements iteratively.
+    *   **New**: **Agent Memory**: "Star" your favorite tracks to teach the AI what you like. The agents recall your starred prompts and lyrics to improve future generations.
 *   **🔧 Precision Tools**:
     *   **In-Painting**: Select a region on the waveform to fix or rewrite (Repaint).
     *   **Remixing**: Generate variations with controlled variance.

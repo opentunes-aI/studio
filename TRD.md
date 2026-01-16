@@ -11,14 +11,19 @@
 ### 2.1 Frontend (`/acestep_studio`)
 *   [x] **Framework**: Next.js 14 (App Router).
 *   [x] **Language**: TypeScript.
+*   [x] **Architecture**: **Feature-Based** structure (`components/features/Library`).
+*   [x] **Logic Layer**: **Custom Hooks** (`hooks/useAudio.ts`) decouple UI from State/API.
 *   [x] **Styling**: Tailwind CSS (Vanilla CSS variables for themes).
-*   [x] **Layout**: Immersive Mode with Collapsible Panels (Zustand State).
 *   [x] **State Management**: Zustand (Global Store).
 *   [x] **Data Fetching**: Supabase JS Client + Native `fetch`.
 *   [x] **Audio Visualization**: `wavesurfer.js`.
 
 ### 2.2 Backend (`/acestep`)
 *   [x] **Framework**: FastAPI (ASGI).
+*   [x] **Architecture**: **Modular Monolith**.
+    *   **Routers** (`api/routers/`): Handle HTTP, Auth, Validation.
+    *   **Services** (`api/services/`): Pure Business Logic (Billing, Job Queue).
+    *   **Core** (`api/core/`): Configuration, Database, Logging.
 *   [x] **Language**: Python 3.10+.
 *   [x] **ML Engine**: PyTorch.
 *   [x] **Architecture**: Model Agnostic Engine (Factory Pattern).

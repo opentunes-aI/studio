@@ -73,7 +73,7 @@ Open [http://localhost:7865](http://localhost:7865).
 *   **Immersive Mode**: Collapsible sidebars (Control Panel & Library) for focused editing.
 *   **Persistent Player**: Global audio playback continues across pages.
 *   **Real-time Console**: Polls the backend for generation logs.
-*   **Library Management**: Sync Local files to Cloud, and **Delete** unwanted tracks.
+*   **Library Management**: Sync Local files to Cloud, **Rename**, **Delete**, and **Star** (save to Agent Memory) your best tracks.
 
 *   **Social Network**: 
     *   **User Identity**: Rich Profiles, Custom Avatars, and Persistent Settings.

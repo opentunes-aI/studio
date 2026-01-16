@@ -24,7 +24,7 @@ export function useChatStream() {
     const [currentSessionId, setCurrentSessionId] = useState<string | null>(null);
     const [showSessionList, setShowSessionList] = useState(false);
 
-    const { setPrompt, setSteps, setCfgScale, setDuration, setSeed, setLyrics, setCoverImage, lastCompletedTrack } = useStudioStore();
+    const { setPrompt, setSteps, setCfgScale, setDuration, setSeed, setLyrics, setCoverImage, setTrackTitle, lastCompletedTrack } = useStudioStore();
     const handledTrackRef = useRef<string | null>(null);
 
     // Listen for completed tracks from global store
@@ -49,23 +49,15 @@ export function useChatStream() {
         if (!act) return;
         const params = act.params || act;
 
-        // Debug confirmation in chat (Temporary)
-        /*
-        setMessages(prev => [...prev, { 
-            role: "agent", 
-            content: [{ type: 'log', message: `Debug: Action=${act.action}` }], 
-            id: Date.now() 
-        }]);
-        */
-
         if (act.action === 'configure' || (params?.prompt && !act.message)) {
             if (params.prompt) setPrompt(String(params.prompt));
+            if (params.title) setTrackTitle(String(params.title));
             if (params.steps) setSteps(Number(params.steps) || 30);
             if (params.cfg_scale) setCfgScale(Number(params.cfg_scale) || 7.0);
             if (params.duration) setDuration(Number(params.duration) || 30);
             if (params.seed) setSeed(Number(params.seed) || null);
         } else if (act.action === 'update_lyrics') {
-            let text = params.lyrics || params.content || params.lyric_content || "";
+            let text = params.lyrics || params.content || params.lyric_content || params.text || "";
 
             // Unpack if it's a nested JSON string (common LLM artifact)
             if (typeof text === 'string' && text.trim().startsWith('{')) {

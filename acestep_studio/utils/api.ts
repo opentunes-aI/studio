@@ -52,6 +52,7 @@ export async function getHistory(): Promise<{ files: string[] }> {
         if (!res.ok) return { files: [] };
         return res.json();
     } catch (e) {
+        console.error("getHistory API Error:", e);
         return { files: [] };
     }
 }

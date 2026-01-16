@@ -61,9 +61,15 @@
 *   [ ] **Mobile PWA**: Installable on iOS/Android via Browser.
 *   [ ] **Native Wrapper**: App Store version (Capacitor).
 
+## 5. Non-Functional Requirements
+### 5.1 Maintainability
+*   **Modular Architecture**: Codebase must use strict separation of concerns (Routers/Services/Projections) to allow "Blackbox" debugging of isolated modules.
+*   **Type Safety**: Strict TypeScript interfaces and Pydantic Models for all data contracts.
+*   **Atomic Components**: Frontend components should ideally be < 200 lines; larger features must be composed of atomic sub-components.
+
 ---
 
-## 5. Constraints & Assumptions
+## 6. Constraints & Assumptions
 *   **Hardware**: User must have an NVIDIA GPU (8GB+ VRAM) for Local Mode.
 *   **Network**: Requires Internet for RAG (Supabase), Agents (Ollama/Groq), and Visualizer.
 *   **Latency**: First generation has cold-start latency (Model Load); subsequent are faster.

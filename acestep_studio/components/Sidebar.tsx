@@ -1,123 +1,53 @@
 "use client";
-import { useEffect, useState } from "react";
-import { getHistory, getTrackMetadata, deleteLocalFile, renameLocalFile } from "@/utils/api";
-import { Music2, RefreshCw, FileAudio, Wand2, Database, Trash2, Share2, Pencil, GitFork, Download, Check, AlertTriangle, Loader2 } from "lucide-react";
-import { useStudioStore } from "@/utils/store";
-import { syncTrackToCloud, deleteCloudSong, supabase } from "@/utils/supabase";
-import { getSongGradient } from "@/utils/visuals";
+import { useState } from "react";
 import { API_URL } from "@/utils/config";
+import { useStudioStore } from "@/utils/store";
+import { useLocalLibrary } from "@/hooks/useLocalLibrary";
+import { useCloudLibrary, CloudSong } from "@/hooks/useCloudLibrary";
+import { useCredits } from "@/hooks/useCredits";
+import { getTrackMetadata } from "@/utils/api";
+import { syncTrackToCloud } from "@/utils/supabase";
+
+import { Music2, RefreshCw, FileAudio, Wand2, Database, Trash2, Share2, Pencil, GitFork, Download, Check, AlertTriangle, Loader2, Star } from "lucide-react";
+import { getSongGradient } from "@/utils/visuals";
+
+// Helper for future Toast integration
+const notify = (msg: string, type: 'info' | 'error' = 'info') => {
+    // In Phase 2: Replace with sonner.toast()
+    if (type === 'error') alert(msg);
+    else console.log(msg);
+};
 
 export default function Sidebar() {
     const [tab, setTab] = useState<'local' | 'cloud'>('local');
-    const [files, setFiles] = useState<string[]>([]);
-    const [cloudSongs, setCloudSongs] = useState<any[]>([]); // Cloud rows
-    const [loading, setLoading] = useState(false);
 
-    // Store Actions
+    // Hooks
+    const localLib = useLocalLibrary();
+    const cloudLib = useCloudLibrary();
+    const { credits, isPro } = useCredits();
+
+    // Store
     const setCurrentTrack = useStudioStore(s => s.setCurrentTrack);
     const setAllParams = useStudioStore(s => s.setAllParams);
-    const setCredits = useStudioStore(s => s.setCredits);
-    const setIsPro = useStudioStore(s => s.setIsPro);
-    const credits = useStudioStore(s => s.credits);
-    const isPro = useStudioStore(s => s.isPro);
-
-    // Legacy / Other
     const setParentId = useStudioStore(s => s.setParentId);
     const currentTrackName = useStudioStore(s => s.currentTrackName);
 
-    async function load() {
-        setLoading(true);
-        try {
-            // Load Wallet
-            if (supabase) {
-                try {
-                    const { data: { user } } = await supabase.auth.getUser();
-                    if (user) {
-                        const { data: wallet, error } = await supabase.from('wallets').select('*').eq('user_id', user.id).single();
-                        if (error) console.warn("Wallet fetch failed (Migration pending?):", error);
-                        if (wallet) {
-                            setCredits(wallet.balance);
-                            setIsPro(wallet.is_pro);
-                        }
-                    }
-                } catch (e) {
-                    console.warn("Wallet system unavailable:", e);
-                }
-            }
+    // --- Actions ---
 
-            if (tab === 'local') {
-                const res = await getHistory();
-                setFiles(Array.isArray(res?.files) ? res.files : []);
-            } else {
-                if (!supabase) return;
-                const { data, error } = await supabase
-                    .from('songs')
-                    .select('*')
-                    .order('created_at', { ascending: false });
+    // 1. Load / Refresh
+    const load = () => {
+        if (tab === 'local') localLib.refresh();
+        else cloudLib.refresh();
+    };
 
-                if (data) {
-                    const parentIds = [...new Set(data.map((s: any) => s.parent_id).filter(Boolean))];
-                    const parentMap: Record<string, string> = {};
-
-                    if (parentIds.length > 0) {
-                        const { data: parents } = await supabase.from('songs').select('id, title').in('id', parentIds);
-                        if (parents) parents.forEach((p: any) => parentMap[p.id] = p.title);
-                    }
-
-                    const enriched = data.map((s: any) => ({
-                        ...s,
-                        parent: s.parent_id ? { title: parentMap[s.parent_id] || "Unknown" } : null
-                    }));
-                    setCloudSongs(enriched);
-                }
-                if (error) console.error(error);
-            }
-        } catch (e) { console.error(e); }
-        finally { setLoading(false); }
-    }
-
-    useEffect(() => {
-        load();
-
-        let channel: any = null;
-        async function initSub() {
-            if (supabase) {
-                const { data: { user } } = await supabase.auth.getUser();
-                if (user) {
-                    // Remove existing if any (cleanup handles it, but safety)
-                    channel = supabase
-                        .channel('wallet-changes')
-                        .on('postgres_changes', {
-                            event: 'UPDATE',
-                            schema: 'public',
-                            table: 'wallets',
-                            filter: `user_id=eq.${user.id}`
-                        }, (payload: any) => {
-                            const newBal = payload.new.balance;
-                            setCredits(newBal);
-                        })
-                        .subscribe();
-                }
-            }
-        }
-        initSub();
-
-        return () => { if (channel) supabase?.removeChannel(channel); };
-    }, [tab]);
-
-    const API_BASE = API_URL;
-
+    // 2. Remix
     async function handleRemix(e: React.MouseEvent, filename: string, cloudMeta?: any, songId?: string) {
         e.stopPropagation();
-
         setParentId(songId || null);
 
         let meta: any = null;
-        if (cloudMeta) {
-            meta = cloudMeta;
-        } else {
-            meta = await getTrackMetadata(filename);
-        }
+        if (cloudMeta) meta = cloudMeta;
+        else meta = await getTrackMetadata(filename);
 
         if (meta) {
             setAllParams({
@@ -129,111 +59,39 @@ export default function Sidebar() {
                 cfgScale: meta.guidance_scale || 15,
                 retakeVariance: 0.2
             });
-            alert(`Loaded remix settings for ${filename.slice(0, 20)}...`);
+            notify(`Loaded remix settings for ${filename}`);
         } else {
-            alert(`Metadata not found. Cannot remix.`);
+            notify(`Metadata not found.`, 'error');
         }
     }
 
-    async function handleDeleteLocal(e: React.MouseEvent, filename: string) {
-        e.stopPropagation();
-        if (!confirm(`Delete "${filename}" permanently? This cannot be undone.`)) return;
-
-        // Release Lock if playing (Windows Fix)
-        if (currentTrackName === filename) {
-            setCurrentTrack(null, null);
-        }
-
-        try {
-            await deleteLocalFile(filename);
-            load();
-        } catch (err) { alert(err); }
-    }
-
-    async function handleDeleteCloud(e: React.MouseEvent, song: any) {
-        e.stopPropagation();
-        if (!confirm(`Delete "${song.title}" from Cloud Library?`)) return;
-        try {
-            await deleteCloudSong(song);
-            load();
-        } catch (err) { alert(err); }
-    }
-
-    async function handleShare(e: React.MouseEvent, songId: string) {
-        e.stopPropagation();
-        const url = `${window.location.origin}/studio/song/${songId}`;
-        navigator.clipboard.writeText(url);
-        alert(`Link copied: ${url}`);
-    }
-
-    async function handleRenameCloud(e: React.MouseEvent, song: any) {
-        e.stopPropagation();
-        const newTitle = prompt("Rename song:", song.title || "Untitled");
-        if (newTitle && newTitle.trim() !== "") {
-            if (!supabase) return;
-            const { error } = await supabase.from('songs').update({ title: newTitle }).eq('id', song.id);
-            if (!error) {
-                load();
-            } else {
-                console.error(error);
-                alert("Failed to rename.");
-            }
-        }
-    }
-
+    // 3. Local Actions
     const [renamingFile, setRenamingFile] = useState<string | null>(null);
-    const [syncingId, setSyncingId] = useState<string | null>(null);
-    const [syncStatus, setSyncStatus] = useState<'idle' | 'success' | 'error'>('idle');
 
     async function finishRename(filename: string, newName: string) {
         setRenamingFile(null);
         const baseName = filename.replace(/\.(wav|mp3|flac|ogg)$/i, "");
         if (!newName || newName.trim() === "" || newName === baseName) return;
-
         try {
-            await renameLocalFile(filename, newName); // API call
-            load();
-        } catch (err: any) { alert("Rename Failed: " + err.message); }
+            await localLib.renameFile(filename, newName);
+        } catch (err: any) { notify(err.message, 'error'); }
     }
 
     async function handleSync(e: React.MouseEvent, filename: string) {
         e.stopPropagation();
-        if (syncingId) return;
-
-        setSyncingId(filename);
-        setSyncStatus('idle');
+        if (!confirm(`Sync "${filename}" to Cloud?`)) return;
 
         try {
-            if (confirm(`Sync "${filename}" to Cloud Library?`)) {
-                await syncTrackToCloud(filename);
-                setSyncStatus('success');
-                setTimeout(() => {
-                    setSyncingId(null);
-                    setSyncStatus('idle');
-                }, 4000);
-            } else {
-                setSyncingId(null);
-            }
+            await syncTrackToCloud(filename);
+            notify("Sync started (check cloud tab)");
         } catch (err: any) {
-            console.error(err);
-            setSyncStatus('error');
-
-            setTimeout(() => {
-                let msg = err.message || "Unknown Error";
-                if (msg.includes("row-level security") || msg.includes("Not authenticated")) {
-                    msg = "Please Log In to Cloud to sync.";
-                }
-                alert("Sync Failed: " + msg);
-                setSyncingId(null);
-                setSyncStatus('idle');
-            }, 100);
+            notify("Sync Failed: " + err.message, 'error');
         }
     }
 
-    async function handleRenameLocal(e: React.MouseEvent, filename: string) {
-        e.stopPropagation();
-        setRenamingFile(filename);
-    }
+    // --- Render ---
+
+    const isLoading = tab === 'local' ? localLib.loading : cloudLib.loading;
 
     return (
         <div className="w-full h-full flex flex-col shrink-0 z-10 bg-black/40 backdrop-blur-3xl border-l border-white/10 shadow-2xl">
@@ -253,19 +111,19 @@ export default function Sidebar() {
                     <div className="flex gap-1 bg-black/40 p-1 rounded-lg border border-white/5 flex-1">
                         <button
                             onClick={() => setTab('local')}
-                            className={`flex-1 px-3 py-1.5 rounded-md text-xs font-bold transition-all ${tab === 'local' ? 'bg-purple-600 text-white shadow-lg shadow-purple-900/50' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}
+                            className={`flex-1 px-3 py-1.5 rounded-md text-xs font-bold transition-all ${tab === 'local' ? 'bg-purple-600 text-white shadow-lg' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}
                         >
                             Local
                         </button>
                         <button
                             onClick={() => setTab('cloud')}
-                            className={`flex-1 px-3 py-1.5 rounded-md text-xs font-bold transition-all ${tab === 'cloud' ? 'bg-cyan-600 text-white shadow-lg shadow-cyan-900/50' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}
+                            className={`flex-1 px-3 py-1.5 rounded-md text-xs font-bold transition-all ${tab === 'cloud' ? 'bg-cyan-600 text-white shadow-lg' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}
                         >
                             Cloud
                         </button>
                     </div>
                     <button onClick={load} className="text-gray-400 hover:text-white hover:bg-white/10 transition-all p-2 rounded-lg border border-white/5 bg-black/40">
-                        <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
+                        <RefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />
                     </button>
                 </div>
             </div>
@@ -273,19 +131,16 @@ export default function Sidebar() {
             {/* List */}
             <div className="flex-1 overflow-y-auto p-4 space-y-2 custom-scrollbar">
                 {tab === 'local' ? (
-                    files.map(f => {
+                    localLib.files.map(f => {
                         const isActive = currentTrackName === f;
                         return (
                             <div
                                 key={f}
-                                onClick={() => setCurrentTrack(`${API_BASE}/outputs/${f}`, f)}
-                                className={`group relative p-3 rounded-xl cursor-pointer border transition-all duration-200 ${isActive ? 'bg-purple-600/20 border-purple-500/50 shadow-[0_0_15px_-5px_rgba(124,58,237,0.3)]' : 'bg-white/5 hover:bg-white/10 border-white/5 hover:border-white/10'} hover:translate-x-1`}
+                                onClick={() => setCurrentTrack(`${API_URL}/outputs/${f}`, f)}
+                                className={`group relative p-3 rounded-xl cursor-pointer border transition-all duration-200 ${isActive ? 'bg-purple-600/20 border-purple-500/50 shadow-purple-900/20' : 'bg-white/5 hover:bg-white/10 border-white/5'} hover:translate-x-1`}
                             >
                                 <div className="flex items-start gap-3">
-                                    <div
-                                        className={`w-10 h-10 rounded-lg flex items-center justify-center shrink-0 transition-transform group-hover:scale-105 ${isActive ? 'shadow-inner' : ''}`}
-                                        style={getSongGradient(f)}
-                                    >
+                                    <div className="w-10 h-10 rounded-lg flex items-center justify-center shrink-0" style={getSongGradient(f)}>
                                         <FileAudio className="w-5 h-5 text-white drop-shadow-md" />
                                     </div>
                                     <div className="flex-1 min-w-0">
@@ -298,156 +153,53 @@ export default function Sidebar() {
                                                 onBlur={(e) => finishRename(f, e.target.value)}
                                                 onKeyDown={(e) => {
                                                     if (e.key === 'Enter') finishRename(f, e.currentTarget.value);
-                                                    if (e.key === 'Escape') setRenamingFile(null);
-                                                    e.stopPropagation();
                                                 }}
                                                 onClick={(e) => e.stopPropagation()}
                                             />
                                         ) : (
-                                            <div className={`text-xs font-bold truncate mb-1 font-heading ${isActive ? 'text-purple-300' : 'text-gray-200'}`}>{f}</div>
+                                            <div className={`text-xs font-bold truncate mb-1 ${isActive ? 'text-purple-300' : 'text-gray-200'}`}>{f}</div>
                                         )}
                                         <div className="text-[10px] text-gray-500 truncate font-mono opacity-70">
                                             {f.split('_')[1] || 'Unknown Date'}
                                         </div>
                                     </div>
                                 </div>
-                                <div
-                                    onClick={(e) => e.stopPropagation()}
-                                    className="absolute right-2 top-2 flex gap-1.5 bg-black/90 p-1.5 rounded-lg border border-white/10 z-50 opacity-100"
-                                >
-                                    <button
-                                        onClick={(e) => handleSync(e, f)}
-                                        title={syncingId === f && syncStatus === 'success' ? "Synced Successfully" : syncingId === f && syncStatus === 'error' ? "Sync Failed" : "Sync to Cloud Library"}
-                                        className="p-1 hover:text-cyan-400 transition-colors"
-                                    >
-                                        {syncingId === f ? (
-                                            syncStatus === 'success' ? <Check size={14} className="text-green-500" /> :
-                                                syncStatus === 'error' ? <AlertTriangle size={14} className="text-red-500" /> :
-                                                    <Loader2 size={14} className="animate-spin text-cyan-400" />
-                                        ) : (
-                                            <Database className="w-3.5 h-3.5" />
-                                        )}
-                                    </button>
-                                    <button
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            const link = document.createElement('a');
-                                            link.href = `${API_BASE}/outputs/${f}`;
-                                            link.download = f;
-                                            link.click();
-                                        }}
-                                        title="Download"
-                                        className="p-1 hover:text-green-400 transition-colors"
-                                    >
-                                        <Download className="w-3.5 h-3.5" />
-                                    </button>
-                                    <button
-                                        onClick={(e) => handleRenameLocal(e, f)}
-                                        title="Rename"
-                                        className="p-1 hover:text-yellow-400 transition-colors"
-                                    >
-                                        <Pencil className="w-3.5 h-3.5" />
-                                    </button>
-                                    <button
-                                        onClick={(e) => handleRemix(e, f)}
-                                        title="Remix"
-                                        className="p-1 hover:text-purple-400 transition-colors"
-                                    >
-                                        <Wand2 className="w-3.5 h-3.5" />
-                                    </button>
-                                    <button
-                                        onClick={(e) => handleDeleteLocal(e, f)}
-                                        title="Delete"
-                                        className="p-1 hover:text-red-400 transition-colors"
-                                    >
-                                        <Trash2 className="w-3.5 h-3.5" />
-                                    </button>
+
+                                {/* Hover Actions */}
+                                <div className="absolute right-2 top-2 flex gap-1.5 bg-black/90 p-1.5 rounded-lg border border-white/10 opacity-0 group-hover:opacity-100 transition-opacity z-20">
+                                    <button onClick={(e) => { e.stopPropagation(); localLib.starFile(f).then(() => notify("Saved to Agent Memory")); }} title="Star (Save to Agent Memory)" className="p-1 hover:text-yellow-400"><Star size={14} /></button>
+                                    <button onClick={(e) => handleSync(e, f)} title="Sync" className="p-1 hover:text-cyan-400"><Database size={14} /></button>
+                                    <button onClick={(e) => { e.stopPropagation(); setRenamingFile(f); }} title="Rename" className="p-1 hover:text-yellow-400"><Pencil size={14} /></button>
+                                    <button onClick={(e) => handleRemix(e, f)} title="Remix" className="p-1 hover:text-purple-400"><Wand2 size={14} /></button>
+                                    <button onClick={(e) => { e.stopPropagation(); if (confirm("Delete?")) localLib.deleteFile(f); }} title="Delete" className="p-1 hover:text-red-400"><Trash2 size={14} /></button>
                                 </div>
                             </div>
                         );
                     })
                 ) : (
-                    cloudSongs.map(song => {
-                        const isActive = currentTrackName === song.local_filename;
-                        return (
-                            <div
-                                key={song.id}
-                                onClick={() => setCurrentTrack(`${API_BASE}/outputs/${song.local_filename}`, song.local_filename)}
-                                className={`group relative p-3 rounded-xl cursor-pointer border transition-all duration-200 ${isActive ? 'bg-cyan-600/20 border-cyan-500/50 shadow-[0_0_15px_-5px_rgba(34,211,238,0.3)]' : 'bg-white/5 hover:bg-white/10 border-white/5 hover:border-white/10'} hover:translate-x-1`}
-                            >
-                                <div className="flex items-start gap-3">
-                                    <div
-                                        className={`w-10 h-10 rounded-lg flex items-center justify-center shrink-0 transition-transform group-hover:scale-105 ${isActive ? 'shadow-inner' : ''}`}
-                                        style={getSongGradient(song.id)}
-                                    >
-                                        <Music2 className="w-5 h-5 text-white drop-shadow-md" />
-                                    </div>
-                                    <div className="flex-1 min-w-0">
-                                        <div className={`text-xs font-bold truncate mb-1 font-heading ${isActive ? 'text-cyan-300' : 'text-gray-200'}`}>{song.title || song.local_filename}</div>
-                                        {song.parent && (
-                                            <div className="flex items-center gap-1 text-[9px] text-zinc-500 mb-0.5">
-                                                <GitFork size={10} className="text-zinc-600" />
-                                                <span className="truncate">Remix of {song.parent.title}</span>
-                                            </div>
-                                        )}
-                                        <div className="text-[10px] text-gray-500 truncate font-mono opacity-70 flex gap-2">
-                                            <span>{new Date(song.created_at).toLocaleDateString()}</span>
-                                            <span>{song.duration}s</span>
-                                        </div>
-                                    </div>
+                    cloudLib.songs.map(song => (
+                        <div
+                            key={song.id}
+                            onClick={() => setCurrentTrack(`${API_URL}/outputs/${song.local_filename}`, song.local_filename)}
+                            className="group relative p-3 rounded-xl cursor-pointer border bg-white/5 hover:bg-white/10 border-white/5 hover:translate-x-1 transition-all"
+                        >
+                            <div className="flex items-start gap-3">
+                                <div className="w-10 h-10 rounded-lg flex items-center justify-center shrink-0" style={getSongGradient(song.id)}>
+                                    <Music2 className="w-5 h-5 text-white" />
                                 </div>
-                                <div
-                                    onClick={(e) => e.stopPropagation()}
-                                    className="absolute right-2 top-2 flex gap-1.5 bg-black/90 p-1.5 rounded-lg border border-white/10 z-50 opacity-100"
-                                >
-                                    <button
-                                        onClick={(e) => handleShare(e, song.id)}
-                                        title="Share Link"
-                                        className="p-1 hover:text-blue-400 transition-colors"
-                                    >
-                                        <Share2 className="w-3.5 h-3.5" />
-                                    </button>
-                                    <button
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            window.open(song.audio_url || `${API_BASE}/outputs/${song.local_filename}`, '_blank');
-                                        }}
-                                        title="Download"
-                                        className="p-1 hover:text-green-400 transition-colors"
-                                    >
-                                        <Download className="w-3.5 h-3.5" />
-                                    </button>
-                                    <button
-                                        onClick={(e) => handleRenameCloud(e, song)}
-                                        title="Rename"
-                                        className="p-1 hover:text-green-400 transition-colors"
-                                    >
-                                        <Pencil className="w-3.5 h-3.5" />
-                                    </button>
-                                    <button
-                                        onClick={(e) => handleRemix(e, song.local_filename, song.meta, song.id)}
-                                        title="Remix"
-                                        className="p-1 hover:text-purple-400 transition-colors"
-                                    >
-                                        <Wand2 className="w-3.5 h-3.5" />
-                                    </button>
-                                    <button
-                                        onClick={(e) => handleDeleteCloud(e, song)}
-                                        title="Delete"
-                                        className="p-1 hover:text-red-400 transition-colors"
-                                    >
-                                        <Trash2 className="w-3.5 h-3.5" />
-                                    </button>
+                                <div className="flex-1 min-w-0">
+                                    <div className="text-xs font-bold truncate mb-1 text-gray-200">{song.title}</div>
+                                    {song.parent && <div className="flex items-center gap-1 text-[9px] text-zinc-500"><GitFork size={10} /> Remix of {song.parent.title}</div>}
                                 </div>
                             </div>
-                        );
-                    })
-                )}
-
-                {((tab === 'local' && files.length === 0) || (tab === 'cloud' && cloudSongs.length === 0)) && !loading && (
-                    <div className="text-center text-xs text-gray-600 mt-10 p-6 border border-dashed border-white/5 rounded-xl">
-                        {tab === 'local' ? "No local files found." : "No synced songs in cloud."}
-                    </div>
+                            {/* Cloud Actions */}
+                            <div className="absolute right-2 top-2 flex gap-1.5 bg-black/90 p-1.5 rounded-lg border border-white/10 opacity-0 group-hover:opacity-100 transition-opacity z-20">
+                                <button onClick={(e) => { e.stopPropagation(); window.open(song.audio_url || `${API_URL}/outputs/${song.local_filename}`, '_blank'); }} className="p-1 hover:text-green-400"><Download size={14} /></button>
+                                <button onClick={(e) => handleRemix(e, song.local_filename, song.meta, song.id)} className="p-1 hover:text-purple-400"><Wand2 size={14} /></button>
+                                <button onClick={(e) => { e.stopPropagation(); if (confirm('Delete?')) cloudLib.deleteSong(song); }} className="p-1 hover:text-red-400"><Trash2 size={14} /></button>
+                            </div>
+                        </div>
+                    ))
                 )}
             </div>
         </div>

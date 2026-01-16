@@ -9,6 +9,8 @@
     *   [x] **Agents**: Verify `parse_llm_json` correctly handles malformed outputs.
     *   [x] **Infrastructure**: Verify `LazyLoader` correctly delays model initialization.
     *   [x] **Database**: Verify CRUD operations on `agent_memory`.
+    *   [ ] **Services**: Verify `JobService` queuing logic in isolation (mocked DB/Worker).
+    *   [ ] **Routers**: Verify `MusicRouter` rejects invalid Pydantic models (422 Error).
     *   [ ] **Billing**: Verify `deduct_credits` logic prevents negative balance.
 
 ### 1.2 Integration Testing (API Pipeline)
