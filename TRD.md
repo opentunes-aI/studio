@@ -69,15 +69,36 @@
 *   [x] **Cors**: Strict allowlist for Production.
 *   [ ] **Rate Limiting**: Prevent API abuse in Cloud variant.
 
-## 6. Future Cloud & Deployment Strategy
-*   **Frontend**: Deployed to **Cloudflare Pages** (Edge).
-    *   **Adapter**: `@cloudflare/next-on-pages`.
-    *   **Reasoning**: Unmetered bandwidth for media apps, global low-latency.
-    *   *Enabler*: Fully decoupled from Backend via `NEXT_PUBLIC_API_URL`.
-*   **Backend (Inference)**: Containerized deployment (Docker).
-    *   **Audio Agnosticism**: The `AudioEngine` abstraction allows us to deploy specialized containers (e.g., "Stable Audio Container" vs "ACE-Step Container") to different GPU providers (Modal, Replicate) without changing the API contract.
-    *   **LLM Agnosticism**: `LiteLLM` allows the Cloud production env to use **Groq/OpenAI** for high-speed agents, while Devs use **Ollama**, merely by changing `AGENT_MODEL_ID` env var.
-*   **Scaling Pattern**: The "Job Queue" architecture allows horizontal scaling of Worker nodes (GPUs) independent of the API server.
-*   **Mobile Strategy**:
-    *   **Phase 1**: PWA (Progressive Web App) for instant install.
-    *   **Phase 2**: Capacitor Wrapper for native store deployment.
+## 6. Deployment Architecture
+### 6.1 Strategy: "Dual-Mode with Service Discovery"
+The codebase is designed to support two distinct runtime environments without code modification.
+
+| Feature | Local Development | Cloud MVP (Free Tier) |
+| :--- | :--- | :--- |
+| **Frontend Host** | `localhost:7865` | Vercel (`opentunes.ai`) |
+| **Backend Host** | `localhost:7866` | Google Colab (via Ngrok) |
+| **Service Discovery** | Static (`config.ts` defaults) | Dynamic (Fetched from Supabase `system_config`) |
+| **Routing** | Direct Path | `middleware.ts` Domain Routing |
+
+### 6.2 Frontend Architecture (Vercel)
+*   **Domain Routing**: A `middleware.ts` file acts as the traffic controller based on the incoming Hostname.
+    *   `opentunes.ai` -> Rewrites to `/` (Landing Page).
+    *   `studio.opentunes.ai` -> Rewrites to `/studio` (Main App).
+    *   `localhost` -> Permissive (Access all paths).
+*   **Service Discovery**:
+    *   The App checks `process.env.NEXT_PUBLIC_API_URL`.
+    *   If empty, it queries Supabase table `system_config` for key `api_url` to find the active Colab Ngrok tunnel.
+
+### 6.3 Backend Architecture (Google Colab)
+*   **Runtime**: The `colab_api.ipynb` notebook acts as the server.
+    *   **Mounts**: Google Drive (for Model Checks/Cache).
+    *   **Installs**: The `acestep` package (zipped from Drive).
+    *   **Tunnels**: `pyngrok` exposes port 8000 to the public internet.
+    *   **Syncs**: On startup, auto-updates the Supabase `system_config` table with the new Ngrok URL.
+*   **Data Persistence**:
+    *   Generated Files: Temporarily stored in Colab `/content/outputs`.
+    *   Long-term: Background task immediately uploads to Supabase Storage (`music` bucket).
+
+### 6.4 Mobile Strategy
+*   **Phase 1**: PWA (Progressive Web App) for instant install.
+*   **Phase 2**: Capacitor Wrapper for native store deployment.

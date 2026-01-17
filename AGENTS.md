@@ -29,6 +29,7 @@ Before answering complex requests, ALWAYS establish context by reading:
 *   **Auth**: Supabase Auth (JWT) + Local Guest Mode.
 *   **Agentic System**: Multi-Agent RAG (Director/Producer/Lyricist) with Feedback Loop (Starring).
 *   **Economy**: Credit System (SaaS) -> Stripe (Hybrid Billing: Subscriptions + Packs).
+*   **Mobile**: PWA First (Next.js Manifest) with Responsive Drawers/Touch Controls.
 
 ## 🔄 Common Workflows
 *   **Running Studio**: `run_studio.bat` (Windows) handles everything.

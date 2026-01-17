@@ -32,6 +32,11 @@
     *   `song_id` (uuid): Target.
     *   `type` (enum): 'like', 'play', 'share'.
 
+*   [x] **`system_config`** (Target: Service Discovery)
+    *   `key` (text, PK): Config key (e.g. 'api_url').
+    *   `value` (text): Dynamic value (e.g. Ngrok URL).
+    *   `updated_at` (timestamp): Last sync time.
+
 ### 1.2 Billing & Credits Schema (SaaS)
 *   **`wallets`**
     *   `user_id` (uuid, PK): Refers to users.

@@ -31,12 +31,9 @@ NEXT_PUBLIC_APP_URL=http://localhost:7865
 ```
 
 ### 1a. Backend Environment (For Deployment)
-The Python backend (`run_api.bat`) supports:
+The Python backend (`run_api.bat` for local, `colab_api.ipynb` for Cloud) supports:
 *   `CORS_ALLOWED_ORIGINS` (default: `*` - Comma separated domains)
-*   `OLLAMA_BASE_URL` (default: `http://localhost:11434`)
-*   `ACE_OUTPUT_DIR` (default: `./outputs`)
-
-If you don't have Supabase keys, the app will run in **Local Mode** (Authentication features disabled).
+*   **Service Discovery**: In Cloud Mode, the Backend auto-updates Supabase `system_config` with its Ngrok URL, so `NEXT_PUBLIC_API_URL` is optional.
 
 ### 2. Install Dependencies
 ```bash
@@ -49,7 +46,6 @@ npm run dev
 ```
 
 ### 4. Database Setup (Supabase)
-### 4. Database Setup (Supabase)
 Run the numbered SQL scripts found in `acestep_studio/migrations/` in order:
 1.  `01_core_schema.sql`: Core tables (Songs) and Storage.
 2.  `02_profiles.sql`: User Profiles and Avatars.
@@ -58,6 +54,7 @@ Run the numbered SQL scripts found in `acestep_studio/migrations/` in order:
 5.  `05_web3.sql`: Web3 readiness columns.
 6.  `09_billing.sql`: Wallets and Transactions tables.
 7.  `10_subscriptions.sql`: Subscription tiers and status tracking.
+8.  `11_system_config.sql`: Service Discovery (Dynamic API URL).
 
 Open [http://localhost:7865](http://localhost:7865).
 
