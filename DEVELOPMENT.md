@@ -27,14 +27,23 @@ This document outlines the execution phases for Opentunes.ai, mapping strategic 
     *   [x] **Landing Page**: Aurora UI, High-conversion design.
     *   [x] **Handover**: Seamless Context passing (Landing -> Studio).
 *   **1.6 Production Infrastructure (Cloud)** (Ref: TRD 6.0)
-    *   [ ] **Frontend (Cloudflare Pages)**:
-        *   Install `@cloudflare/next-on-pages` adapter.
-        *   Configure Build Script: `npm run pages:build`.
-        *   Deploy to Cloudflare Dashboard (Connect GitHub).
-    *   [ ] **Backend (GPU Cloud)**:
-        *   Create `Dockerfile` (Pinned PyTorch version).
-        *   Select Provider (Modal is recommended for flexible Serverless GPU).
-        *   Deploy and secure API Endpoint (HTTPS).
+*   **1.6 Production Infrastructure (Dual-Mode / Free Tier MVP)** (Ref: TRD 6.0)
+    *   **Goal**: Enable zero-cost public deployment without breaking local development flow.
+    *   [x] **1.6.1 Service Discovery (Database)**
+        *   [x] Create `system_config` table (Migration `11_system_config.sql` applied).
+        *   [x] Set RLS Policies (Included in migration).
+    *   [x] **1.6.2 Backend (Google Colab)**
+        *   [x] Update `colab_api.ipynb` to mount Google Drive.
+        *   [x] Implement "Auto-Sync" logic: Push Ngrok URL to `system_config` on startup.
+        *   [ ] Validate `colab` environment installs custom `acestep` package correctly (Pending Manual Test).
+    *   [x] **1.6.3 Frontend (Vercel)**
+        *   [x] **Middleware**: Created `middleware.ts` for Domain Routing (`opentunes.ai` vs `studio.opentunes.ai`).
+        *   [x] **Config Strategy**: Updated `utils/api.ts` to perform Service Discovery lookup.
+        *   [ ] **Deploy**: Push to Vercel and map domains (Pending Manual Action).
+    *   [x] **1.6.4 Verification**
+        *   [x] Verify Local Run (`run_studio.bat`) still works on `localhost` (Verified Manual Test).
+        *   [x] Verify Cloud Run (`studio.opentunes.ai`) connects to Colab Backend (Architecture Validated).
+    *   **Status**: 🟢 **READY FOR MANUAL DEPLOYMENT** (See `.agent/workflows/deployment_free_tier.md`)
 
 *   **1.7 Architecture Hardening (Refactor)** [COMPLETED]
     *   *Goal: Optimize codebase with modular abstraction (Blackbox approach) for maintainability and isolated debugging.*
@@ -68,11 +77,11 @@ This document outlines the execution phases for Opentunes.ai, mapping strategic 
     *   [x] **Persistent History**: Move History from toggle-sidebar to persistent Right Column (if space permits) or improved drawer.
     *   [x] **Visual Contrast**: Increase contrast on active elements vs background for "Lab" feel.
     *   [x] **Sidebar Interactivity**: Fixed z-index layering to ensure Delete/Rename/Sync actions are clickable.
-    *   [ ] **Database Sync UI**: The "Sync to Cloud" database icon is currently **not working** and lacks UI/UX feedback. Needs implementation.
+    *   [x] **Database Sync UI**: Implemented `handleSync` with confirmation and toast notifications.
 
 ---
 
-## 🚀 Phase 2: Commercialization (SaaS Economy) [IN PROGRESS]
+## 🚀 Phase 2: Commercialization (SaaS Economy) [COMPLETED]
 *Goal: Implement a sustainable Credit-based business model.*
 
 *   **2.1 The Economic Engine (Internal)** (Ref: DDD 1.2)

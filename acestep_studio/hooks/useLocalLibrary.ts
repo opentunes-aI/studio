@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { getHistory, deleteLocalFile, renameLocalFile, getTrackMetadata } from "@/utils/api";
+import { getHistory, deleteLocalFile, renameLocalFile, getTrackMetadata, starTrack } from "@/utils/api";
 import { useStudioStore } from "@/utils/store";
 
 export function useLocalLibrary() {
@@ -47,8 +47,8 @@ export function useLocalLibrary() {
 
     const starFile = async (filename: string) => {
         try {
-            // Using direct fetch for now, can move to API util later
-            await fetch(`http://localhost:7866/files/${filename}/star`, { method: "POST" });
+            // Updated to use dynamic API
+            await starTrack(filename);
         } catch (e: any) {
             throw new Error(e.message || "Star failed");
         }
