@@ -79,6 +79,7 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans, system-ui, sans-serif);
+  overscroll-behavior-y: none; /* Prevent Pull-to-Refresh bounce in PWA */
 }
 
 /* Scrollbar styling for studio feel */

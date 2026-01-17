@@ -83,7 +83,7 @@ export default function AgentChat() {
 
             {/* Chat Window */}
             {isOpen && (
-                <div className="fixed bottom-6 right-6 w-[350px] h-[500px] bg-card/95 backdrop-blur-xl border border-border rounded-xl shadow-2xl flex flex-col z-50 overflow-hidden ring-1 ring-white/10">
+                <div className="fixed bottom-0 right-0 sm:bottom-6 sm:right-6 w-full h-[85vh] sm:w-[350px] sm:h-[500px] bg-card/95 backdrop-blur-xl border-t sm:border border-border rounded-t-2xl sm:rounded-xl shadow-2xl flex flex-col z-50 overflow-hidden ring-1 ring-white/10 animate-in slide-in-from-bottom-10 sm:slide-in-from-bottom-2 duration-300">
                     {/* Header */}
                     <div className="h-14 bg-gradient-to-r from-pink-600/20 to-purple-600/20 border-b border-border flex items-center justify-between px-4 shrink-0">
                         <div className="flex items-center gap-2 overflow-hidden">

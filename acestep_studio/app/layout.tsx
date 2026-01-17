@@ -21,6 +21,15 @@ export const metadata: Metadata = {
   icons: {
     icon: '/logo.png',
   },
+  manifest: '/manifest.json'
+};
+
+export const viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false, // Prevent zooming in PWA mode
+  themeColor: "#000000",
 };
 
 export default function RootLayout({

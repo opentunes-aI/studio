@@ -51,18 +51,18 @@ export default function FooterPlayer() {
     return (
         <div className="h-20 bg-card border-t border-border flex items-center justify-between px-6 shrink-0 z-50 shadow-[0_-5px_20px_rgba(0,0,0,0.3)]">
             {/* Track Info */}
-            <div className="flex items-center gap-4 w-1/3">
-                <div className="w-12 h-12 bg-secondary rounded-md flex items-center justify-center">
+            <div className="flex items-center gap-4 flex-1 min-w-0 pr-4">
+                <div className="w-12 h-12 bg-secondary rounded-md flex items-center justify-center shrink-0">
                     <span className="text-2xl">🎵</span>
                 </div>
                 <div className="min-w-0">
                     <div className="font-bold text-sm truncate text-foreground">{currentTrackName || "Unknown Track"}</div>
-                    <div className="text-xs text-muted-foreground">Opentunes Studio</div>
+                    <div className="text-xs text-muted-foreground hidden sm:block">Opentunes Studio</div>
                 </div>
             </div>
 
             {/* Controls */}
-            <div className="text-center w-1/3 flex flex-col items-center justify-center gap-1">
+            <div className="text-center flex-1 w-full max-w-xs sm:w-auto flex flex-col items-center justify-center gap-1">
                 <div className="flex items-center gap-4">
                     <button className="text-muted-foreground hover:text-foreground"><SkipBack className="w-5 h-5" /></button>
                     <button
@@ -73,7 +73,7 @@ export default function FooterPlayer() {
                     </button>
                     <button className="text-muted-foreground hover:text-foreground"><SkipForward className="w-5 h-5" /></button>
                 </div>
-                <div className="w-full max-w-xs flex items-center gap-2 text-[10px] font-mono text-muted-foreground">
+                <div className="w-full flex items-center gap-2 text-[10px] font-mono text-muted-foreground">
                     <span>{formatTime(progress)}</span>
                     <input
                         type="range"
@@ -88,8 +88,8 @@ export default function FooterPlayer() {
                 </div>
             </div>
 
-            {/* Volume / Extras */}
-            <div className="w-1/3 flex justify-end items-center gap-4">
+            {/* Volume / Extras (Hidden on Mobile) */}
+            <div className="flex-1 justify-end items-center gap-4 hidden sm:flex">
                 <button
                     onClick={() => {
                         if (!currentTrackUrl) return;

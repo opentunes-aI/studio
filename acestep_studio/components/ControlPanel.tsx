@@ -123,7 +123,7 @@ export default function ControlPanel() {
     }
 
     return (
-        <div className="w-96 bg-black/40 backdrop-blur-3xl border-r border-white/10 h-full flex flex-col shrink-0 z-20 shadow-2xl relative">
+        <div className="w-full bg-black/40 backdrop-blur-3xl border-r border-white/10 h-full flex flex-col shrink-0 z-20 shadow-2xl relative">
 
             {/* Scrollable Content */}
             <div className="flex-1 overflow-y-auto p-5 space-y-6 custom-scrollbar">
