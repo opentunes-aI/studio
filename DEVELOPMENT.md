@@ -72,7 +72,7 @@ This document outlines the execution phases for Opentunes.ai, mapping strategic 
 
 ---
 
-## 🚀 Phase 2: Commercialization (SaaS Economy) [NEXT UP]
+## 🚀 Phase 2: Commercialization (SaaS Economy) [IN PROGRESS]
 *Goal: Implement a sustainable Credit-based business model.*
 
 *   **2.1 The Economic Engine (Internal)** (Ref: DDD 1.2)
@@ -84,8 +84,13 @@ This document outlines the execution phases for Opentunes.ai, mapping strategic 
 *   **2.2 Payments & Subscriptions** (Ref: PRD 4.5)
     *   [x] **Stripe Integration**: Hybrid Billing (Subscriptions + Top-ups).
     *   [x] **Webhooks**: Secure idempotent handling of `payment.succeeded` and `invoice.payment_succeeded`.
-    *   [x] **Billing Dashboard**: User Settings UI (Tabs: Account, Billing History).
-    *   [ ] **Pro Features**: Gate "Stem Separation" and "Private Mode" behind `is_pro` flag.
+    *   [x] **Billing Dashboard Refactor**:
+        *   Split `SettingsDialog` into "Subscription" (Plans, Upgrades, Downgrades) and "Billing" (History, Payment Methods) tabs.
+        *   Enhanced `CreditDialog` with improved plan status logic.
+    *   [x] **Payment Method Management**: Added UI to List, Add, Detach, and Set Default Payment Methods (`usePaymentMethods` hook).
+    *   [x] **Subscription Details**: Added detailed period tracking (Start/End dates) and Renewal Status visibility.
+    *   [x] **Pro Features**: Gate "Stem Separation" and "Private Mode" behind `is_pro` flag.
+    *   [ ] **Extended Payment Methods**: Add PayPal, Apple Pay, and Google Pay support via Stripe Link.
 *   **2.3 Web 3 Integration (Deferred)**
     *   [ ] **Wallet Login**: Implementation moved to Phase 3.
 

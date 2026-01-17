@@ -100,7 +100,11 @@ export default function Sidebar() {
     return (
         <div className="w-full h-full flex flex-col shrink-0 z-10 bg-black/40 backdrop-blur-3xl border-l border-white/10 shadow-2xl">
             <CreditDialog isOpen={showCredits} onClose={() => setShowCredits(false)} />
-            <SettingsDialog isOpen={showSettings} onClose={() => setShowSettings(false)} />
+            <SettingsDialog
+                isOpen={showSettings}
+                onClose={() => setShowSettings(false)}
+                onOpenUpgrade={() => { setShowSettings(false); setShowCredits(true); }}
+            />
 
             {/* Header / Tabs */}
             <div className="flex flex-col gap-4 p-5 border-b border-white/5">

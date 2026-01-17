@@ -59,3 +59,11 @@ To test if credits are actually added after payment, you need to forward Stripe 
 4.  Complete payment using Stripe Test Card (`4242 4242...`).
 5.  Watch the `stripe listen` terminal for `200 OK`.
 6.  Refresh Studio to see your new balance!
+
+## 6. Enable Customer Portal
+To allow users to **manage subscriptions** (cancel, upgrade, view invoices), you must enable the Customer Portal in Stripe.
+
+1.  Go to **Settings > Customer Portal** in the Stripe Dashboard.
+2.  **Enable** the portal.
+3.  Configure permitted actions (e.g., "Allow customers to cancel subscriptions").
+4.  Save changes.

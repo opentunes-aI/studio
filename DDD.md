@@ -36,8 +36,10 @@
 *   **`wallets`**
     *   `user_id` (uuid, PK): Refers to users.
     *   `balance` (int): Current available credits.
-    *   `is_pro` (bool): Active subscription status.
-    *   `next_refill_at` (timestamp): For daily/monthly grants.
+    *   `subscription_tier` (text): 'free', 'starter', 'creator', 'studio'.
+    *   `subscription_status` (text): 'active', 'canceled', 'past_due'.
+    *   `stripe_subscription_id` (text): Stripe reference.
+    *   `renews_at` (timestamp): Next billing date.
 
 *   **`transactions`** (Immutable Ledger)
     *   `id` (uuid, PK).

@@ -12,6 +12,58 @@ if settings.STRIPE_SECRET_KEY:
 class BillingService:
     
     @staticmethod
+    def create_portal_session(user_id: str, email: str = None):
+        """Creates a Stripe Portal Session for managing subscriptions"""
+        if not settings.STRIPE_SECRET_KEY:
+            raise HTTPException(503, "Stripe not configured")
+
+        try:
+            cid = BillingService._get_customer_id(user_id, email)
+            if not cid:
+                raise HTTPException(404, "No billing account found")
+
+            # 3. Create Portal Session
+            portal_session = stripe.billing_portal.Session.create(
+                customer=cid,
+                return_url=f"{settings.APP_BASE_URL}/settings/billing"
+            )
+            return {"url": portal_session.url}
+
+        except HTTPException: raise
+        except Exception as e:
+            logger.error(f"Portal Error: {e}")
+            raise HTTPException(500, "Portal creation failed")
+
+    @staticmethod
+    def cancel_subscription(user_id: str):
+        """Cancels the user's active subscription at period end"""
+        supabase = get_db()
+        if not supabase: return False
+
+        # 1. Get Subscription ID
+        res = supabase.table("wallets").select("stripe_subscription_id").eq("user_id", user_id).single().execute()
+        sub_id = res.data.get("stripe_subscription_id")
+        
+        if not sub_id:
+            raise HTTPException(400, "No active subscription found")
+
+        try:
+            # 2. Cancel at Period End (Standard SaaS behavior)
+            stripe.Subscription.modify(
+                sub_id,
+                cancel_at_period_end=True
+            )
+            
+            # 3. Update DB Status
+            supabase.table("wallets").update({"subscription_status": "canceling"}).eq("user_id", user_id).execute()
+            
+            return {"status": "canceled", "message": "Subscription will end at the current billing cycle."}
+            
+        except Exception as e:
+            logger.error(f"Cancel Error: {e}")
+            raise HTTPException(500, f"Cancellation failed: {str(e)}")
+
+    @staticmethod
     def create_checkout_session(user_id: str, email: str, price_id: str, is_subscription: bool = False):
         """Creates a Stripe Checkout Session for Credit Packs or Subscriptions"""
         if not settings.STRIPE_SECRET_KEY:
@@ -189,6 +241,115 @@ class BillingService:
             logger.error(f"Failed to fetch history: {e}")
             return []
     @staticmethod
+    def _get_customer_id(user_id: str, email: str = None):
+        """Helper to resolve Stripe Customer ID from User ID"""
+        supabase = get_db()
+        customer_id = None
+        
+        if supabase:
+            res = supabase.table("wallets").select("stripe_subscription_id").eq("user_id", user_id).single().execute()
+            if res.data and res.data.get("stripe_subscription_id"):
+                try:
+                    sub = stripe.Subscription.retrieve(res.data["stripe_subscription_id"])
+                    customer_id = sub.customer
+                except: pass
+
+        if not customer_id and email:
+            customers = stripe.Customer.list(email=email, limit=1)
+            if customers.data:
+                customer_id = customers.data[0].id
+        
+        return customer_id
+
+    @staticmethod
+    def get_payment_methods(user_id: str, email: str = None):
+        """List all payment methods for the user"""
+        if not settings.STRIPE_SECRET_KEY: return []
+        
+        cid = BillingService._get_customer_id(user_id, email)
+        if not cid: return [] 
+        
+        try:
+            pms = stripe.PaymentMethod.list(customer=cid, type="card")
+            customer = stripe.Customer.retrieve(cid)
+            default_pm = customer.invoice_settings.default_payment_method
+            
+            return [{
+                "id": pm.id,
+                "brand": pm.card.brand,
+                "last4": pm.card.last4,
+                "exp_month": pm.card.exp_month,
+                "exp_year": pm.card.exp_year,
+                "is_default": pm.id == default_pm
+            } for pm in pms.data]
+        except Exception as e:
+            logger.error(f"List PM Error: {e}")
+            return []
+
+    @staticmethod
+    def create_setup_session(user_id: str, email: str):
+        """Create a session to add a new payment method"""
+        if not settings.STRIPE_SECRET_KEY: raise HTTPException(503, "Stripe not configured")
+        
+        cid = BillingService._get_customer_id(user_id, email)
+        if not cid and email:
+            # Create Customer if not exists
+            cust = stripe.Customer.create(email=email, metadata={"user_id": user_id})
+            cid = cust.id
+            
+        try:
+            session = stripe.checkout.Session.create(
+                payment_method_types=['card'],
+                mode='setup',
+                customer=cid,
+                success_url=f"{settings.APP_BASE_URL}/studio?setup=success",
+                cancel_url=f"{settings.APP_BASE_URL}/studio?setup=cancel",
+            )
+            return {"url": session.url}
+        except Exception as e:
+            logger.error(f"Setup Session Error: {e}")
+            raise HTTPException(500, "Setup failed")
+
+    @staticmethod
+    def detach_payment_method(user_id: str, pm_id: str):
+        """Remove a payment method"""
+        cid = BillingService._get_customer_id(user_id)
+        if not cid: raise HTTPException(404, "Customer not found")
+        
+        pms = stripe.PaymentMethod.list(customer=cid, type="card")
+        
+        # Check if user has active subscription
+        # Logic: If Sub Active, must keep at least 1 PM.
+        supabase = get_db()
+        # simplified check: assume if they have Stripe Customer, they might have sub.
+        # But we can check wallet status.
+        is_active = False
+        if supabase:
+             w = supabase.table("wallets").select("subscription_status").eq("user_id", user_id).single().execute()
+             if w.data and w.data.get("subscription_status") == 'active':
+                 is_active = True
+                 
+        if is_active and len(pms.data) <= 1:
+            raise HTTPException(400, "Cannot remove the last payment method while subscription is active.")
+
+        try:
+            stripe.PaymentMethod.detach(pm_id)
+            return {"status": "detached"}
+        except Exception as e:
+            raise HTTPException(500, f"Detach failed: {str(e)}")
+
+    @staticmethod
+    def set_default_payment_method(user_id: str, pm_id: str):
+        cid = BillingService._get_customer_id(user_id)
+        if not cid: raise HTTPException(404, "Customer not found")
+        
+        try:
+            stripe.Customer.modify(cid, invoice_settings={"default_payment_method": pm_id})
+            return {"status": "updated"}
+        except Exception as e:
+            raise HTTPException(500, f"Update failed: {str(e)}")
+
+    @staticmethod
     def update_subscription_status(user_id: str, status: str, stripe_sub_id: str = None):
         """Updates subscription status in wallet."""
         supabase = get_db()
@@ -197,9 +358,34 @@ class BillingService:
         updates = {"subscription_status": status}
         if stripe_sub_id: updates["stripe_subscription_id"] = stripe_sub_id
         
-        # Calculate tier based on price? For now just set active.
-        # Ideally we map stripe_price_id to tier name stored in metadata
-        
         try:
             supabase.table("wallets").update(updates).eq("user_id", user_id).execute()
         except: pass
+
+    @staticmethod
+    def get_subscription_details(user_id: str):
+        """Fetch detailed subscription info including period dates"""
+        if not settings.STRIPE_SECRET_KEY: return None
+        
+        supabase = get_db()
+        if not supabase: return None
+        
+        try:
+            res = supabase.table("wallets").select("stripe_subscription_id").eq("user_id", user_id).single().execute()
+            if not res.data or not res.data.get("stripe_subscription_id"):
+                return None
+                
+            sub_id = res.data["stripe_subscription_id"]
+            sub = stripe.Subscription.retrieve(sub_id)
+            
+            return {
+                "status": sub.status,
+                "current_period_start": sub.current_period_start,
+                "current_period_end": sub.current_period_end,
+                "cancel_at_period_end": sub.cancel_at_period_end,
+                "plan_amount": sub.plan.amount, # in cents
+                "plan_interval": sub.plan.interval
+            }
+        except Exception as e:
+            logger.error(f"Sub Details Error: {e}")
+            return None

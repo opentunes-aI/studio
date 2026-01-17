@@ -56,6 +56,8 @@ Run the numbered SQL scripts found in `acestep_studio/migrations/` in order:
 3.  `03_community.sql`: Social features (Likes, Play Counts, Public Access).
 4.  `04_social.sql`: Follows and Messages.
 5.  `05_web3.sql`: Web3 readiness columns.
+6.  `09_billing.sql`: Wallets and Transactions tables.
+7.  `10_subscriptions.sql`: Subscription tiers and status tracking.
 
 Open [http://localhost:7865](http://localhost:7865).
 

@@ -17,8 +17,11 @@ interface StudioState {
     // Economy
     credits: number;
     isPro: boolean;
+    subscriptionStatus: string;
+    subscriptionTier: string;
     setCredits: (v: number) => void;
     setIsPro: (v: boolean) => void;
+    setSubscriptionStatus: (v: string) => void;
 
     // Form State
     trackTitle: string;
@@ -98,8 +101,11 @@ export const useStore = create<StudioState>((set) => ({
     // Economy Defaults
     credits: 0,
     isPro: false,
+    subscriptionStatus: "none",
+    subscriptionTier: "free",
     setCredits: (v) => set({ credits: v }),
     setIsPro: (v) => set({ isPro: v }),
+    setSubscriptionStatus: (v) => set((state) => ({ subscriptionStatus: v, subscriptionTier: v === 'active' || v === 'past_due' ? (state.subscriptionTier || 'starter') : 'free' })),
 
     prompt: "upbeat techno with synth leads",
     lyrics: "",

@@ -5,7 +5,7 @@ import { useCredits } from "@/hooks/useCredits";
 import { X, Check, Zap, Crown, Star, Sparkles } from "lucide-react";
 import { supabase } from "@/utils/supabase";
 
-type Plan = {
+export type Plan = {
     id: string;
     name: string;
     price: number;
@@ -16,7 +16,15 @@ type Plan = {
     isPack?: boolean;
 };
 
-const PLANS: Plan[] = [
+export const PLANS: Plan[] = [
+    {
+        id: "free_tier",
+        name: "Free",
+        price: 0,
+        credits: 50,
+        features: ["50 Monthly Credits", "Standard Queue", "Personal License"],
+        color: "gray"
+    },
     {
         id: "price_1SqJJQQSlQu7Rwj9wBMyU5qd",
         name: "Starter",
@@ -50,7 +58,7 @@ const PACKS: Plan[] = [
 ];
 
 export default function CreditDialog({ isOpen, onClose }: { isOpen: boolean, onClose: () => void }) {
-    const { credits } = useCredits();
+    const { credits, subscriptionTier, subscriptionStatus } = useCredits();
     const [loading, setLoading] = useState<string | null>(null);
     const [mounted, setMounted] = useState(false);
 
@@ -66,6 +74,14 @@ export default function CreditDialog({ isOpen, onClose }: { isOpen: boolean, onC
             if (!user?.data?.user) {
                 alert("Please log in first!");
                 return;
+            }
+
+            // Warning for switching plans
+            if (!plan.isPack && subscriptionStatus === 'active' && plan.name.toLowerCase() !== subscriptionTier) {
+                if (!confirm(`Switching to ${plan.name} will start a new subscription. Your previous subscription will need to be cancelled manually to avoid double billing (check email). Continue?`)) {
+                    // Note: Ideally we automate this swap in webhook, but for now manual warning.
+                    return;
+                }
             }
 
             const res = await fetch(`${API_BASE}/billing/create-checkout-session`, {
@@ -90,9 +106,32 @@ export default function CreditDialog({ isOpen, onClose }: { isOpen: boolean, onC
         }
     }
 
+    async function handleCancel() {
+        if (!confirm("Are you sure you want to cancel your subscription? You will lose access to Pro features at the end of the billing period.")) return;
+        setLoading('cancel');
+        try {
+            const { data: { user } } = await supabase!.auth.getUser();
+            const res = await fetch(`${API_BASE}/billing/cancel-subscription`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ user_id: user?.id })
+            });
+            if (!res.ok) throw new Error("Cancellation failed");
+            alert("Subscription canceled successfully.");
+            onClose();
+        } catch (e) { alert("Error: " + e); }
+        finally { setLoading(null); }
+    }
+
     return createPortal(
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 backdrop-blur-md animate-in fade-in duration-200 overflow-y-auto py-10">
-            <div className="w-[1000px] bg-[#0c0c12] rounded-3xl border border-white/10 shadow-2xl relative overflow-hidden ring-1 ring-white/10 flex flex-col">
+        <div
+            onClick={onClose}
+            className="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 backdrop-blur-md animate-in fade-in duration-200 overflow-y-auto py-10 cursor-pointer"
+        >
+            <div
+                onClick={(e) => e.stopPropagation()}
+                className="w-[1200px] bg-[#0c0c12] rounded-3xl border border-white/10 shadow-2xl relative overflow-hidden ring-1 ring-white/10 flex flex-col cursor-default"
+            >
 
                 {/* Close Button */}
                 <button onClick={onClose} className="absolute top-6 right-6 text-gray-400 hover:text-white transition-colors z-20 bg-white/5 p-2 rounded-full hover:bg-white/10">
@@ -106,70 +145,93 @@ export default function CreditDialog({ isOpen, onClose }: { isOpen: boolean, onC
                         <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
                         <span className="text-xs font-mono text-gray-300">CURRENT BALANCE: <span className="text-white font-bold">{credits} CREDITS</span></span>
                     </div>
-                    <h2 className="text-4xl font-bold text-white mb-3 tracking-tight">Upgrade your Studio</h2>
+                    <h2 className="text-4xl font-bold text-white mb-3 tracking-tight">
+                        Manage Subscription
+                    </h2>
                     <p className="text-gray-400 max-w-lg mx-auto">
-                        Unlock professional tools, commercial rights, and priority generation speeds.
+                        View your current plan or upgrade to unlock simplified billing.
                     </p>
                 </div>
 
                 {/* Main Plans Grid */}
-                <div className="grid grid-cols-3 gap-6 px-12 pb-12">
-                    {PLANS.map(plan => (
-                        <div
-                            key={plan.id}
-                            className={`
-                                relative flex flex-col p-6 rounded-2xl border transition-all duration-300 group
-                                ${plan.popular
-                                    ? 'bg-gradient-to-b from-purple-900/40 to-black border-purple-500/50 shadow-2xl shadow-purple-900/20 md:scale-105 z-10'
-                                    : 'bg-white/[0.03] border-white/5 hover:bg-white/[0.05] hover:border-white/20'
-                                }
-                            `}
-                        >
-                            {plan.popular && (
-                                <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-gradient-to-r from-purple-500 to-pink-500 text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-widest shadow-lg">
-                                    Most Popular
-                                </div>
-                            )}
+                <div className="grid grid-cols-4 gap-4 px-8 pb-12">
+                    {PLANS.map(plan => {
+                        const isFree = plan.price === 0;
+                        const isCurrent = plan.name.toLowerCase() === (subscriptionTier || 'free').toLowerCase();
 
-                            <div className="mb-6">
-                                <h3 className={`text-lg font-bold mb-1 ${plan.popular ? 'text-white' : 'text-gray-300'}`}>{plan.name}</h3>
-                                <div className="flex items-baseline gap-1">
-                                    <span className="text-3xl font-bold text-white">${plan.price}</span>
-                                    <span className="text-sm text-gray-500">/mo</span>
-                                </div>
-                                <div className={`text-sm font-mono mt-2 inline-block px-2 py-1 rounded-md ${plan.popular ? 'bg-purple-500/20 text-purple-300' : 'bg-white/10 text-gray-400'}`}>
-                                    {plan.credits} Credits
-                                </div>
-                            </div>
-
-                            <div className="flex-1 space-y-3 mb-8">
-                                {plan.features.map((feat, i) => (
-                                    <div key={i} className="flex items-center gap-3 text-sm text-gray-300">
-                                        <Check size={16} className={plan.popular ? 'text-purple-400' : 'text-gray-500'} />
-                                        <span>{feat}</span>
-                                    </div>
-                                ))}
-                            </div>
-
-                            <button
-                                onClick={() => handleBuy(plan)}
-                                disabled={!!loading}
+                        return (
+                            <div
+                                key={plan.id}
                                 className={`
-                                    w-full py-3 rounded-xl font-bold text-sm transition-all
+                                    relative flex flex-col p-6 rounded-2xl border transition-all duration-300 group
                                     ${plan.popular
-                                        ? 'bg-white text-black hover:bg-gray-200'
-                                        : 'bg-white/10 text-white hover:bg-white/20'
+                                        ? 'bg-gradient-to-b from-purple-900/40 to-black border-purple-500/50 shadow-2xl shadow-purple-900/20 md:scale-105 z-10'
+                                        : 'bg-white/[0.03] border-white/5 hover:bg-white/[0.05] hover:border-white/20'
                                     }
+                                    ${isCurrent ? 'ring-2 ring-emerald-500 border-emerald-500/50' : ''}
                                 `}
                             >
-                                {loading === plan.id ? (
-                                    <div className="w-5 h-5 border-2 border-current border-t-transparent rounded-full animate-spin mx-auto"></div>
-                                ) : (
-                                    "Subscribe"
+                                {plan.popular && !isCurrent && (
+                                    <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-gradient-to-r from-purple-500 to-pink-500 text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-widest shadow-lg">
+                                        Most Popular
+                                    </div>
                                 )}
-                            </button>
-                        </div>
-                    ))}
+                                {isCurrent && (
+                                    <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-emerald-500 text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-widest shadow-lg flex items-center gap-1">
+                                        <Check size={12} /> Current Plan
+                                    </div>
+                                )}
+
+                                <div className="mb-6">
+                                    <h3 className={`text-lg font-bold mb-1 ${plan.popular ? 'text-white' : 'text-gray-300'}`}>{plan.name}</h3>
+                                    <div className="flex items-baseline gap-1">
+                                        <span className="text-3xl font-bold text-white">${plan.price}</span>
+                                        <span className="text-sm text-gray-500">/mo</span>
+                                    </div>
+                                    <div className={`text-sm font-mono mt-2 inline-block px-2 py-1 rounded-md ${plan.popular ? 'bg-purple-500/20 text-purple-300' : 'bg-white/10 text-gray-400'}`}>
+                                        {plan.credits} Credits
+                                    </div>
+                                </div>
+
+                                <div className="flex-1 space-y-3 mb-8">
+                                    {plan.features.map((feat, i) => (
+                                        <div key={i} className="flex items-center gap-3 text-sm text-gray-300">
+                                            <Check size={16} className={plan.popular ? 'text-purple-400' : 'text-gray-500'} />
+                                            <span>{feat}</span>
+                                        </div>
+                                    ))}
+                                </div>
+
+                                <button
+                                    onClick={() => isFree && !isCurrent ? handleCancel() : handleBuy(plan)}
+                                    disabled={!!loading || isCurrent}
+                                    className={`
+                                        w-full py-3 rounded-xl font-bold text-sm transition-all
+                                        ${isCurrent
+                                            ? 'bg-emerald-500/20 text-emerald-400 cursor-default hover:bg-emerald-500/20'
+                                            : plan.popular
+                                                ? 'bg-white text-black hover:bg-gray-200'
+                                                : isFree
+                                                    ? 'bg-white/5 text-gray-400 hover:bg-red-500/10 hover:text-red-400 border border-white/5'
+                                                    : 'bg-white/10 text-white hover:bg-white/20'
+                                        }
+                                    `}
+                                >
+                                    {loading === plan.id ? (
+                                        <div className="w-5 h-5 border-2 border-current border-t-transparent rounded-full animate-spin mx-auto"></div>
+                                    ) : isCurrent ? (
+                                        "Active"
+                                    ) : isFree ? (
+                                        "Downgrade"
+                                    ) : subscriptionStatus === 'active' ? (
+                                        "Switch Plan"
+                                    ) : (
+                                        "Subscribe"
+                                    )}
+                                </button>
+                            </div>
+                        );
+                    })}
                 </div>
 
                 {/* Top Up Section */}
@@ -195,9 +257,17 @@ export default function CreditDialog({ isOpen, onClose }: { isOpen: boolean, onC
                             </button>
                         ))}
                     </div>
-                    <p className="text-xs text-gray-600 mt-6">
-                        Secure payments via Stripe. Subscriptions can be cancelled at any time.
-                    </p>
+
+
+
+                    {subscriptionStatus === 'canceling' && (
+                        <div className="mt-8 pt-6 border-t border-white/5 w-full max-w-md text-center">
+                            <div className="text-xs text-yellow-400 flex items-center justify-center gap-2">
+                                <span className="w-2 h-2 rounded-full bg-yellow-400"></span>
+                                Subscription canceling. Access remains until period end.
+                            </div>
+                        </div>
+                    )}
                 </div>
 
             </div>

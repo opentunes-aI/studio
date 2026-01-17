@@ -5,6 +5,7 @@ import { supabase } from "@/utils/supabase";
 export function useCredits() {
     const setCredits = useStudioStore(s => s.setCredits);
     const setIsPro = useStudioStore(s => s.setIsPro);
+    const setSubscriptionStatus = useStudioStore(s => s.setSubscriptionStatus);
     const credits = useStudioStore(s => s.credits);
     const isPro = useStudioStore(s => s.isPro);
 
@@ -21,7 +22,8 @@ export function useCredits() {
             const { data: wallet } = await supabase.from('wallets').select('*').eq('user_id', user.id).single();
             if (wallet) {
                 setCredits(wallet.balance);
-                setIsPro(wallet.is_pro);
+                setIsPro(!!wallet.stripe_subscription_id); // Use ID presence or is_pro flag
+                setSubscriptionStatus(wallet.subscription_status || 'none');
             }
 
             // 2. Subscribe
@@ -35,6 +37,10 @@ export function useCredits() {
                 }, (payload: any) => {
                     const newBal = payload.new.balance;
                     if (typeof newBal === 'number') setCredits(newBal);
+
+                    if (payload.new.subscription_status) {
+                        setSubscriptionStatus(payload.new.subscription_status);
+                    }
                 })
                 .subscribe();
         }
@@ -46,5 +52,8 @@ export function useCredits() {
         };
     }, []); // Run once on mount
 
-    return { credits, isPro };
+    const subscriptionStatus = useStudioStore(s => s.subscriptionStatus);
+    const subscriptionTier = useStudioStore(s => s.subscriptionTier);
+
+    return { credits, isPro, subscriptionStatus, subscriptionTier };
 }
