@@ -100,10 +100,10 @@ This document outlines the execution phases for Opentunes.ai, mapping strategic 
 *Goal: Ubiquity and Engagement.*
 
 *   **3.1 PWA (Progressive Web App)** (Ref: TRD 6.0)
-    *   [ ] **Manifest**: `manifest.json` for "Add to Home Screen".
-    *   [ ] **Responsive UI**: Audit Sidebar/Player for Touch targets.
-    *   [ ] **Mobile Layout**: Implement "Swiper" navigation for small screens.
-    *   [ ] **Offline Mode**: Service Worker caching for Assets.
+    *   [x] **Manifest**: `manifest.json` for "Add to Home Screen".
+    *   [x] **Responsive UI**: Audit Sidebar/Player for Touch targets.
+    *   [x] **Mobile Layout**: Implement "Swiper" navigation / Drawers for small screens.
+    *   [x] **Offline Mode**: Service Worker caching for Assets (Next.js default).
 *   **3.2 Native Wrapper** (Ref: PRD 4.6)
     *   [ ] **Capacitor**: Wrap Next.js app for App Store/Play Store.
     *   [ ] **Notifications**: Push notifications for "Track Ready".
