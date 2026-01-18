@@ -5,8 +5,47 @@ import { API_URL } from './config';
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
+// Custom Storage to allow Cross-Subdomain Session Sharing via Cookies
+const CookieStorage = {
+    getItem: (key: string) => {
+        if (typeof document === 'undefined') return null;
+        const match = document.cookie.match(new RegExp('(^| )' + key + '=([^;]+)'));
+        return match ? decodeURIComponent(match[2]) : null;
+    },
+    setItem: (key: string, value: string) => {
+        if (typeof document === 'undefined') return;
+        const hostname = window.location.hostname;
+        let domainAttr = '';
+        if (hostname.includes('opentunes.ai')) {
+            domainAttr = '; domain=.opentunes.ai';
+        }
+        // Set cookie for 100 years
+        document.cookie = `${key}=${JSON.stringify(encodeURIComponent(value))}; path=/; max-age=31536000${domainAttr}; SameSite=Lax; Secure`;
+        // Note: supabase-js v2 stores the session object as a string, but sometimes we need to be careful with encoding.
+        // Actually, supabase-js handles serialization. We just need to persist the string value.
+        // Simplified:
+        document.cookie = `${key}=${encodeURIComponent(value)}; path=/; max-age=31536000${domainAttr}; SameSite=Lax; Secure`;
+    },
+    removeItem: (key: string) => {
+        if (typeof document === 'undefined') return;
+        const hostname = window.location.hostname;
+        let domainAttr = '';
+        if (hostname.includes('opentunes.ai')) {
+            domainAttr = '; domain=.opentunes.ai';
+        }
+        document.cookie = `${key}=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT${domainAttr}; SameSite=Lax; Secure`;
+    }
+};
+
 export const supabase = (supabaseUrl && supabaseKey)
-    ? createClient(supabaseUrl, supabaseKey)
+    ? createClient(supabaseUrl, supabaseKey, {
+        auth: {
+            persistSession: true,
+            storageKey: 'sb-auth-token',
+            storage: (typeof window !== 'undefined') ? CookieStorage : undefined,
+            // If server-side, storage should be undefined/null effectively 
+        }
+    })
     : null;
 
 import { getTrackMetadata } from "./api";
