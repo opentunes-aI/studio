@@ -26,9 +26,20 @@ export default function LoginCard({ onLocalHack }: { onLocalHack?: () => void })
 
         setLoading(true);
         try {
+            const hostname = window.location.hostname;
+            let redirectUrl = window.location.origin + '/studio';
+
+            // In Production, always send Magic Link traffic to the Studio Domain
+            if (hostname === 'opentunes.ai' || hostname === 'www.opentunes.ai') {
+                redirectUrl = 'https://studio.opentunes.ai';
+            } else if (hostname === 'studio.opentunes.ai') {
+                // Already on studio domain, just go to root (which middleware rewrites to /studio)
+                redirectUrl = 'https://studio.opentunes.ai';
+            }
+
             const { error } = await supabase.auth.signInWithOtp({
                 email,
-                options: { emailRedirectTo: window.location.origin + '/studio' }
+                options: { emailRedirectTo: redirectUrl }
             });
             if (error) throw error;
             setSent(true);

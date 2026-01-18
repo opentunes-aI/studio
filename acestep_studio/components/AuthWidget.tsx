@@ -31,10 +31,18 @@ export default function AuthWidget() {
         setLoading(true);
         try {
             console.log("[Auth] Calling Supabase API...");
-            // Use window.location.origin + '/studio' to ensure redirection to app
+            // Use dynamic redirect to ensure cloud users hit the studio domain
+            const hostname = window.location.hostname;
+            let redirectUrl = window.location.origin + '/studio';
+            if (hostname === 'opentunes.ai' || hostname === 'www.opentunes.ai') {
+                redirectUrl = 'https://studio.opentunes.ai';
+            } else if (hostname === 'studio.opentunes.ai') {
+                redirectUrl = 'https://studio.opentunes.ai';
+            }
+
             const { error } = await supabase.auth.signInWithOtp({
                 email,
-                options: { emailRedirectTo: window.location.origin + '/studio' }
+                options: { emailRedirectTo: redirectUrl }
             });
             console.log("[Auth] API Response:", error);
 
